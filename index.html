@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StoreVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#0b0d12;--sur:#12151d;--sur2:#181c27;--bdr:#242838;--bdr2:#2e3448;
+  --acc:#e8c547;--acc2:#4fc3f7;--acc3:#a78bfa;
+  --red:#f06292;--grn:#66bb6a;--orn:#ffa726;
+  --txt:#e8eaf0;--txt2:#b0b8d0;--mut:#6a748a;
+  --fh:'Syne',sans-serif;--fm:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:var(--fm);min-height:100vh;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+
+/* ── ENTRY SCREEN ── */
+#scr-entry{display:flex;align-items:center;justify-content:center;padding:20px;}
+#scr-entry.active{display:flex;}
+.entry-card{background:var(--sur);border:1px solid var(--bdr2);border-radius:18px;width:100%;max-width:380px;padding:38px 32px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.entry-logo{text-align:center;margin-bottom:28px;}
+.entry-title{font-family:var(--fh);font-size:24px;font-weight:800;color:var(--acc);}
+.entry-sub{font-size:9px;color:var(--mut);letter-spacing:3px;text-transform:uppercase;margin-top:3px;}
+.entry-line{width:36px;height:2px;background:var(--acc);margin:10px auto 0;border-radius:2px;}
+.btn-entry{display:block;width:100%;padding:12px;border-radius:9px;border:none;font-family:var(--fm);font-size:13px;font-weight:600;cursor:pointer;transition:all .16s;text-align:center;margin-bottom:10px;}
+.btn-entry.primary{background:var(--acc);color:#000;}
+.btn-entry.primary:hover{background:#f0d060;}
+.btn-entry.ghost{background:var(--sur2);color:var(--txt2);border:1px solid var(--bdr2);}
+.btn-entry.ghost:hover{border-color:var(--acc);color:var(--acc);}
+.btn-entry.link{background:none;color:var(--mut);font-size:11px;padding:8px;}
+.btn-entry.link:hover{color:var(--txt);}
+.entry-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);display:block;margin-bottom:5px;}
+.entry-input{width:100%;background:var(--sur2);border:1px solid var(--bdr2);border-radius:8px;padding:10px 13px;color:var(--txt);font-family:var(--fm);font-size:12px;outline:none;margin-bottom:10px;transition:border-color .15s;}
+.entry-input:focus{border-color:var(--acc);}
+.entry-err{background:rgba(240,98,146,.1);border:1px solid rgba(240,98,146,.3);color:var(--red);border-radius:8px;padding:9px 12px;font-size:11px;text-align:center;display:none;margin-bottom:10px;}
+.entry-footer{text-align:center;margin-top:16px;font-size:10px;color:var(--mut);}
+
+/* ── APP SCREEN ── */
+#scr-app.active{display:flex;}
+#scr-app{min-height:100vh;}
+.sidebar{width:220px;background:var(--sur);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0;}
+.main{flex:1;padding:28px 32px;overflow-x:hidden;min-width:0;}
+
+/* Sidebar parts */
+.s-logo{padding:20px 18px 14px;border-bottom:1px solid var(--bdr);}
+.s-logo-t{font-family:var(--fh);font-size:17px;font-weight:800;color:var(--acc);}
+.s-logo-s{font-size:9px;color:var(--mut);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.s-user{margin:10px 10px 0;padding:9px 11px;background:var(--sur2);border:1px solid var(--bdr2);border-radius:9px;display:flex;align-items:center;gap:9px;}
+.s-av{width:28px;height:28px;border-radius:50%;background:var(--acc3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.s-av.adm{background:var(--acc);color:#000;}
+.s-uname{font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.s-urole{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-top:1px;}
+.s-nav{padding:10px 0;flex:1;}
+.s-sec{font-size:9px;letter-spacing:2px;color:var(--mut);text-transform:uppercase;padding:10px 18px 3px;}
+.nb{display:flex;align-items:center;gap:10px;width:100%;padding:9px 18px;background:none;border:none;color:var(--mut);font-family:var(--fm);font-size:12px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;text-align:left;}
+.nb:hover{color:var(--txt2);background:var(--sur2);}
+.nb.on{color:var(--acc);border-left-color:var(--acc);background:rgba(232,197,71,.06);}
+.nb .ni{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.nb .nbdg{margin-left:auto;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:9px;}
+.adm-only{display:none;}
+.is-admin .adm-only{display:flex;}
+.s-foot{padding:11px 12px;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.s-status{font-size:10px;color:var(--mut);}
+.s-signout{background:none;border:1px solid var(--bdr2);border-radius:6px;color:var(--mut);font-family:var(--fm);font-size:10px;padding:4px 9px;cursor:pointer;transition:all .14s;white-space:nowrap;}
+.s-signout:hover{border-color:var(--red);color:var(--red);}
+
+/* Pages */
+.page{display:none;}
+.page.on{display:block;}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:14px;flex-wrap:wrap;}
+.ptit{font-family:var(--fh);font-size:24px;font-weight:800;letter-spacing:-1px;line-height:1;}
+.ptit span{color:var(--acc);}
+.psub{font-size:11px;color:var(--mut);margin-top:4px;}
+.pact{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+@media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr);}}
+.sc{background:var(--sur);border:1px solid var(--bdr);border-radius:9px;padding:14px 16px;position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sc.y::before{background:var(--acc);}.sc.b::before{background:var(--acc2);}
+.sc.g::before{background:var(--grn);}.sc.r::before{background:var(--red);}
+.sn{font-family:var(--fh);font-size:26px;font-weight:800;line-height:1;}
+.sl{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px;}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-family:var(--fm);font-size:11px;font-weight:500;transition:all .15s;white-space:nowrap;}
+.btn-p{background:var(--acc);color:#000;}.btn-p:hover{background:#f0d060;}
+.btn-g{background:var(--sur2);color:var(--txt2);border:1px solid var(--bdr2);}.btn-g:hover{border-color:var(--acc);color:var(--acc);}
+.btn-d{background:rgba(240,98,146,.1);color:var(--red);border:1px solid rgba(240,98,146,.25);}.btn-d:hover{background:rgba(240,98,146,.2);}
+.btn-s{background:rgba(102,187,106,.1);color:var(--grn);border:1px solid rgba(102,187,106,.25);}.btn-s:hover{background:rgba(102,187,106,.2);}
+.btn-b{background:rgba(79,195,247,.1);color:var(--acc2);border:1px solid rgba(79,195,247,.25);}.btn-b:hover{background:rgba(79,195,247,.2);}
+.btn-sm{padding:4px 9px;font-size:10px;border-radius:6px;}
+
+/* Table */
+.tw{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+.th2{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--bdr);gap:8px;flex-wrap:wrap;}
+.thl{display:flex;align-items:center;gap:8px;}
+.tnl{font-family:var(--fh);font-size:13px;font-weight:700;}
+.tcnt{font-size:10px;color:var(--mut);background:var(--sur2);border:1px solid var(--bdr);border-radius:20px;padding:1px 8px;}
+.tox{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--sur2);}
+th{padding:8px 12px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);font-weight:500;white-space:nowrap;border-bottom:1px solid var(--bdr);}
+td{padding:9px 12px;font-size:11px;border-top:1px solid var(--bdr);vertical-align:middle;}
+tbody tr:hover td{background:rgba(255,255,255,.02);}
+
+/* Badges */
+.bdg{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap;}
+.bg{background:rgba(102,187,106,.1);color:var(--grn);border:1px solid rgba(102,187,106,.2);}
+.bw{background:rgba(255,167,38,.1);color:var(--orn);border:1px solid rgba(255,167,38,.2);}
+.br{background:rgba(240,98,146,.1);color:var(--red);border:1px solid rgba(240,98,146,.2);}
+.bb{background:rgba(79,195,247,.1);color:var(--acc2);border:1px solid rgba(79,195,247,.2);}
+.by{background:rgba(232,197,71,.1);color:var(--acc);border:1px solid rgba(232,197,71,.2);}
+
+/* Search */
+.sbar{display:flex;align-items:center;gap:8px;background:var(--sur2);border:1px solid var(--bdr2);border-radius:9px;padding:9px 13px;max-width:480px;transition:border-color .15s;}
+.sbar:focus-within{border-color:var(--acc2);}
+.sbar input{background:none;border:none;outline:none;color:var(--txt);font-family:var(--fm);font-size:12px;flex:1;}
+.sbar input::placeholder{color:var(--mut);}
+
+/* Modal */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:500;padding:16px;}
+.mo{display:none;}
+.mo.open{display:flex;}
+.mdl{background:var(--sur);border:1px solid var(--bdr2);border-radius:13px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+.mdl-w{max-width:760px;}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bdr);}
+.mt{font-family:var(--fh);font-size:16px;font-weight:700;}
+.mx{background:none;border:none;color:var(--mut);cursor:pointer;font-size:17px;padding:3px 6px;border-radius:5px;}
+.mx:hover{color:var(--txt);background:var(--sur2);}
+.mb{padding:20px;}
+.mf{padding:12px 20px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:8px;}
+
+/* Forms */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ff{grid-column:1/-1;}
+.fgrp{display:flex;flex-direction:column;gap:4px;}
+.flbl{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);}
+.fc{background:var(--sur2);border:1px solid var(--bdr2);border-radius:8px;padding:8px 11px;color:var(--txt);font-family:var(--fm);font-size:12px;outline:none;transition:border-color .14s;}
+.fc:focus{border-color:var(--acc);}
+.fc option{background:var(--sur2);}
+textarea.fc{resize:vertical;min-height:58px;}
+
+/* Alert */
+.al{padding:9px 13px;border-radius:8px;font-size:11px;margin-bottom:12px;line-height:1.5;}
+.al-i{background:rgba(79,195,247,.08);border:1px solid rgba(79,195,247,.22);color:var(--acc2);}
+.al-w{background:rgba(255,167,38,.08);border:1px solid rgba(255,167,38,.22);color:var(--orn);}
+.al-g{background:rgba(102,187,106,.08);border:1px solid rgba(102,187,106,.22);color:var(--grn);}
+.al-r{background:rgba(240,98,146,.08);border:1px solid rgba(240,98,146,.22);color:var(--red);}
+
+/* Tabs */
+.tabs{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap;}
+.tab{padding:5px 13px;border-radius:20px;border:1px solid var(--bdr2);background:none;color:var(--mut);cursor:pointer;font-family:var(--fm);font-size:11px;transition:all .14s;}
+.tab:hover{color:var(--txt2);}
+.tab.on{background:var(--acc);color:#000;border-color:var(--acc);font-weight:600;}
+
+/* Choice cards */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:480px;}
+.ccard{background:var(--sur2);border:2px solid var(--bdr2);border-radius:13px;padding:20px 16px;cursor:pointer;transition:all .17s;text-align:center;}
+.ccard:hover{border-color:var(--acc);transform:translateY(-2px);}
+.cc-i{font-size:28px;margin-bottom:9px;}
+.cc-t{font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:3px;}
+.cc-d{font-size:10px;color:var(--mut);line-height:1.5;}
+
+/* Table picker */
+.tsl{display:flex;flex-direction:column;gap:6px;}
+.tsi{background:var(--sur2);border:1px solid var(--bdr2);border-radius:8px;padding:10px 13px;cursor:pointer;transition:all .13s;display:flex;align-items:center;justify-content:space-between;}
+.tsi:hover{border-color:var(--acc2);}
+.tsi.sel{border-color:var(--acc);background:rgba(232,197,71,.06);}
+
+/* No data */
+.nd{text-align:center;padding:40px 0;color:var(--mut);}
+.nd-i{font-size:30px;margin-bottom:8px;}
+.nd-t{font-size:12px;}
+
+/* Import */
+.dz{border:2px dashed var(--bdr2);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .18s;position:relative;}
+.dz:hover,.dz.ov{border-color:var(--acc2);background:rgba(79,195,247,.04);}
+.dz input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.spl{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;}
+.spi{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:9px 13px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:all .13s;}
+.spi:hover{border-color:var(--acc2);}
+.cmr{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:9px;margin-bottom:8px;}
+.ptw{max-height:160px;overflow-y:auto;border-radius:7px;border:1px solid var(--bdr);}
+.ptw table{font-size:10px;}.ptw th{font-size:8px;}
+
+/* Section head */
+.sh{font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:11px;display:flex;align-items:center;gap:9px;}
+.sh::after{content:'';flex:1;height:1px;background:var(--bdr);}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px;}
+@media(max-width:680px){.sidebar{display:none;}.main{padding:14px;}.fg{grid-template-columns:1fr;}.cgrid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     ENTRY SCREEN
+══════════════════════════════════ -->
+<div id="scr-entry" class="screen active">
+  <div class="entry-card">
+    <div class="entry-logo">
+      <div class="entry-title">StoreVault</div>
+      <div class="entry-sub">Inventory Management</div>
+      <div class="entry-line"></div>
+    </div>
+
+    <!-- Default view -->
+    <div id="ev-default">
+      <button class="btn-entry primary" onclick="enterViewer()">View Inventory →</button>
+      <button class="btn-entry ghost" onclick="showAdminForm()">🔒 Admin Login</button>
+    </div>
+
+    <!-- Admin login form -->
+    <div id="ev-admin" style="display:none">
+      <label class="entry-label">Admin User ID</label>
+      <input class="entry-input" type="text" id="a-uid" placeholder="User ID" autocomplete="off"/>
+      <label class="entry-label">Password</label>
+      <input class="entry-input" type="password" id="a-pwd" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()"/>
+      <div class="entry-err" id="a-err">Incorrect user ID or password.</div>
+      <button class="btn-entry primary" onclick="adminLogin()">Sign In as Admin →</button>
+      <button class="btn-entry link" onclick="showDefault()">← Back</button>
+    </div>
+
+    <div class="entry-footer">StoreVault v2.0 · All rights reserved</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     APP SCREEN
+══════════════════════════════════ -->
+<div id="scr-app" class="screen">
+  <aside class="sidebar">
+    <div class="s-logo">
+      <div class="s-logo-t">StoreVault</div>
+      <div class="s-logo-s">Inventory System</div>
+    </div>
+    <div class="s-user">
+      <div class="s-av" id="s-av">V</div>
+      <div>
+        <div class="s-uname" id="s-uname">Viewer</div>
+        <div class="s-urole" id="s-role">Viewer</div>
+      </div>
+    </div>
+    <nav class="s-nav">
+      <div class="s-sec">Navigation</div>
+      <button class="nb on" id="nav-dashboard" onclick="gotoPage('dashboard')">
+        <span class="ni">⊗</span> Not In Office
+        <span class="nbdg" id="out-badge" style="display:none">0</span>
+      </button>
+      <button class="nb" id="nav-search" onclick="gotoPage('search')">
+        <span class="ni">◎</span> Search
+      </button>
+      <button class="nb" id="nav-inventory" onclick="gotoPage('inventory')">
+        <span class="ni">⬡</span> All Inventory
+      </button>
+
+      <!-- Update — visible to ALL users (viewer + admin) -->
+      <button class="nb" id="nav-update" onclick="gotoPage('update')">
+        <span class="ni">✎</span> Update Records
+      </button>
+
+      <!-- ════════════════════════════════════════════
+           ADMIN-ONLY NAV — visible only to admins
+           Edit user credentials in ADMIN_USERS below
+      ════════════════════════════════════════════ -->
+      <div class="s-sec adm-only" style="margin-top:6px">Admin</div>
+      <button class="nb adm-only" id="nav-new" onclick="gotoPage('new')">
+        <span class="ni">＋</span> New Entry
+      </button>
+      <button class="nb adm-only" id="nav-import" onclick="openMo('mo-import')">
+        <span class="ni">⬆</span> Import Excel/CSV
+      </button>
+      <button class="nb adm-only" id="nav-export" onclick="doExport()">
+        <span class="ni">⬇</span> Export to Excel
+      </button>
+      <!-- ═══════ END ADMIN-ONLY NAV ═══════ -->
+    </nav>
+    <div class="s-foot">
+      <div class="s-status" id="s-status">◎ Ready</div>
+      <button class="s-signout" id="s-signout" onclick="signOut()">Admin Login</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- NOT IN OFFICE -->
+    <div class="page on" id="page-dashboard">
+      <div class="ph">
+        <div>
+          <div class="ptit">Not In <span>Office</span></div>
+          <div class="psub">Items currently issued, dispatched, on loan or in repair</div>
+        </div>
+        <div class="pact" id="dash-adm" style="display:none">
+          <button class="btn btn-b" onclick="openMo('mo-import')">⬆ Import</button>
+          <button class="btn btn-s" onclick="doExport()">⬇ Export</button>
+          <button class="btn btn-p" onclick="gotoPage('new')">＋ New Entry</button>
+        </div>
+      </div>
+      <div class="stats" id="dash-stats"></div>
+      <div id="dash-body"></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="page" id="page-search">
+      <div class="ph">
+        <div><div class="ptit">Search <span>Items</span></div><div class="psub">Find items across all tables</div></div>
+      </div>
+      <div class="sbar" style="margin-bottom:18px">
+        <span style="color:var(--mut)">◎</span>
+        <input type="text" id="srch-inp" placeholder="Search make, description, model, serial, location…" oninput="doSearch()"/>
+      </div>
+      <div id="srch-out"><div class="nd"><div class="nd-i">◎</div><div class="nd-t">Start typing to search</div></div></div>
+    </div>
+
+    <!-- ALL INVENTORY -->
+    <div class="page" id="page-inventory">
+      <div class="ph">
+        <div><div class="ptit">All <span>Inventory</span></div><div class="psub">Complete list across all tables</div></div>
+        <div class="pact" id="inv-adm" style="display:none">
+          <button class="btn btn-s" onclick="doExport()">⬇ Export</button>
+        </div>
+      </div>
+      <div id="inv-body"></div>
+    </div>
+
+    <!-- NEW ENTRY (admin) -->
+    <div class="page" id="page-new">
+      <div class="ph">
+        <div><div class="ptit">New <span>Entry</span></div><div class="psub">Create table or add items</div></div>
+      </div>
+      <div class="cgrid">
+        <div class="ccard" onclick="openMo('mo-new-table')">
+          <div class="cc-i">⊞</div><div class="cc-t">Create New Table</div>
+          <div class="cc-d">New inventory category with a custom name</div>
+        </div>
+        <div class="ccard" onclick="openSelectTable()">
+          <div class="cc-i">⊕</div><div class="cc-t">Add Item to Table</div>
+          <div class="cc-d">Add a new item to an existing table</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPDATE RECORDS (all users) -->
+    <div class="page" id="page-update">
+      <div class="ph">
+        <div><div class="ptit">Update <span>Records</span></div><div class="psub" id="upd-sub">Edit inventory items</div></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+        <div class="tabs" id="upd-tabs" style="margin-bottom:0"></div>
+        <div id="upd-tbl-actions" style="display:none;gap:8px">
+          <button class="btn btn-d btn-sm" id="remove-tbl-btn" onclick="confirmRemoveTable()">⊗ Remove Table</button>
+        </div>
+      </div>
+      <div id="upd-body"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════
+     MODALS
+══════════════════════════════════ -->
+<div class="mo" id="mo-new-table">
+  <div class="mdl">
+    <div class="mh"><div class="mt">Create New Table</div><button class="mx" onclick="closeMo('mo-new-table')">✕</button></div>
+    <div class="mb">
+      <div class="fgrp"><div class="flbl">Table / Category Name</div><input class="fc" id="nt-name" placeholder="e.g. Electronics, Furniture…"/></div>
+      <div class="al al-i" style="margin-top:11px;margin-bottom:0">A new empty table will be created. Add items to it after.</div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-g" onclick="closeMo('mo-new-table')">Cancel</button>
+      <button class="btn btn-p" onclick="createTable()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-sel-table">
+  <div class="mdl">
+    <div class="mh"><div class="mt">Select Table</div><button class="mx" onclick="closeMo('mo-sel-table')">✕</button></div>
+    <div class="mb">
+      <div class="al al-i">Choose a table to add a new item into.</div>
+      <div class="tsl" id="sel-tbl-list"></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-g" onclick="closeMo('mo-sel-table')">Cancel</button>
+      <button class="btn btn-p" onclick="goAddItem()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-item">
+  <div class="mdl mdl-w">
+    <div class="mh"><div class="mt" id="item-title">Add Item</div><button class="mx" onclick="closeMo('mo-item')">✕</button></div>
+    <div class="mb">
+      <div class="al al-i" style="margin-bottom:14px">Table: <strong id="item-tbl" style="color:var(--acc)"></strong></div>
+      <div class="fg">
+        <div class="fgrp"><div class="flbl">Sl No</div><input class="fc" id="f-slno" placeholder="Auto"/></div>
+        <div class="fgrp"><div class="flbl">Make / Brand</div><input class="fc" id="f-make" placeholder="e.g. Dell, HP"/></div>
+        <div class="fgrp ff"><div class="flbl">Product Description *</div><input class="fc" id="f-desc" placeholder="Full description"/></div>
+        <div class="fgrp"><div class="flbl">Model / Part No</div><input class="fc" id="f-model" placeholder="Model number"/></div>
+        <div class="fgrp"><div class="flbl">Serial No</div><input class="fc" id="f-serial" placeholder="Serial number"/></div>
+        <div class="fgrp"><div class="flbl">Qty</div><input class="fc" id="f-qty" type="number" min="1" placeholder="1"/></div>
+        <div class="fgrp">
+          <div class="flbl">Condition <small style="color:var(--mut)">(24 Mar 2025)</small></div>
+          <select class="fc" id="f-cond">
+            <option value="">— Select —</option>
+            <option>Good</option><option>Working</option><option>Fair</option>
+            <option>Needs Repair</option><option>Damaged</option><option>Obsolete</option>
+          </select>
+        </div>
+        <div class="fgrp">
+          <div class="flbl">Where Is It?</div>
+          <select class="fc" id="f-where">
+            <option>In Office</option><option>With User</option><option>In Repair</option>
+            <option>Dispatched</option><option>On Loan</option><option>Missing</option>
+          </select>
+        </div>
+        <div class="fgrp ff"><div class="flbl">Remarks</div><textarea class="fc" id="f-rmk" placeholder="Additional notes…"></textarea></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-g" onclick="closeMo('mo-item')">Cancel</button>
+      <button class="btn btn-p" id="item-save-btn" onclick="saveItem()">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-del">
+  <div class="mdl" style="max-width:360px">
+    <div class="mh"><div class="mt">Confirm Delete</div><button class="mx" onclick="closeMo('mo-del')">✕</button></div>
+    <div class="mb"><div class="al al-r" style="margin-bottom:0">This will permanently delete the item.</div></div>
+    <div class="mf">
+      <button class="btn btn-g" onclick="closeMo('mo-del')">Cancel</button>
+      <button class="btn btn-d" onclick="confirmDel()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Table confirm (admin only) -->
+<div class="mo" id="mo-del-table">
+  <div class="mdl" style="max-width:400px">
+    <div class="mh"><div class="mt">Remove Table</div><button class="mx" onclick="closeMo('mo-del-table')">✕</button></div>
+    <div class="mb">
+      <div class="al al-r">This will permanently delete the table <strong id="del-tbl-name" style="color:var(--acc)"></strong> and all its items. This cannot be undone.</div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-g" onclick="closeMo('mo-del-table')">Cancel</button>
+      <button class="btn btn-d" onclick="doRemoveTable()">Remove Table</button>
+    </div>
+  </div>
+</div>
+
+<!-- Viewer quick-update modal (Where Is It + Remarks only) -->
+<div class="mo" id="mo-viewer-edit">
+  <div class="mdl" style="max-width:440px">
+    <div class="mh"><div class="mt">Update Item</div><button class="mx" onclick="closeMo('mo-viewer-edit')">✕</button></div>
+    <div class="mb">
+      <div class="al al-i" style="margin-bottom:14px">
+        <strong id="ve-desc" style="color:var(--acc)"></strong><br>
+        <span style="font-size:10px;color:var(--mut)" id="ve-meta"></span>
+      </div>
+      <div class="fg">
+        <div class="fgrp">
+          <div class="flbl">Where Is It?</div>
+          <select class="fc" id="ve-where">
+            <option>In Office</option><option>With User</option><option>In Repair</option>
+            <option>Dispatched</option><option>On Loan</option><option>Missing</option>
+          </select>
+        </div>
+        <div class="fgrp ff">
+          <div class="flbl">Remarks</div>
+          <textarea class="fc" id="ve-rmk" placeholder="Update remarks or notes…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-g" onclick="closeMo('mo-viewer-edit')">Cancel</button>
+      <button class="btn btn-p" onclick="saveViewerEdit()">Save Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="mo" id="mo-import">
+  <div class="mdl mdl-w">
+    <div class="mh"><div class="mt">Import Excel / CSV</div><button class="mx" onclick="closeImport()">✕</button></div>
+    <div class="mb">
+      <div id="imp-s1">
+        <div class="al al-i">Upload .xlsx, .xls or .csv — each sheet becomes a table.</div>
+        <div class="dz" id="imp-dz">
+          <input type="file" id="imp-file" accept=".xlsx,.xls,.csv" onchange="impFileChosen(event)"/>
+          <div style="font-size:34px;margin-bottom:9px">📂</div>
+          <div style="font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:4px">Drop file or click to browse</div>
+          <div style="font-size:10px;color:var(--mut)"><span style="color:var(--acc)">.xlsx · .xls · .csv</span></div>
+        </div>
+      </div>
+      <div id="imp-s2" style="display:none">
+        <div class="al al-i" id="imp-finfo"></div>
+        <div class="sh">Select Sheets</div>
+        <div class="spl" id="imp-sheets"></div>
+        <div style="margin-top:11px;display:flex;gap:14px;flex-wrap:wrap">
+          <label style="font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="imp-mode" value="append" checked style="accent-color:var(--acc)"> Append</label>
+          <label style="font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="imp-mode" value="replace" style="accent-color:var(--acc)"> Replace</label>
+        </div>
+      </div>
+      <div id="imp-s3" style="display:none">
+        <div class="al al-i">Map columns — sheet: <strong id="imp-sname" style="color:var(--acc)"></strong></div>
+        <div id="imp-colmap"></div>
+        <div id="imp-prev-wrap" style="display:none;margin-top:11px">
+          <div class="sh" style="margin-bottom:7px">Preview <span style="font-size:10px;color:var(--mut);font-weight:400">(5 rows)</span></div>
+          <div class="ptw" id="imp-prev"></div>
+        </div>
+      </div>
+      <div id="imp-s4" style="display:none;text-align:center;padding:22px 0">
+        <div style="font-size:38px;margin-bottom:10px">✅</div>
+        <div style="font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:5px">Import Complete!</div>
+        <div id="imp-done-msg" style="font-size:11px;color:var(--mut)"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-g" onclick="closeImport()">Cancel</button>
+      <button class="btn btn-p" id="imp-next" onclick="impNext()" style="display:none">Next →</button>
+      <button class="btn btn-p" id="imp-do" onclick="impDo()" style="display:none">Import</button>
+      <button class="btn btn-s" id="imp-done" onclick="closeImport()" style="display:none">Done ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCRIPT
+══════════════════════════════════ -->
+<script>
+// ╔══════════════════════════════════════════════════╗
+// ║  ADMIN USERS — modify userId & password below   ║
+// ╚══════════════════════════════════════════════════╝
+const ADMIN_USERS = [
+  // ── Admin 1 ── change userId and password
+  { userId:'admin1', password:'Admin@123', name:'Admin One' },
+  // ── Admin 2 ── change userId and password
+  { userId:'admin2', password:'Admin@456', name:'Admin Two' },
+  // ── Admin 3 ── change userId and password
+  { userId:'anil', password:'10698', name:'Admin Three' },
+];
+// ╚══════════════════════════════════════════════════╝
+
+// ── State ──
+let CU = null; // current user
+const DB_KEY = 'sv_db_v3';
+let DB = {};
+let saveT = null;
+
+// ── Entry screen helpers ──
+function showAdminForm() {
+  document.getElementById('ev-default').style.display = 'none';
+  document.getElementById('ev-admin').style.display   = '';
+  document.getElementById('a-uid').focus();
+}
+function showDefault() {
+  document.getElementById('ev-admin').style.display   = 'none';
+  document.getElementById('ev-default').style.display = '';
+  document.getElementById('a-err').style.display      = 'none';
+  document.getElementById('a-uid').value = '';
+  document.getElementById('a-pwd').value = '';
+}
+
+// ── Enter as viewer ──
+function enterViewer() {
+  CU = { name:'Store Viewer', role:'viewer' };
+  switchToApp();
+}
+
+// ── Admin login ──
+function adminLogin() {
+  const uid  = (document.getElementById('a-uid').value||'').trim();
+  const pwd  = document.getElementById('a-pwd').value || '';
+  const user = ADMIN_USERS.find(u => u.userId === uid && u.password === pwd);
+  if (!user) {
+    document.getElementById('a-err').style.display = 'block';
+    document.getElementById('a-pwd').value = '';
+    return;
+  }
+  document.getElementById('a-err').style.display = 'none';
+  CU = { name: user.name, role: 'admin' };
+  switchToApp();
+}
+
+// ── Switch to app ──
+function switchToApp() {
+  document.getElementById('scr-entry').className = 'screen';
+  document.getElementById('scr-app').className   = 'screen active';
+  setupUserUI();
+  bootDB();
+}
+
+// ── Sign out ──
+function signOut() {
+  const wasViewer = CU && CU.role === 'viewer';
+  CU = null;
+  document.getElementById('scr-app').className   = 'screen';
+  document.getElementById('scr-entry').className = 'screen active';
+  showDefault();
+  if (wasViewer) showAdminForm();
+}
+
+// ── Setup user UI ──
+function setupUserUI() {
+  const isAdmin = CU.role === 'admin';
+  const av = document.getElementById('s-av');
+  av.textContent  = CU.name.charAt(0).toUpperCase();
+  av.className    = 's-av' + (isAdmin ? ' adm' : '');
+  document.getElementById('s-uname').textContent = CU.name;
+  document.getElementById('s-role').textContent  = isAdmin ? 'Administrator' : 'Viewer';
+  document.getElementById('s-signout').textContent = isAdmin ? 'Sign Out' : 'Admin Login';
+  const appEl = document.getElementById('scr-app');
+  isAdmin ? appEl.classList.add('is-admin') : appEl.classList.remove('is-admin');
+  document.getElementById('dash-adm').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('inv-adm').style.display  = isAdmin ? 'flex' : 'none';
+}
+
+// ── DB ──
+function bootDB() {
+  let loaded = false;
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      if (p && typeof p === 'object' && Object.keys(p).length > 0) { DB = p; loaded = true; setStat('loaded'); }
+    }
+  } catch(e) {}
+  if (!loaded) { seedDB(); }
+  showPage('dashboard');
+}
+function savDB() { try { localStorage.setItem(DB_KEY, JSON.stringify(DB)); setStat('saved'); } catch(e) { setStat('err'); } }
+function schedSave() { setStat('saving'); clearTimeout(saveT); saveT = setTimeout(savDB, 600); }
+function setStat(s) {
+  const el = document.getElementById('s-status');
+  if (!el) return;
+  const map = { saved:'● Saved', saving:'◌ Saving…', loaded:'● Loaded', err:'⚠ Error', demo:'◎ Demo data' };
+  el.textContent = map[s] || '◎ Ready';
+}
+
+// ── Seed ──
+function seedDB() {
+  DB['Electronics'] = [
+    {slno:'1', make:'Dell',     desc:'Laptop 15.6" Core i7 16GB',          model:'Inspiron 15 5510',  serial:'DL2024001', qty:2,  condition:'Good',    where:'In Office',  remarks:'Purchased Jan 2024'},
+    {slno:'2', make:'HP',       desc:'LaserJet Pro A4 Monochrome Printer',  model:'M404dn',            serial:'HP2024011', qty:1,  condition:'Working', where:'With User',  remarks:'Issued to Mr. Rajan – Finance'},
+    {slno:'3', make:'Samsung',  desc:'27" Full HD LED Monitor',             model:'LF27T550FHW',       serial:'SM2023045', qty:3,  condition:'Good',    where:'In Office',  remarks:''},
+    {slno:'4', make:'Cisco',    desc:'8-Port Gigabit Unmanaged Switch',     model:'SG110-08-NA',       serial:'CS2022100', qty:1,  condition:'Fair',    where:'In Repair',  remarks:'Port 3 not responding'},
+    {slno:'5', make:'Apple',    desc:'MacBook Air 13" M2 8GB',              model:'MLXY3HN/A',         serial:'AP2024022', qty:1,  condition:'Good',    where:'With User',  remarks:'Issued to Design team lead'},
+    {slno:'6', make:'Epson',    desc:'A3 Colour Inkjet Printer',            model:'EcoTank L8050',     serial:'EP2023009', qty:1,  condition:'Working', where:'In Office',  remarks:''},
+    {slno:'7', make:'Logitech', desc:'Wireless Keyboard & Mouse Combo',     model:'MK545 Advanced',    serial:'LG2023055', qty:5,  condition:'Good',    where:'In Office',  remarks:'Spare units'},
+    {slno:'8', make:'Sony',     desc:'65" 4K UHD Smart LED TV',             model:'KD-65X74L',         serial:'SN2023031', qty:1,  condition:'Good',    where:'Dispatched', remarks:'Client boardroom presentation'},
+    {slno:'9', make:'Lenovo',   desc:'ThinkPad X1 Carbon Core i5',          model:'20XW005QIN',        serial:'LV2024003', qty:1,  condition:'Good',    where:'On Loan',    remarks:'Lent to Coimbatore branch'},
+    {slno:'10',make:'HP',       desc:'Projector Full HD 3500 Lumens',       model:'HP EP3200',         serial:'HP2022044', qty:1,  condition:'Fair',    where:'With User',  remarks:'Training dept – seminar'},
+  ];
+  DB['Furniture'] = [
+    {slno:'1', make:'Godrej',      desc:'High-Back Ergonomic Office Chair',     model:'Ergo Pro',    serial:'GJ2021001', qty:10, condition:'Good',    where:'In Office',  remarks:''},
+    {slno:'2', make:'Featherlite', desc:'8-Seater Conference Table',            model:'CT-8-FLT',    serial:'FL2020050', qty:1,  condition:'Good',    where:'In Office',  remarks:'Main conference room'},
+    {slno:'3', make:'Godrej',      desc:'3-Door Steel Almirah with Lock',       model:'Storwell 3D', serial:'GJ2019030', qty:2,  condition:'Fair',    where:'On Loan',    remarks:'Lent to Pune branch'},
+    {slno:'4', make:'Durian',      desc:'L-Shaped Executive Desk',              model:'BOSTON-L-WN', serial:'DR2022015', qty:4,  condition:'Good',    where:'In Office',  remarks:'Director & Manager cabins'},
+    {slno:'5', make:'Nilkamal',    desc:'Plastic Visitor Chair Stackable',      model:'CHR-OMEGA',   serial:'NK2021100', qty:20, condition:'Working', where:'In Office',  remarks:'Reception area'},
+    {slno:'6', make:'Durian',      desc:'Glass-Top Coffee Table',              model:'OSLO-CT-CLR', serial:'DR2020008', qty:2,  condition:'Fair',    where:'Dispatched', remarks:'Sent for refurbishment'},
+  ];
+  DB['IT Peripherals'] = [
+    {slno:'1', make:'Seagate',   desc:'1TB External Hard Disk USB 3.0',       model:'Backup Plus',   serial:'SG2023012', qty:5,  condition:'Good',    where:'In Office',  remarks:'Backup drives'},
+    {slno:'2', make:'Logitech',  desc:'HD Webcam 1080p with Mic',             model:'C920 Pro HD',   serial:'LG2024018', qty:6,  condition:'Good',    where:'With User',  remarks:'WFH – 6 employees'},
+    {slno:'3', make:'APC',       desc:'650VA UPS with LCD Display',           model:'BX650CI-IN',    serial:'AP2021055', qty:6,  condition:'Fair',    where:'In Office',  remarks:'2 need battery replacement'},
+    {slno:'4', make:'Wacom',     desc:'Graphic Drawing Tablet Medium',        model:'CTL-6100WL',    serial:'WC2023007', qty:1,  condition:'Good',    where:'With User',  remarks:'Issued to Graphic Designer'},
+    {slno:'5', make:'Sony',      desc:'Portable Bluetooth Speaker 30W',       model:'SRS-XB43',      serial:'SN2023041', qty:2,  condition:'Good',    where:'Dispatched', remarks:'Offsite event – Bangalore'},
+  ];
+  DB['Networking'] = [
+    {slno:'1', make:'Cisco',    desc:'24-Port PoE Managed Switch',            model:'SG350-28P',     serial:'CS2021010', qty:1,  condition:'Good',    where:'In Office',  remarks:'Server room'},
+    {slno:'2', make:'D-Link',   desc:'Wireless Access Point AC1200',          model:'DAP-1665',      serial:'DL2022033', qty:4,  condition:'Good',    where:'In Office',  remarks:'Floors 1-4'},
+    {slno:'3', make:'Fortinet', desc:'Next-Gen Firewall',                     model:'FortiGate 60F', serial:'FT2022001', qty:1,  condition:'Good',    where:'In Office',  remarks:'Main gateway'},
+    {slno:'4', make:'TP-Link',  desc:'4G LTE Mobile WiFi Hotspot',            model:'M7650',         serial:'TP2023044', qty:2,  condition:'Good',    where:'With User',  remarks:'Project manager & field engineer'},
+  ];
+  DB['Tools & Equipment'] = [
+    {slno:'1', make:'Bosch',   desc:'18V Cordless Power Drill',               model:'GSB 18V-55',    serial:'BS2023001', qty:2,  condition:'Good',    where:'In Office',  remarks:''},
+    {slno:'2', make:'Stanley', desc:'Hand Tool Kit 99-Piece',                 model:'STMT73795',     serial:'ST2022005', qty:1,  condition:'Working', where:'Dispatched', remarks:'Site – Whitefield project'},
+    {slno:'3', make:'Fluke',   desc:'Digital Multimeter True RMS',            model:'117 HVAC',      serial:'FL2021030', qty:2,  condition:'Good',    where:'In Office',  remarks:''},
+    {slno:'4', make:'Bosch',   desc:'Laser Distance Measurer 50m',            model:'GLM 50 C',      serial:'BS2022044', qty:1,  condition:'Good',    where:'With User',  remarks:'Civil engineer – site survey'},
+    {slno:'5', make:'Makita',  desc:'Angle Grinder 125mm 840W',               model:'GA5030',        serial:'MK2023009', qty:1,  condition:'Good',    where:'In Repair',  remarks:'Guard damaged – service centre'},
+  ];
+  DB['Office Supplies'] = [
+    {slno:'1', make:'Canon',  desc:'A3 Document Scanner Flatbed',             model:'DR-C230',       serial:'CN2022010', qty:1,  condition:'Good',    where:'In Office',  remarks:'Admin dept'},
+    {slno:'2', make:'Godrej', desc:'Paper Shredder Cross-Cut 12 Sheet',       model:'GSS-5500CD',    serial:'GJ2021088', qty:1,  condition:'Working', where:'In Office',  remarks:''},
+    {slno:'3', make:'Casio',  desc:'Scientific Calculator 552 Functions',     model:'FX-991EX',      serial:'CA2023066', qty:8,  condition:'Good',    where:'In Office',  remarks:'Accounts dept'},
+    {slno:'4', make:'Kores',  desc:'Heavy Duty Laminator A3',                 model:'KL-A3-25',      serial:'KR2022034', qty:1,  condition:'Good',    where:'On Loan',    remarks:'HR dept – Noida office'},
+    {slno:'5', make:'Philips',desc:'Pocket Voice Recorder 8GB',               model:'DVT2050',       serial:'PH2023023', qty:2,  condition:'Good',    where:'With User',  remarks:'HR interviews – 2 units'},
+  ];
+  setStat('demo');
+}
+
+// ── Navigation ──
+const ALL_PAGES = ['dashboard','search','inventory','new','update'];
+
+function showPage(name) {
+  ALL_PAGES.forEach(p => {
+    const pg = document.getElementById('page-'+p);
+    const nb = document.getElementById('nav-'+p);
+    if (pg) pg.className = 'page' + (p===name ? ' on' : '');
+    if (nb) {
+      // preserve admin-only class for admin-only nav items
+      const isAdmOnly = nb.classList.contains('adm-only');
+      nb.className = 'nb' + (p===name ? ' on' : '') + (isAdmOnly ? ' adm-only' : '');
+    }
+  });
+  if (name==='dashboard') renderDash();
+  if (name==='inventory') renderInv();
+  if (name==='update')    renderUpdate();
+  if (name==='search')    {
+    document.getElementById('srch-inp').value = '';
+    document.getElementById('srch-out').innerHTML = '<div class="nd"><div class="nd-i">◎</div><div class="nd-t">Start typing to search</div></div>';
+  }
+}
+
+function gotoPage(name) {
+  if (name==='new' && CU?.role!=='admin') return;
+  showPage(name);
+}
+
+// ── DASHBOARD ──
+function renderDash() {
+  const all   = Object.values(DB).flat();
+  const out   = all.filter(r => r.where !== 'In Office');
+  const tables = Object.keys(DB);
+  const totalQty = all.reduce((s,r) => s+(parseInt(r.qty)||0), 0);
+
+  const badge = document.getElementById('out-badge');
+  badge.textContent = out.length;
+  badge.style.display = out.length ? '' : 'none';
+
+  document.getElementById('dash-stats').innerHTML =
+    `<div class="sc y"><div class="sn">${tables.length}</div><div class="sl">Categories</div></div>
+     <div class="sc b"><div class="sn">${all.length}</div><div class="sl">Records</div></div>
+     <div class="sc g"><div class="sn">${totalQty}</div><div class="sl">Total Qty</div></div>
+     <div class="sc r"><div class="sn">${out.length}</div><div class="sl">Not In Office</div></div>`;
+
+  if (!out.length) {
+    document.getElementById('dash-body').innerHTML =
+      `<div class="tw"><div style="padding:44px;text-align:center">
+        <div style="font-size:36px;margin-bottom:10px">✅</div>
+        <div style="font-family:var(--fh);font-size:16px;font-weight:700;color:var(--grn);margin-bottom:5px">All Items Are In Office</div>
+        <div style="font-size:11px;color:var(--mut)">No items currently issued, dispatched or out for repair.</div>
+      </div></div>`;
+    return;
+  }
+
+  const isAdmin = CU?.role === 'admin';
+  let html = `<div class="al al-w" style="margin-bottom:16px">⚠ <strong>${out.length}</strong> item${out.length!==1?'s':''} not in the office.</div>`;
+  tables.forEach(tbl => {
+    const rows = DB[tbl].map((r,i)=>({r,i})).filter(({r})=>r.where!=='In Office');
+    if (!rows.length) return;
+    html += buildTable(tbl, rows, isAdmin, true);
+  });
+  document.getElementById('dash-body').innerHTML = html;
+}
+
+// ── INVENTORY ──
+function renderInv() {
+  const tables = Object.keys(DB);
+  if (!tables.length) {
+    document.getElementById('inv-body').innerHTML = '<div class="nd"><div class="nd-i">⬡</div><div class="nd-t">No tables yet</div></div>';
+    return;
+  }
+  const isAdmin = CU?.role === 'admin';
+  const all = Object.values(DB).flat();
+  const outN = all.filter(r=>r.where!=='In Office').length;
+  let html = `<div style="font-size:11px;color:var(--mut);margin-bottom:14px">${all.length} records · ${tables.length} tables · <span style="color:${outN?'var(--red)':'var(--grn)'}">` +
+    (outN ? `⚠ ${outN} not in office` : '✓ All in office') + `</span></div>`;
+  tables.forEach(t => {
+    const rows = DB[t].map((r,i)=>({r,i}));
+    html += buildTable(t, rows, isAdmin, false);
+  });
+  document.getElementById('inv-body').innerHTML = html;
+}
+
+// ── Build table HTML ──
+// mode: 'dash' = dashboard (return button), 'full' = admin full edit+delete, 'viewer' = viewer quick-update
+function buildTable(tbl, rows, isAdmin, dashMode) {
+  const addBtn = isAdmin && !dashMode
+    ? `<button class="btn btn-p btn-sm" onclick="openAddItem('${tbl}')">＋ Add</button>` : '';
+  const countLabel = dashMode ? `${rows.length} out` : `${rows.length} item${rows.length!==1?'s':''}`;
+
+  // Determine if we're on the update page (viewer gets edit button)
+  const onUpdatePage = document.getElementById('page-update')?.classList.contains('on');
+  const viewerCanEdit = !isAdmin && onUpdatePage;
+
+  return `
+  <div class="tw">
+    <div class="th2">
+      <div class="thl">
+        <div class="tnl">${tbl}</div>
+        <div class="tcnt" ${dashMode?'style="color:var(--red)"':''}>${countLabel}</div>
+      </div>
+      ${addBtn}
+    </div>
+    <div class="tox"><table>
+      <thead><tr>
+        <th>Sl No</th><th>Make</th><th>Product Description</th>
+        <th>Model/Part No</th><th>Serial No</th><th>Qty</th>
+        <th>Condition</th><th>Remarks</th><th>Where Is It?</th>
+        ${(isAdmin || viewerCanEdit) ? '<th>Actions</th>' : ''}
+      </tr></thead>
+      <tbody>
+      ${rows.map(({r,i})=>`<tr>
+        <td>${r.slno||i+1}</td>
+        <td>${r.make||'—'}</td>
+        <td>${r.desc||'—'}</td>
+        <td style="color:var(--acc2)">${r.model||'—'}</td>
+        <td style="color:var(--mut);font-size:10px">${r.serial||'—'}</td>
+        <td>${r.qty||1}</td>
+        <td>${condBadge(r.condition)}</td>
+        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.remarks||'—'}</td>
+        <td>${whereBadge(r.where)}</td>
+        ${isAdmin ? `<td><div style="display:flex;gap:4px">
+          <button class="btn btn-g btn-sm" onclick="openEditItem('${tbl}',${i})">✎</button>
+          ${dashMode
+            ? `<button class="btn btn-s btn-sm" onclick="returnItem('${tbl}',${i})">↩</button>`
+            : `<button class="btn btn-d btn-sm" onclick="openDel('${tbl}',${i})">✕</button>`
+          }
+        </div></td>` : viewerCanEdit ? `<td>
+          <button class="btn btn-b btn-sm" onclick="openViewerEdit('${tbl}',${i})">✎ Update</button>
+        </td>` : ''}
+      </tr>`).join('')}
+      </tbody>
+    </table></div>
+  </div>`;
+}
+
+function condBadge(c) {
+  if (!c) return '<span class="bdg bb">—</span>';
+  const m = {Good:'bg',Working:'bg',Fair:'bw','Needs Repair':'bw',Damaged:'br',Obsolete:'br'};
+  return `<span class="bdg ${m[c]||'bb'}">${c}</span>`;
+}
+function whereBadge(w) {
+  const out = w && w!=='In Office';
+  return `<span class="bdg ${out?'br':'by'}">${w||'In Office'}</span>`;
+}
+
+function returnItem(tbl, idx) {
+  DB[tbl][idx].where = 'In Office';
+  schedSave(); renderDash();
+}
+
+// ── UPDATE PAGE ──
+let currentUpdTable = null;
+
+function renderUpdate() {
+  const names = Object.keys(DB);
+  const isAdmin = CU?.role === 'admin';
+  document.getElementById('upd-sub').textContent = isAdmin
+    ? 'Edit, delete items or remove entire tables'
+    : 'Update item location and remarks';
+
+  if (!names.length) {
+    document.getElementById('upd-tabs').innerHTML = '';
+    document.getElementById('upd-tbl-actions').style.display = 'none';
+    document.getElementById('upd-body').innerHTML = '<div class="nd"><div class="nd-t">No tables available.</div></div>';
+    return;
+  }
+  currentUpdTable = names[0];
+  document.getElementById('upd-tabs').innerHTML = names.map((n,i)=>
+    `<button class="tab${i===0?' on':''}" onclick="selUpdTab('${n}',this)">${n}</button>`
+  ).join('');
+  // Show Remove Table button only for admins
+  document.getElementById('upd-tbl-actions').style.display = isAdmin ? 'flex' : 'none';
+  showUpdTable(names[0]);
+}
+
+function selUpdTab(name, btn) {
+  currentUpdTable = name;
+  document.querySelectorAll('#upd-tabs .tab').forEach(t=>t.className='tab');
+  btn.className='tab on';
+  showUpdTable(name);
+}
+
+function showUpdTable(name) {
+  const isAdmin = CU?.role === 'admin';
+  const rows = (DB[name]||[]).map((r,i)=>({r,i}));
+
+  // Viewer sees a simplified edit form (only Where Is It + Remarks editable inline)
+  // Admin sees full add/edit/delete
+  let topBar = '';
+  if (isAdmin) {
+    topBar = `<div style="display:flex;justify-content:flex-end;margin-bottom:11px">
+      <button class="btn btn-p btn-sm" onclick="openAddItem('${name}')">＋ Add Item</button>
+    </div>`;
+  } else {
+    topBar = `<div class="al al-i" style="margin-bottom:14px">
+      As a viewer you can update <strong>Where Is It?</strong> and <strong>Remarks</strong> for any item.
+    </div>`;
+  }
+  document.getElementById('upd-body').innerHTML = topBar + buildTable(name, rows, isAdmin, false);
+}
+
+// ── REMOVE TABLE (admin only) ──
+function confirmRemoveTable() {
+  if (!currentUpdTable) return;
+  document.getElementById('del-tbl-name').textContent = currentUpdTable;
+  openMo('mo-del-table');
+}
+
+function doRemoveTable() {
+  if (!currentUpdTable) return;
+  delete DB[currentUpdTable];
+  closeMo('mo-del-table');
+  schedSave();
+  currentUpdTable = null;
+  renderUpdate();
+}
+
+// ── SEARCH ──
+function doSearch() {
+  const q = (document.getElementById('srch-inp').value||'').trim().toLowerCase();
+  const out = document.getElementById('srch-out');
+  if (!q) { out.innerHTML='<div class="nd"><div class="nd-i">◎</div><div class="nd-t">Start typing to search</div></div>'; return; }
+  const isAdmin = CU?.role==='admin';
+  let total=0, html='';
+  Object.entries(DB).forEach(([tbl,rows]) => {
+    const matched = rows.map((r,i)=>({r,i})).filter(({r})=>
+      [r.slno,r.make,r.desc,r.model,r.serial,r.remarks,r.where].some(v=>(v||'').toLowerCase().includes(q))
+    );
+    if (!matched.length) return;
+    total += matched.length;
+    html += buildTable(tbl, matched, isAdmin, false);
+  });
+  out.innerHTML = total
+    ? `<div style="font-size:11px;color:var(--mut);margin-bottom:13px"><strong style="color:var(--acc)">${total}</strong> result${total!==1?'s':''} for "<em>${q}</em>"</div>`+html
+    : `<div class="nd"><div class="nd-i">◎</div><div class="nd-t">No results for "<em>${q}</em>"</div></div>`;
+}
+
+// ── MODALS ──
+function openMo(id)  { document.getElementById(id).classList.add('open'); }
+function closeMo(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.mo').forEach(el => el.addEventListener('click', e => { if (e.target===el) el.classList.remove('open'); }));
+
+// Create table
+function createTable() {
+  const n = (document.getElementById('nt-name').value||'').trim();
+  if (!n) { alert('Enter a table name.'); return; }
+  if (DB[n]) { alert('Table already exists.'); return; }
+  DB[n] = [];
+  document.getElementById('nt-name').value = '';
+  closeMo('mo-new-table'); schedSave(); gotoPage('update');
+}
+
+// Select table for add
+let selTbl = null;
+function openSelectTable() {
+  const names = Object.keys(DB);
+  if (!names.length) { alert('No tables yet. Create one first.'); return; }
+  selTbl = null;
+  document.getElementById('sel-tbl-list').innerHTML = names.map(n=>
+    `<div class="tsi" onclick="pickTbl('${n}',this)">
+      <div><div style="font-size:12px;font-weight:500">${n}</div><div style="font-size:10px;color:var(--mut)">${DB[n].length} items</div></div>
+      <span style="color:var(--mut)">›</span>
+    </div>`
+  ).join('');
+  openMo('mo-sel-table');
+}
+function pickTbl(name, el) {
+  document.querySelectorAll('#sel-tbl-list .tsi').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel'); selTbl = name;
+}
+function goAddItem() {
+  if (!selTbl) { alert('Select a table.'); return; }
+  closeMo('mo-sel-table'); openAddItem(selTbl);
+}
+
+// Item form
+let itemState = {mode:null,tbl:null,idx:null};
+function openAddItem(tbl) {
+  itemState = {mode:'add',tbl,idx:null};
+  document.getElementById('item-title').textContent = 'Add Item';
+  document.getElementById('item-tbl').textContent   = tbl;
+  document.getElementById('item-save-btn').textContent = 'Save Item';
+  clearItemForm();
+  document.getElementById('f-slno').value = (DB[tbl]||[]).length + 1;
+  openMo('mo-item');
+}
+function openEditItem(tbl, idx) {
+  itemState = {mode:'edit',tbl,idx};
+  const r = DB[tbl][idx];
+  document.getElementById('item-title').textContent = 'Edit Item';
+  document.getElementById('item-tbl').textContent   = tbl;
+  document.getElementById('item-save-btn').textContent = 'Update Item';
+  document.getElementById('f-slno').value  = r.slno||'';
+  document.getElementById('f-make').value  = r.make||'';
+  document.getElementById('f-desc').value  = r.desc||'';
+  document.getElementById('f-model').value = r.model||'';
+  document.getElementById('f-serial').value= r.serial||'';
+  document.getElementById('f-qty').value   = r.qty||1;
+  document.getElementById('f-cond').value  = r.condition||'';
+  document.getElementById('f-where').value = r.where||'In Office';
+  document.getElementById('f-rmk').value   = r.remarks||'';
+  openMo('mo-item');
+}
+function clearItemForm() {
+  ['f-slno','f-make','f-desc','f-model','f-serial','f-qty','f-rmk'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-cond').value  = '';
+  document.getElementById('f-where').value = 'In Office';
+}
+function saveItem() {
+  const desc = (document.getElementById('f-desc').value||'').trim();
+  if (!desc) { alert('Product Description is required.'); return; }
+  const item = {
+    slno: (document.getElementById('f-slno').value||'').trim() || String((DB[itemState.tbl]||[]).length+1),
+    make: (document.getElementById('f-make').value||'').trim(),
+    desc,
+    model:  (document.getElementById('f-model').value||'').trim(),
+    serial: (document.getElementById('f-serial').value||'').trim(),
+    qty:    parseInt(document.getElementById('f-qty').value)||1,
+    condition: document.getElementById('f-cond').value,
+    where:  document.getElementById('f-where').value||'In Office',
+    remarks:(document.getElementById('f-rmk').value||'').trim(),
+  };
+  if (itemState.mode==='add') { if(!DB[itemState.tbl]) DB[itemState.tbl]=[]; DB[itemState.tbl].push(item); }
+  else DB[itemState.tbl][itemState.idx] = item;
+  closeMo('mo-item'); schedSave(); refreshActive();
+}
+
+let delState = {tbl:null,idx:null};
+function openDel(tbl,idx){ delState={tbl,idx}; openMo('mo-del'); }
+function confirmDel(){
+  DB[delState.tbl].splice(delState.idx,1);
+  closeMo('mo-del'); schedSave(); refreshActive();
+}
+
+// ── Viewer quick-edit (Where Is It + Remarks only) ──
+let veState = {tbl:null,idx:null};
+function openViewerEdit(tbl, idx) {
+  veState = {tbl, idx};
+  const r = DB[tbl][idx];
+  document.getElementById('ve-desc').textContent  = r.desc || '—';
+  document.getElementById('ve-meta').textContent  = [r.make, r.model, r.serial].filter(Boolean).join(' · ');
+  document.getElementById('ve-where').value = r.where || 'In Office';
+  document.getElementById('ve-rmk').value   = r.remarks || '';
+  openMo('mo-viewer-edit');
+}
+function saveViewerEdit() {
+  const r = DB[veState.tbl][veState.idx];
+  r.where   = document.getElementById('ve-where').value || 'In Office';
+  r.remarks = (document.getElementById('ve-rmk').value||'').trim();
+  closeMo('mo-viewer-edit');
+  schedSave(); refreshActive();
+}
+
+function refreshActive() {
+  const active = ALL_PAGES.find(p => document.getElementById('page-'+p)?.classList.contains('on'));
+  if (active==='dashboard') renderDash();
+  if (active==='inventory') renderInv();
+  if (active==='update') {
+    // Re-render same tab if still exists, else full re-render
+    if (currentUpdTable && DB[currentUpdTable]) showUpdTable(currentUpdTable);
+    else renderUpdate();
+  }
+}
+
+// ── EXPORT ──
+function doExport() {
+  if (!Object.keys(DB).length) { alert('No data to export.'); return; }
+  const wb = XLSX.utils.book_new();
+  Object.keys(DB).forEach(t => {
+    const ws = XLSX.utils.aoa_to_sheet([
+      ['Sl No','Make','Product Description','Model/Part No','Serial No','Qty','Condition (24 Mar 2025)','Remarks','Where Is It?'],
+      ...DB[t].map(r=>[r.slno,r.make,r.desc,r.model,r.serial,r.qty,r.condition,r.remarks,r.where])
+    ]);
+    ws['!cols'] = [6,12,30,16,14,5,22,22,14].map(w=>({wch:w}));
+    XLSX.utils.book_append_sheet(wb, ws, t.slice(0,31));
+  });
+  XLSX.writeFile(wb,'StoreVault_Export.xlsx');
+}
+
+// ── IMPORT ──
+let impWB=null, impSheets=[], impSel=[], impQ=[], impQi=0, impHdrs=[], impData=[], impMode='append';
+const IMP_FIELDS = [
+  {k:'slno',l:'Sl No'},{k:'make',l:'Make'},{k:'desc',l:'Description'},
+  {k:'model',l:'Model/Part No'},{k:'serial',l:'Serial No'},{k:'qty',l:'Qty'},
+  {k:'condition',l:'Condition'},{k:'remarks',l:'Remarks'},{k:'where',l:'Where Is It?'}
+];
+function closeImport(){ closeMo('mo-import'); resetImp(); }
+function resetImp(){
+  impWB=null; impSheets=[]; impSel=[]; impQ=[]; impQi=0; impHdrs=[]; impData=[];
+  ['imp-s1','imp-s2','imp-s3','imp-s4'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('imp-s1').style.display='';
+  ['imp-next','imp-do','imp-done'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('imp-file').value='';
+}
+const impDZ = document.getElementById('imp-dz');
+impDZ.addEventListener('dragover',e=>{e.preventDefault();impDZ.classList.add('ov');});
+impDZ.addEventListener('dragleave',()=>impDZ.classList.remove('ov'));
+impDZ.addEventListener('drop',e=>{e.preventDefault();impDZ.classList.remove('ov');if(e.dataTransfer.files[0])procImpFile(e.dataTransfer.files[0]);});
+function impFileChosen(e){if(e.target.files[0])procImpFile(e.target.files[0]);}
+function procImpFile(f){
+  const rd=new FileReader();
+  rd.onload=e=>{
+    try{impWB=XLSX.read(new Uint8Array(e.target.result),{type:'array'});impSheets=impWB.SheetNames;showImpS2(f.name);}
+    catch(err){alert('Cannot read file: '+err.message);}
+  };
+  rd.readAsArrayBuffer(f);
+}
+function showImpS2(fn){
+  document.getElementById('imp-s1').style.display='none';
+  document.getElementById('imp-s2').style.display='';
+  document.getElementById('imp-finfo').innerHTML=`📄 <strong>${fn}</strong> — ${impSheets.length} sheet(s)`;
+  document.getElementById('imp-sheets').innerHTML=impSheets.map((n,i)=>{
+    const rows=XLSX.utils.sheet_to_json(impWB.Sheets[n],{header:1,defval:''});
+    return`<div class="spi" onclick="togImpSheet(${i})"><input type="checkbox" id="isc-${i}" checked onclick="event.stopPropagation();togImpSheet(${i})" style="accent-color:var(--acc);width:13px;height:13px"><div><div style="font-size:12px;font-weight:500">${n}</div><div style="font-size:10px;color:var(--mut)">${Math.max(0,rows.length-1)} rows</div></div></div>`;
+  }).join('');
+  document.getElementById('imp-next').style.display='inline-flex';
+}
+function togImpSheet(i){const cb=document.getElementById('isc-'+i);cb.checked=!cb.checked;}
+function impNext(){
+  const s2=document.getElementById('imp-s2'), s3=document.getElementById('imp-s3');
+  if(s2.style.display!=='none'){
+    impSel=impSheets.filter((_,i)=>document.getElementById('isc-'+i)?.checked);
+    if(!impSel.length){alert('Select at least one sheet.');return;}
+    impMode=document.querySelector('input[name="imp-mode"]:checked').value;
+    impQ=[...impSel]; impQi=0;
+    s2.style.display='none'; document.getElementById('imp-next').style.display='none';
+    showImpMap(); return;
+  }
+  if(s3.style.display!=='none') impApplyNext();
+}
+function showImpMap(){
+  if(impQi>=impQ.length){showImpDone();return;}
+  const name=impQ[impQi];
+  const rows=XLSX.utils.sheet_to_json(impWB.Sheets[name],{header:1,defval:''});
+  impHdrs=(rows[0]||[]).map(String); impData=rows.slice(1);
+  document.getElementById('imp-s3').style.display='';
+  document.getElementById('imp-sname').textContent=name;
+  document.getElementById('imp-colmap').innerHTML=IMP_FIELDS.map(f=>{
+    const auto=impAutoMap(f.k,impHdrs);
+    const opts=['(skip)',...impHdrs].map(h=>`<option value="${h}"${h===auto?' selected':''}>${h}</option>`).join('');
+    return`<div class="cmr"><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px">${f.l}</div><div style="color:var(--mut)">←</div><select class="fc" id="imap-${f.k}" onchange="impPrev()">${opts}</select></div>`;
+  }).join('');
+  const last=impQi>=impQ.length-1;
+  document.getElementById('imp-do').style.display=last?'inline-flex':'none';
+  document.getElementById('imp-next').style.display=!last?'inline-flex':'none';
+  if(!last) document.getElementById('imp-next').textContent=`Next (${impQi+2}/${impQ.length}) →`;
+  impPrev();
+}
+function impAutoMap(k,hdrs){
+  const aliases={slno:['sl no','sl.no','slno','s.no','#'],make:['make','brand'],desc:['description','product','name'],model:['model','part'],serial:['serial','s/n'],qty:['qty','quantity','count'],condition:['condition','status'],remarks:['remarks','notes'],where:['where','location']};
+  for(const h of hdrs){if((aliases[k]||[k]).some(a=>h.toLowerCase().includes(a)))return h;}
+  return'(skip)';
+}
+function impGetMap(){const m={};IMP_FIELDS.forEach(f=>{const v=document.getElementById('imap-'+f.k)?.value;if(v&&v!=='(skip)')m[f.k]=v;});return m;}
+function impPrev(){
+  const map=impGetMap(), p5=impData.slice(0,5);
+  if(!p5.length){document.getElementById('imp-prev-wrap').style.display='none';return;}
+  const mf=IMP_FIELDS.filter(f=>map[f.k]);
+  document.getElementById('imp-prev').innerHTML=`<table><thead><tr>${mf.map(f=>`<th>${f.l}</th>`).join('')}</tr></thead><tbody>${p5.map(row=>`<tr>${mf.map(f=>{const ci=impHdrs.indexOf(map[f.k]);return`<td>${ci>=0?(row[ci]??''):'—'}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`;
+  document.getElementById('imp-prev-wrap').style.display='';
+}
+function impApplyNext(){impCommit();impQi++;if(impQi<impQ.length)showImpMap();else showImpDone();}
+function impDo(){impCommit();showImpDone();}
+function impCommit(){
+  const name=impQ[impQi], map=impGetMap();
+  const items=impData.filter(r=>r.some(c=>String(c).trim())).map((row,ri)=>{
+    const item={};IMP_FIELDS.forEach(f=>{if(map[f.k]){const ci=impHdrs.indexOf(map[f.k]);item[f.k]=ci>=0?String(row[ci]??'').trim():'';}else item[f.k]=f.k==='qty'?1:'';});
+    if(!item.slno)item.slno=String(ri+1);item.qty=parseInt(item.qty)||1;if(!item.where)item.where='In Office';return item;
+  });
+  if(impMode==='replace'||!DB[name])DB[name]=items;else DB[name]=[...DB[name],...items];
+}
+function showImpDone(){
+  document.getElementById('imp-s3').style.display='none';
+  document.getElementById('imp-s4').style.display='';
+  document.getElementById('imp-next').style.display='none';
+  document.getElementById('imp-do').style.display='none';
+  document.getElementById('imp-done').style.display='inline-flex';
+  const total=impSel.reduce((s,n)=>s+(DB[n]||[]).length,0);
+  document.getElementById('imp-done-msg').innerHTML=`Imported <strong style="color:var(--acc)">${impSel.length}</strong> sheet(s) with <strong style="color:var(--acc)">${total}</strong> records.`;
+  schedSave(); renderDash();
+}
+</script>
+</body>
+</html>
