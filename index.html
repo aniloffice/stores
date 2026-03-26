@@ -54,21 +54,7 @@ input,select,textarea,button{font-family:var(--sans);}
 .rs-btn.active{background:var(--s1);color:var(--txt);box-shadow:0 2px 8px rgba(0,0,0,.3);}
 .rs-btn .rs-icon{font-size:20px;display:block;margin-bottom:3px;}
 
-/* Admin panel */
-.admin-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:18px;}
-.acard{
-  background:var(--s2);border:1px solid var(--bdr);border-radius:10px;
-  padding:13px;cursor:pointer;transition:all var(--tr);text-align:center;
-}
-.acard:hover{border-color:var(--bdr2);}
-.acard.sel{border-color:var(--acc);background:rgba(245,158,11,.06);}
-.acard-av{
-  width:38px;height:38px;border-radius:50%;margin:0 auto 7px;
-  display:grid;place-items:center;font-size:13px;font-weight:700;font-family:var(--mono);
-}
-.acard-name{font-size:12px;font-weight:600;line-height:1.3;}
-.acard-id{font-size:10px;color:var(--t2);font-family:var(--mono);margin-top:2px;}
-.acard.sel .acard-name{color:var(--acc);}
+/* Admin panel — simple ID+password, no name cards */
 
 .lcard{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:24px;}
 .lf{margin-bottom:14px;}
@@ -76,12 +62,12 @@ input,select,textarea,button{font-family:var(--sans);}
   display:block;font-size:10px;font-weight:700;color:var(--t2);
   text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;
 }
-.lf input, .lf select{
+.lf input{
   width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--bdr);
   border-radius:var(--r);color:var(--txt);font-size:13px;outline:none;
   transition:border-color var(--tr);
 }
-.lf input:focus, .lf select:focus{border-color:var(--acc);}
+.lf input:focus{border-color:var(--acc);}
 .btn-login{
   width:100%;padding:12px;background:var(--acc);color:#000;border:none;
   border-radius:var(--r);font-weight:700;font-size:14px;cursor:pointer;
@@ -508,20 +494,22 @@ tbody td:first-child{text-align:center;}
     </div>
 
     <!-- ADMIN PANEL -->
+    <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                  ⚠  ADMIN CREDENTIALS  ⚠                    ║
+    ╠══════════════════════════════════════════════════════════════╣
+    ║  ADMIN 1 → ID: ADM001  |  Password: Admin1@2024             ║
+    ║  ADMIN 2 → ID: ADM002  |  Password: Admin2@2024             ║
+    ║  ADMIN 3 → ID: ADM003  |  Password: Admin3@2024             ║
+    ║  ADMIN 4 → ID: ADM004  |  Password: Admin4@2024             ║
+    ╚══════════════════════════════════════════════════════════════╝
+    -->
     <div id="panel-admin">
       <div class="lcard">
-        <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Select Admin ID</div>
-        <div class="admin-grid">
-          <div class="lf">
-            <label>Admin ID</label>
-            <select id="admin-select" onchange="updateAdminSelection()">
-              <option value="">-- Select Admin --</option>
-              <option value="0">ADM001</option>
-              <option value="1">ADM002</option>
-              <option value="2">ADM003</option>
-              <option value="3">ADM004</option>
-            </select>
-          </div>
+        <div class="lf">
+          <label>Admin ID</label>
+          <input type="text" id="adminId" placeholder="e.g. ADM001"
+            autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('adminPass').focus()">
         </div>
         <div class="lf">
           <label>Password</label>
@@ -529,30 +517,36 @@ tbody td:first-child{text-align:center;}
             onkeydown="if(event.key==='Enter')doLogin()">
         </div>
         <button class="btn-login" onclick="doLogin()">Sign In →</button>
-        <div class="lerr" id="lerr-admin">❌ Incorrect password. Please try again.</div>
+        <div class="lerr" id="lerr-admin">❌ Incorrect ID or password. Please try again.</div>
       </div>
     </div>
 
     <!-- VIEWER PANEL -->
+    <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                  ⚠  VIEWER CREDENTIALS  ⚠                   ║
+    ╠══════════════════════════════════════════════════════════════╣
+    ║  VIEWER  → ID: VIEW01  |  Password: Viewer@2024             ║
+    ╚══════════════════════════════════════════════════════════════╝
+    -->
     <div id="panel-viewer" style="display:none;">
       <div class="lcard">
         <div class="viewer-hint">
           <strong>👁 Viewer Access</strong><br>
-          Browse all COTS and SFF inventory, search products, filter not-in-office items.
-          No edits allowed.
+          Browse all COTS &amp; SFF inventory, search products, filter not-in-office items. No edits allowed.
         </div>
         <div class="lf">
           <label>Viewer ID</label>
           <input type="text" id="viewerId" placeholder="VIEW01"
-            onkeydown="if(event.key==='Enter')doLogin()">
+            autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('viewerPass').focus()">
         </div>
         <div class="lf">
           <label>Password</label>
           <input type="password" id="viewerPass" placeholder="Enter viewer password"
             onkeydown="if(event.key==='Enter')doLogin()">
         </div>
-        <button class="btn-login" onclick="doLogin()">Enter →</button>
-        <div class="lerr" id="lerr-viewer">❌ Incorrect credentials.</div>
+        <button class="btn-login" onclick="doLogin()">Sign In →</button>
+        <div class="lerr" id="lerr-viewer">❌ Incorrect ID or password.</div>
       </div>
     </div>
   </div>
@@ -738,6 +732,14 @@ tbody td:first-child{text-align:center;}
     </div>
 
     <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:12px;margin-bottom:13px;font-size:12px;color:var(--t2);line-height:1.7;">
+      <!--
+      ╔══════════════════════════════════════════════════════════════════════╗
+      ║  GOOGLE SHEET LINK (paste into Apps Script as SPREADSHEET_ID):      ║
+      ║  https://docs.google.com/spreadsheets/d/                            ║
+      ║  1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit?usp=sharing    ║
+      ║  SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio'  ║
+      ╚══════════════════════════════════════════════════════════════════════╝
+      -->
       📊 <strong style="color:var(--acc)">Your Google Sheet:</strong>
       <a href="https://docs.google.com/spreadsheets/d/1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit" target="_blank" style="color:var(--acc2);text-decoration:none;">
         Open Sheet ↗
@@ -797,12 +799,22 @@ tbody td:first-child{text-align:center;}
      JAVASCRIPT
 ══════════════════════════════════════════════════════════════ -->
 <script>
-// ⚠️  CHANGE THESE CREDENTIALS BEFORE DEPLOYING TO PRODUCTION ⚠️
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                   ⚠  ALL CREDENTIALS — CHANGE BEFORE DEPLOY ⚠          ║
+// ╠══════════════════════════════════════════════════════════════════════════╣
+// ║  ADMIN 1 → ID: ADM001 | Name: Raj Kumar    | Password: Admin1@2024      ║
+// ║  ADMIN 2 → ID: ADM002 | Name: Priya Sharma | Password: Admin2@2024      ║
+// ║  ADMIN 3 → ID: ADM003 | Name: Vikram Singh | Password: Admin3@2024      ║
+// ║  ADMIN 4 → ID: ADM004 | Name: Ankit Patel  | Password: Admin4@2024      ║
+// ╠══════════════════════════════════════════════════════════════════════════╣
+// ║  VIEWER  → ID: VIEW01 |                    | Password: Viewer@2024       ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
 const ADMINS = [
-  { id:'ADM001', pass:'Admin1@2024' },
-  { id:'ADM002', pass:'Admin2@2024' },
-  { id:'ADM003', pass:'Admin3@2024' },
-  { id:'ADM004', pass:'Admin4@2024' },
+  { id:'ADM001', name:'Raj Kumar',    pass:'Admin1@2024', color:'var(--acc)' },
+  { id:'ADM002', name:'Priya Sharma', pass:'Admin2@2024', color:'var(--grn)' },
+  { id:'ADM003', name:'Vikram Singh', pass:'Admin3@2024', color:'var(--pur)' },
+  { id:'ADM004', name:'Ankit Patel',  pass:'Admin4@2024', color:'var(--blu)' },
 ];
 const VIEWER = { id:'VIEW01', pass:'Viewer@2024' };
 
@@ -904,10 +916,10 @@ const TABLE_DEFS = {
   ]
 };
 
-// ════════ APP STATE ════════════════════════════════════════════════════════
+// ════════ APP STATE ═══════════════════════════════════════════════════════
 let A = {
   user: null,
-  product: null,
+  product: null,    // 'COTS' or 'SFF'
   activeTableId: null,
   nioFilter: false,
   searchMode: false,
@@ -917,7 +929,7 @@ let A = {
   histTableId: null,
 };
 
-// ════════ DATA STORE ════════════════════════════════════════════════════════
+// ════════ DATA STORE ══════════════════════════════════════════════════════
 function saveData() {
   localStorage.setItem('ip_data', JSON.stringify(DATA));
 }
@@ -925,6 +937,7 @@ function loadData() {
   try {
     const d = JSON.parse(localStorage.getItem('ip_data') || 'null');
     if (d) {
+      // merge: ensure all defined tables exist
       Object.keys(TABLE_DEFS).forEach(prod => {
         TABLE_DEFS[prod].forEach(tdef => {
           if (!d[tdef.id]) d[tdef.id] = [];
@@ -941,37 +954,743 @@ function loadData() {
 }
 let DATA = loadData();
 
-// ════════ AUTH ══════════════════════════════════════════════════════════════
-let selAdminIdx = null;
+// ════════ AUTH ════════════════════════════════════════════════════════════
 let curRole = 'admin';
-
-function updateAdminSelection() {
-  const select = document.getElementById('admin-select');
-  selAdminIdx = select.value === '' ? null : parseInt(select.value);
-  document.getElementById('adminPass').focus();
-}
 
 function switchRole(role) {
   curRole = role;
-  document.getElementById('rtab-admin').className = 'rs-btn' + (role==='admin'?' active':'');
-  document.getElementById('rtab-viewer').className = 'rs-btn' + (role==='viewer'?' active':'');
-  document.getElementById('panel-admin').style.display = role==='admin' ? 'block' : 'none';
+  document.getElementById('rtab-admin').className = 'rs-btn' + (role==='admin' ? ' active' : '');
+  document.getElementById('rtab-viewer').className = 'rs-btn' + (role==='viewer' ? ' active' : '');
+  document.getElementById('panel-admin').style.display  = role==='admin'  ? 'block' : 'none';
   document.getElementById('panel-viewer').style.display = role==='viewer' ? 'block' : 'none';
-  document.getElementById('lerr-admin').style.display = 'none';
+  document.getElementById('lerr-admin').style.display  = 'none';
   document.getElementById('lerr-viewer').style.display = 'none';
+  // Focus first field of visible panel
+  setTimeout(() => {
+    const fld = role==='admin'
+      ? document.getElementById('adminId')
+      : document.getElementById('viewerId');
+    if (fld) fld.focus();
+  }, 80);
 }
 
 function doLogin() {
   if (curRole === 'admin') {
-    if (selAdminIdx === null || selAdminIdx === '') {
-      document.getElementById('lerr-admin').textContent = '❌ Please select an admin ID.';
-      document.getElementById('lerr-admin').style.display = 'block'; 
-      return;
+    const enteredId   = document.getElementById('adminId').value.trim().toUpperCase();
+    const enteredPass = document.getElementById('adminPass').value;
+    const adm = ADMINS.find(a => a.id === enteredId && a.pass === enteredPass);
+    if (!adm) {
+      document.getElementById('lerr-admin').style.display = 'block'; return;
     }
-    const adm = ADMINS[selAdminIdx];
-    if (document.getElementById('adminPass').value !== adm.pass) {
-      document.getElementById('lerr-admin').style.display = 'block'; 
-      return;
+    document.getElementById('lerr-admin').style.display = 'none';
+    A.user = { name: 'Admin (' + adm.id + ')', id: adm.id, role: 'admin' };
+  } else {
+    const enteredId   = document.getElementById('viewerId').value.trim().toUpperCase();
+    const enteredPass = document.getElementById('viewerPass').value;
+    if (enteredId !== VIEWER.id || enteredPass !== VIEWER.pass) {
+      document.getElementById('lerr-viewer').style.display = 'block'; return;
     }
-    A.user = { id:adm.id, role:'admin' };
-    document.getElementById('lerr-admin').style.display =
+    document.getElementById('lerr-viewer').style.display = 'none';
+    A.user = { name: 'Viewer', id: VIEWER.id, role: 'viewer' };
+  }
+  show('pg-product');
+  document.getElementById('pu-name').textContent = A.user.name;
+  const pb = document.getElementById('pu-badge');
+  pb.textContent = A.user.role.toUpperCase();
+  pb.className = 'puser-badge ' + (isAdmin() ? 'ba' : 'bv');
+}
+
+function doLogout() {
+  A.user = null; A.product = null;
+  document.getElementById('adminId').value   = '';
+  document.getElementById('adminPass').value = '';
+  document.getElementById('viewerId').value  = '';
+  document.getElementById('viewerPass').value = '';
+  switchRole('admin');
+  show('pg-login');
+}
+const isAdmin = () => A.user?.role === 'admin';
+
+// ════════ PRODUCT SELECT ══════════════════════════════════════════════════
+function enterProduct(prod) {
+  A.product = prod;
+  A.activeTableId = TABLE_DEFS[prod][0].id;
+  A.nioFilter = false; A.searchMode = false; A.searchQuery = '';
+  show('pg-app');
+  // Topbar
+  document.getElementById('tb-uname').textContent = A.user.name;
+  const b = document.getElementById('tb-badge');
+  b.textContent = A.user.role.toUpperCase();
+  b.className = 'puser-badge ' + (isAdmin() ? 'ba' : 'bv');
+  const pb = document.getElementById('tb-prod-badge');
+  pb.textContent = (prod === 'COTS' ? '🖥️' : '💻') + ' ' + prod;
+  pb.className = 'tb-product-badge ' + prod.toLowerCase();
+  document.getElementById('sb-prod-label').textContent = prod + ' TABLES';
+  // Admin button
+  document.getElementById('btn-add-row').style.display = isAdmin() ? 'flex' : 'none';
+  if (isAdmin()) {
+    document.getElementById('btn-add-row').className =
+      'btn bp bsm' + (prod === 'SFF' ? ' sff-btn' : '');
+  }
+  const gsUrl = localStorage.getItem('ip_gsurl') || '';
+  document.getElementById('gs-url-input').value = gsUrl;
+  updateSyncDot(!!gsUrl);
+  renderSidebar();
+  selectTable(A.activeTableId);
+}
+function goProductSelect() {
+  A.product = null;
+  show('pg-product');
+}
+
+// ════════ SIDEBAR ═════════════════════════════════════════════════════════
+function renderSidebar() {
+  const tables = TABLE_DEFS[A.product];
+  const isSFF = A.product === 'SFF';
+  document.getElementById('sb-tables').innerHTML = tables.map(t => {
+    const rows = DATA[t.id] || [];
+    const nioCount = rows.filter(r => (r.inoffice||'') === 'No').length;
+    return `<div class="t-item ${t.id===A.activeTableId?'active':''}
+      ${t.id===A.activeTableId&&isSFF?'sff-active':''}"
+      onclick="selectTable('${t.id}')">
+      <span class="t-item-icon">${t.icon}</span>
+      <span class="t-item-name">${t.name}</span>
+      <span class="t-item-cnt">${rows.length}</span>
+    </div>`;
+  }).join('');
+  // NIO count
+  let totalNIO = 0;
+  tables.forEach(t => {
+    (DATA[t.id]||[]).forEach(r => { if((r.inoffice||'')==='No') totalNIO++; });
+  });
+  const nc = document.getElementById('nio-count');
+  if (totalNIO > 0) { nc.textContent = totalNIO; nc.style.display = 'inline'; }
+  else nc.style.display = 'none';
+}
+
+// ════════ SELECT TABLE ════════════════════════════════════════════════════
+function selectTable(id) {
+  A.activeTableId = id;
+  A.searchMode = false;
+  A.searchQuery = '';
+  document.getElementById('sb-search-input').value = '';
+  renderSidebar();
+  renderMainTable();
+}
+
+// ════════ NIO FILTER ══════════════════════════════════════════════════════
+function toggleNIO() {
+  A.nioFilter = !A.nioFilter;
+  A.searchMode = false;
+  A.searchQuery = '';
+  document.getElementById('sb-search-input').value = '';
+  const tog = document.getElementById('nio-toggle');
+  const ind = document.getElementById('nio-ind');
+  tog.className = 'nio-toggle' + (A.nioFilter ? ' active' : '');
+  renderMainTable();
+}
+
+// ════════ SEARCH ══════════════════════════════════════════════════════════
+function handleSearch(q) {
+  A.searchQuery = q.trim().toLowerCase();
+  A.searchMode = A.searchQuery.length > 0;
+  A.nioFilter = false;
+  document.getElementById('nio-toggle').className = 'nio-toggle';
+  if (A.searchMode) renderSearchResults();
+  else renderMainTable();
+}
+
+function renderSearchResults() {
+  const q = A.searchQuery;
+  const tables = TABLE_DEFS[A.product];
+  let results = [];
+  tables.forEach(t => {
+    const rows = (DATA[t.id]||[]).filter(row =>
+      t.cols.some(col => String(row[col.id]||'').toLowerCase().includes(q))
+    );
+    if (rows.length) results.push({ table:t, rows });
+  });
+
+  const main = document.getElementById('main-content');
+  if (!results.length) {
+    main.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;">
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <h3>No results found</h3>
+        <p>No products match "<strong style="color:var(--txt)">${escH(q)}</strong>"</p>
+      </div>
+    </div>`; return;
+  }
+
+  let html = `<div class="search-results">
+    <div class="sr-header">Found across ${results.length} table(s) for "<strong style="color:var(--txt)">${escH(q)}</strong>"</div>`;
+  results.forEach(({table:t, rows}) => {
+    html += `<div class="sr-group">
+      <div class="sr-group-title">${t.icon} ${t.name} <span style="color:var(--acc);font-family:var(--mono)">${rows.length}</span></div>`;
+    rows.forEach(row => {
+      const firstCol = t.cols.find(c => c.id !== 'slno' && c.id !== 'sn') || t.cols[0];
+      const secondCol = t.cols[1];
+      const inoffice = row.inoffice || '';
+      html += `<div class="sr-row" onclick="jumpToRow('${t.id}','${row._id}')">
+        <div class="sr-row-name">${escH(String(row[firstCol?.id]||'—'))}
+          ${inoffice==='No'?'<span class="nin-badge nin-no" style="margin-left:6px">Not in Office</span>':''}
+        </div>
+        <div class="sr-row-meta">${t.name} &nbsp;·&nbsp; ${escH(String(row[secondCol?.id]||''))}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function jumpToRow(tableId, rowId) {
+  A.searchMode = false;
+  A.searchQuery = '';
+  document.getElementById('sb-search-input').value = '';
+  selectTable(tableId);
+  // Highlight row (scroll & flash)
+  setTimeout(() => {
+    const tr = document.getElementById('row-' + rowId);
+    if (tr) {
+      tr.scrollIntoView({ behavior:'smooth', block:'center' });
+      tr.style.background = 'rgba(245,158,11,.12)';
+      setTimeout(() => tr.style.background = '', 1500);
+    }
+  }, 100);
+}
+
+// ════════ RENDER MAIN TABLE ══════════════════════════════════════════════
+function renderMainTable() {
+  const tdef = TABLE_DEFS[A.product].find(t => t.id === A.activeTableId);
+  if (!tdef) return;
+  let rows = DATA[tdef.id] || [];
+  if (A.nioFilter) rows = rows.filter(r => (r.inoffice||'') === 'No');
+
+  // Stats
+  const allRows = DATA[tdef.id] || [];
+  const nioCount = allRows.filter(r => (r.inoffice||'') === 'No').length;
+  const inCount  = allRows.filter(r => (r.inoffice||'') === 'Yes').length;
+
+  const isSFF = A.product === 'SFF';
+  const accentCls = isSFF ? 'bp sff-btn' : 'bp';
+
+  let html = `<div class="table-area">
+    <div class="main-head">
+      <div class="mh-left">
+        <h2>${tdef.icon} ${escH(tdef.name)}</h2>
+        <div class="mh-sub">${allRows.length} rows · ${tdef.cols.length} columns
+          ${A.nioFilter ? ' · <span style="color:var(--red)">Showing: Not in Office</span>' : ''}
+        </div>
+      </div>
+      <div class="mh-right">
+        ${isAdmin() ? `
+          <button class="btn btn-o bsm" onclick="openSyncModal()">☁ Sync</button>
+          <button class="btn bo bsm" onclick="exportCSV()">⬇ CSV</button>
+          <button class="btn ${accentCls} bsm" onclick="openAddRow()">+ Add Row</button>
+        ` : '<span style="font-size:11px;color:var(--t2)">👁 View only</span>'}
+      </div>
+    </div>
+    <div class="stat-bar">
+      <div class="stat">
+        <div class="stat-d" style="background:var(--t2)"></div>
+        <span class="stat-n">${allRows.length}</span><span class="stat-l">Total</span>
+      </div>
+      <div class="stat">
+        <div class="stat-d" style="background:var(--grn)"></div>
+        <span class="stat-n">${inCount}</span><span class="stat-l">In Office</span>
+      </div>
+      <div class="stat">
+        <div class="stat-d" style="background:var(--red)"></div>
+        <span class="stat-n">${nioCount}</span><span class="stat-l">Not in Office</span>
+      </div>
+    </div>
+    <div class="twrap">`;
+
+  if (!rows.length) {
+    html += `<div class="empty-state">
+      <div class="empty-state-icon">${tdef.icon}</div>
+      <h3>${A.nioFilter ? 'No items out of office' : 'No rows yet'}</h3>
+      <p>${isAdmin() && !A.nioFilter ? 'Click "+ Add Row" to add entries.' : 'No data to display.'}</p>
+    </div>`;
+  } else {
+    const showActs = isAdmin();
+    const actTh = showActs ? `<th style="text-align:right;padding-right:12px">Actions</th>` : '';
+    const hdrs = tdef.cols.map(c => `<th>${escH(c.name)}</th>`).join('');
+    html += `<table><thead><tr><th>#</th>${hdrs}${actTh}</tr></thead><tbody>`;
+    rows.forEach((row, i) => {
+      const isNIO = (row.inoffice||'') === 'No';
+      html += `<tr id="row-${row._id}" class="${isNIO ? 'nio-row' : ''}">
+        <td class="rn">${i+1}</td>`;
+      tdef.cols.forEach(col => {
+        const v = row[col.id] ?? '';
+        if (col.type === 'inoffice') {
+          const cls = v==='Yes' ? 'nin-yes' : v==='No' ? 'nin-no' : '';
+          html += `<td>${v ? `<span class="nin-badge ${cls}">${v==='Yes'?'✓ Yes':'✗ No'}</span>` : '<span style="color:var(--t3)">—</span>'}</td>`;
+        } else if (col.type === 'condition') {
+          const vl = String(v).toLowerCase();
+          const cls = vl.includes('good')||vl.includes('new')||vl.includes('work') ? 'cg' :
+                      vl.includes('fair')||vl.includes('avg') ? 'cf' :
+                      vl.includes('poor')||vl.includes('bad')||vl.includes('dam') ? 'cp' : '';
+          html += `<td>${v ? `<span class="cond-badge ${cls}">${escH(String(v))}</span>` : '<span style="color:var(--t3)">—</span>'}</td>`;
+        } else if (col.type === 'availability') {
+          const cls = String(v).toLowerCase().includes('avail') ? 'av-avail' :
+                      String(v).toLowerCase().includes('not') ? 'av-notav' : 'av-res';
+          html += `<td>${v ? `<span class="av-badge ${cls}">${escH(String(v))}</span>` : '<span style="color:var(--t3)">—</span>'}</td>`;
+        } else if (col.type === 'status') {
+          html += `<td><span style="font-size:12px;color:var(--t2)">${escH(String(v||'—'))}</span></td>`;
+        } else if (col.type === 'number' && v !== '') {
+          html += `<td style="font-family:var(--mono);font-size:11px">${Number(v).toLocaleString('en-IN')}</td>`;
+        } else {
+          html += `<td class="ct" title="${String(v).replace(/"/g,'&quot;')}">${v ? escH(String(v)) : '<span style="color:var(--t3)">—</span>'}</td>`;
+        }
+      });
+      if (showActs) {
+        const histBtn = tdef.hasHistory
+          ? `<button class="abt h" onclick="openHistory('${tdef.id}','${row._id}')" title="History">
+              📜 <span class="hist-count">${(row._history||[]).length}</span>
+             </button>`
+          : '';
+        html += `<td><div class="acts">
+          ${histBtn}
+          <button class="abt e" onclick="openEditRow('${row._id}')" title="Edit">✏ Edit</button>
+          <button class="abt d" onclick="deleteRow('${row._id}')" title="Delete">🗑</button>
+        </div></td>`;
+      }
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</div></div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ════════ ROW CRUD ════════════════════════════════════════════════════════
+const uid = () => 'r' + Date.now() + Math.random().toString(36).slice(2,6);
+const escH = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function buildRowForm(tdef, row=null) {
+  return tdef.cols.map(col => {
+    const v = row ? (row[col.id] ?? '') : '';
+    let inp;
+    if (col.type === 'inoffice') {
+      inp = `<select id="rf_${col.id}">
+        <option value="">— Select —</option>
+        <option ${v==='Yes'?'selected':''}>Yes</option>
+        <option ${v==='No'?'selected':''}>No</option>
+      </select>`;
+    } else if (col.type === 'condition') {
+      inp = `<select id="rf_${col.id}">
+        <option value="">— Select —</option>
+        <option ${v==='Good / Working'?'selected':''}>Good / Working</option>
+        <option ${v==='Fair'?'selected':''}>Fair</option>
+        <option ${v==='Poor'?'selected':''}>Poor</option>
+        <option ${v==='Damaged'?'selected':''}>Damaged</option>
+        <option ${v==='New'?'selected':''}>New</option>
+      </select>`;
+    } else if (col.type === 'availability') {
+      inp = `<select id="rf_${col.id}">
+        <option value="">— Select —</option>
+        <option ${v==='Available'?'selected':''}>Available</option>
+        <option ${v==='Not Available'?'selected':''}>Not Available</option>
+        <option ${v==='Reserved'?'selected':''}>Reserved</option>
+      </select>`;
+    } else if (col.type === 'status') {
+      inp = `<input type="text" id="rf_${col.id}" value="${String(v).replace(/"/g,'&quot;')}" placeholder="${col.name}…">`;
+    } else if (col.type === 'number') {
+      inp = `<input type="number" id="rf_${col.id}" value="${v}" placeholder="0" step="any">`;
+    } else if (col.type === 'date') {
+      inp = `<input type="date" id="rf_${col.id}" value="${v}">`;
+    } else {
+      inp = `<input type="text" id="rf_${col.id}" value="${String(v).replace(/"/g,'&quot;')}" placeholder="${col.name}…">`;
+    }
+    return `<div class="ff"><label>${col.name}${col.req?' *':''}</label>${inp}</div>`;
+  }).join('');
+}
+
+function openAddRow() {
+  if (!A.activeTableId) { toast('Select a table first','i'); return; }
+  const tdef = getActiveTDef();
+  A.editRowId = null;
+  document.getElementById('row-modal-title').textContent = 'Add New Row';
+  document.getElementById('row-modal-sub').textContent = tdef.icon + ' ' + tdef.name;
+  document.getElementById('row-form-fields').innerHTML = buildRowForm(tdef);
+  document.getElementById('row-save-btn').textContent = 'Add Row';
+  OM('modal-row');
+}
+function openEditRow(rowId) {
+  const tdef = getActiveTDef();
+  const row = (DATA[tdef.id]||[]).find(r => r._id === rowId);
+  if (!row) return;
+  A.editRowId = rowId;
+  document.getElementById('row-modal-title').textContent = 'Edit Row';
+  document.getElementById('row-modal-sub').textContent = tdef.icon + ' ' + tdef.name;
+  document.getElementById('row-form-fields').innerHTML = buildRowForm(tdef, row);
+  document.getElementById('row-save-btn').textContent = 'Save Changes';
+  OM('modal-row');
+}
+function saveRow() {
+  const tdef = getActiveTDef();
+  const data = { _id: A.editRowId || uid(), _history: [] };
+  if (A.editRowId) {
+    const existing = (DATA[tdef.id]||[]).find(r => r._id === A.editRowId);
+    if (existing) data._history = existing._history || [];
+  }
+  tdef.cols.forEach(col => {
+    const el = document.getElementById('rf_' + col.id);
+    if (el) data[col.id] = el.value;
+  });
+  const rc = tdef.cols.find(c => c.req);
+  if (rc && !data[rc.id]) { toast('First required field is empty','e'); return; }
+
+  if (!DATA[tdef.id]) DATA[tdef.id] = [];
+  if (A.editRowId) {
+    const idx = DATA[tdef.id].findIndex(r => r._id === A.editRowId);
+    if (idx > -1) DATA[tdef.id][idx] = data;
+    toast('Row updated ✓','s');
+  } else {
+    DATA[tdef.id].push(data);
+    toast('Row added ✓','s');
+  }
+  saveData(); CM('modal-row'); renderSidebar(); renderMainTable();
+}
+function deleteRow(rowId) {
+  if (!confirm('Delete this row and all its history?')) return;
+  const tdef = getActiveTDef();
+  DATA[tdef.id] = (DATA[tdef.id]||[]).filter(r => r._id !== rowId);
+  saveData(); renderSidebar(); renderMainTable();
+  toast('Row deleted','i');
+}
+
+// ════════ HISTORY ═════════════════════════════════════════════════════════
+function openHistory(tableId, rowId) {
+  A.histTableId = tableId;
+  A.histRowId   = rowId;
+  const tdef = TABLE_DEFS[A.product].find(t => t.id === tableId);
+  const row  = (DATA[tableId]||[]).find(r => r._id === rowId);
+  if (!row || !tdef) return;
+
+  // Product info summary
+  const nameCol = tdef.cols.find(c => c.id !== 'slno' && c.id !== 'sn') || tdef.cols[0];
+  const info = tdef.cols.slice(0,4).map(c => `<span><b style="color:var(--t2)">${c.name}:</b> ${escH(String(row[c.id]||'—'))}</span>`).join(' &nbsp;·&nbsp; ');
+  document.getElementById('hist-product-info').innerHTML = info;
+  document.getElementById('hist-modal-sub').textContent = `${tdef.icon} ${tdef.name} — Allocation History (tracking last 5–6 months)`;
+  document.getElementById('hist-add-btn').style.display = isAdmin() ? 'flex' : 'none';
+  document.getElementById('hist-form').className = 'hist-form';
+  // Reset form
+  ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id => document.getElementById(id).value='');
+  renderHistEntries(row._history || []);
+  OM('modal-hist');
+}
+function renderHistEntries(entries) {
+  const el = document.getElementById('hist-entries-list');
+  if (!entries.length) {
+    el.innerHTML = `<div style="text-align:center;padding:24px;color:var(--t3);font-size:13px;">
+      No history entries yet.${isAdmin() ? ' Click "+ Add History Entry" to track allocations.' : ''}
+    </div>`; return;
+  }
+  el.innerHTML = `<div class="hist-list">${entries.map((e,i) => `
+    <div class="hist-entry">
+      <div class="hist-entry-head">
+        <div class="hist-entry-num">${i+1}</div>
+        <div class="hist-entry-date">
+          ${e.wentDate ? '📤 ' + fmtDate(e.wentDate) : ''}
+          ${e.cameDate ? ' → 📥 ' + fmtDate(e.cameDate) : ''}
+          ${!e.wentDate && !e.cameDate ? 'No dates recorded' : ''}
+        </div>
+        ${isAdmin() ? `<button class="hist-entry-del" onclick="deleteHistEntry('${e._id}')" title="Delete">🗑</button>` : ''}
+      </div>
+      <div class="hist-grid">
+        <div class="hist-field"><label>Location / Site</label><span>${escH(e.location||'—')}</span></div>
+        <div class="hist-field"><label>Customer / Person</label><span>${escH(e.customer||'—')}</span></div>
+        <div class="hist-field"><label>Went Date</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.wentDate)||'—'}</span></div>
+        <div class="hist-field"><label>Came Back</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.cameDate)||'—'}</span></div>
+        ${e.remarks ? `<div class="hist-field" style="grid-column:1/-1"><label>Remarks</label><span>${escH(e.remarks)}</span></div>` : ''}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+function fmtDate(d) {
+  if (!d) return '';
+  try {
+    return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  } catch(e) { return d; }
+}
+function toggleHistForm() {
+  const f = document.getElementById('hist-form');
+  f.className = f.className.includes('open') ? 'hist-form' : 'hist-form open';
+}
+function saveHistEntry() {
+  const went  = document.getElementById('hf-went').value;
+  const came  = document.getElementById('hf-came').value;
+  const loc   = document.getElementById('hf-loc').value.trim();
+  const cust  = document.getElementById('hf-cust').value.trim();
+  const rem   = document.getElementById('hf-rem').value.trim();
+  if (!went && !loc) { toast('Enter at least a went date or location','e'); return; }
+  const entry = { _id:uid(), wentDate:went, cameDate:came, location:loc, customer:cust, remarks:rem };
+  const row = (DATA[A.histTableId]||[]).find(r => r._id === A.histRowId);
+  if (!row) return;
+  if (!row._history) row._history = [];
+  row._history.push(entry);
+  saveData();
+  renderHistEntries(row._history);
+  toggleHistForm();
+  ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id => document.getElementById(id).value='');
+  renderMainTable(); // update count badge
+  toast('History entry added ✓','s');
+}
+function deleteHistEntry(entryId) {
+  if (!confirm('Delete this history entry?')) return;
+  const row = (DATA[A.histTableId]||[]).find(r => r._id === A.histRowId);
+  if (!row) return;
+  row._history = (row._history||[]).filter(e => e._id !== entryId);
+  saveData(); renderHistEntries(row._history); renderMainTable();
+  toast('Entry deleted','i');
+}
+
+// ════════ GOOGLE SHEETS SYNC ══════════════════════════════════════════════
+// Apps Script code embedded for download
+const GS_CODE = `// ══════════════════════════════════════════════════════════════
+//  InventoryPro — Google Apps Script Backend
+//  
+//  SETUP:
+//  1. Open: https://docs.google.com/spreadsheets/d/
+//           1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit
+//  2. Extensions → Apps Script → delete existing → paste this → Save
+//  3. Deploy → New Deployment → Web App
+//     Execute as: Me | Who has access: Anyone
+//  4. Copy Web App URL → paste in InventoryPro Sync Settings
+//
+//  SHEET STRUCTURE (tabs auto-created):
+//  COTS_RegularlyUsed | COTS_Storage | COTS_Consumables
+//  COTS_Misc | COTS_Pendrives | COTS_BootablePendrives
+//  SFF_MaterialsList | SFF_DemoUnit
+// ══════════════════════════════════════════════════════════════
+
+// ⚠ CHANGE THIS TO YOUR SPREADSHEET ID IF NEEDED:
+// Current link: https://docs.google.com/spreadsheets/d/1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit
+const SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
+
+function res(data) {
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = e.parameter.sheet;
+    if (!sheet) return res({ ok:true, sheets:ss.getSheets().map(s=>s.getName()) });
+    const tab = ss.getSheetByName(sheet);
+    if (!tab) return res({ ok:false, error:'Sheet tab not found: '+sheet });
+    const vals = tab.getDataRange().getValues();
+    if (!vals.length) return res({ ok:true, headers:[], rows:[] });
+    const headers = vals[0].map(String);
+    const rows = vals.slice(1).map(r => {
+      const obj = {};
+      headers.forEach((h,i) => obj[h] = String(r[i]??''));
+      return obj;
+    });
+    return res({ ok:true, headers, rows });
+  } catch(e) { return res({ ok:false, error:e.message }); }
+}
+
+function doPost(e) {
+  try {
+    const body = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    if (body.action === 'ping')
+      return res({ ok:true, message:'InventoryPro connected ✓' });
+
+    if (body.action === 'sync') {
+      const { tabName, headers, rows } = body;
+      let tab = ss.getSheetByName(tabName);
+      if (!tab) tab = ss.insertSheet(tabName);
+      else tab.clearContents();
+      if (rows.length > 0 || headers.length > 0) {
+        const vals = [headers, ...rows];
+        tab.getRange(1,1,vals.length,headers.length).setValues(vals);
+        const hdrRange = tab.getRange(1,1,1,headers.length);
+        hdrRange.setBackground('#1e1e2e').setFontColor('#f59e0b').setFontWeight('bold');
+        tab.setFrozenRows(1);
+        try { tab.autoResizeColumns(1,headers.length); } catch(x) {}
+      }
+      return res({ ok:true, message:'Synced "'+tabName+'" — '+rows.length+' rows' });
+    }
+
+    return res({ ok:false, error:'Unknown action' });
+  } catch(e) { return res({ ok:false, error:e.message }); }
+}`;
+
+// Tab name mapping
+const TAB_NAMES = {
+  cots_t1:'COTS_RegularlyUsed',  cots_t2:'COTS_Storage',
+  cots_t3:'COTS_Consumables',    cots_t4:'COTS_Misc',
+  cots_t5:'COTS_Pendrives',      cots_t6:'COTS_BootablePendrives',
+  sff_t1:'SFF_MaterialsList',    sff_t2:'SFF_DemoUnit',
+};
+
+function getGsUrl() { return (localStorage.getItem('ip_gsurl')||'').trim(); }
+function saveGsUrl() {
+  const u = document.getElementById('gs-url-input').value.trim();
+  localStorage.setItem('ip_gsurl', u);
+  updateSyncDot(!!u);
+}
+function updateSyncDot(on) {
+  document.getElementById('sync-dot').className = 'sync-dot' + (on?' on':'');
+  document.getElementById('sync-txt').textContent = on ? 'Sheets: Connected' : 'Sheets: Not connected';
+}
+async function gsPost(payload) {
+  const url = getGsUrl();
+  if (!url) throw new Error('No Apps Script URL set');
+  const r = await fetch(url, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error||'Error');
+  return d;
+}
+async function testGsConn() {
+  const el = document.getElementById('gs-conn-res');
+  el.textContent='Testing…'; el.style.color='var(--t3)';
+  try {
+    const d = await gsPost({ action:'ping' });
+    el.style.color='var(--grn)'; el.textContent='✓ '+d.message;
+    updateSyncDot(true); toast('Connected!','s');
+  } catch(e) {
+    el.style.color='var(--red)'; el.textContent='✗ '+e.message;
+    toast('Failed: '+e.message,'e');
+  }
+}
+function tdefForId(id) {
+  for (const prod of ['COTS','SFF']) {
+    const t = TABLE_DEFS[prod].find(t => t.id === id);
+    if (t) return t;
+  }
+}
+async function syncTableById(tableId) {
+  const tdef = tdefForId(tableId);
+  if (!tdef) return;
+  const tabName = TAB_NAMES[tableId];
+  const headers = tdef.cols.map(c => c.name);
+  headers.push('History (JSON)');
+  const rows = (DATA[tableId]||[]).map(row => [
+    ...tdef.cols.map(c => String(row[c.id]??'')),
+    JSON.stringify(row._history||[])
+  ]);
+  return gsPost({ action:'sync', tabName, headers, rows });
+}
+async function syncActive() {
+  if (!A.activeTableId) { toast('Select a table first','i'); return; }
+  if (!getGsUrl()) { openSyncModal(); toast('Set Apps Script URL first','i'); return; }
+  toast('Syncing…','i');
+  try { const d = await syncTableById(A.activeTableId); toast('✓ '+d.message,'s'); }
+  catch(e) { toast('Failed: '+e.message,'e'); }
+}
+async function syncAll() {
+  if (!getGsUrl()) { toast('Set Apps Script URL first','e'); return; }
+  const allTableIds = [...TABLE_DEFS.COTS, ...TABLE_DEFS.SFF].map(t => t.id);
+  toast(`Syncing ${allTableIds.length} tables…`,'i');
+  let ok=0, fail=0;
+  for (const id of allTableIds) {
+    try { await syncTableById(id); ok++; } catch(e) { fail++; }
+  }
+  toast(fail ? `${ok} synced, ${fail} failed` : `✓ All ${ok} tables synced`,'s');
+}
+async function importActive() {
+  if (!A.activeTableId) { toast('Select a table first','i'); return; }
+  if (!getGsUrl()) { toast('Set Apps Script URL first','e'); return; }
+  const tdef = getActiveTDef();
+  const tabName = TAB_NAMES[A.activeTableId];
+  toast(`Importing ${tabName}…`,'i');
+  try {
+    const res = await fetch(getGsUrl() + '?sheet=' + encodeURIComponent(tabName));
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    if (!data.rows?.length) { toast('No data in sheet tab','i'); return; }
+    if (!confirm(`Replace ${(DATA[A.activeTableId]||[]).length} local rows with ${data.rows.length} from Sheets?`)) return;
+    DATA[A.activeTableId] = data.rows.map(obj => {
+      const row = { _id:uid(), _history:[] };
+      tdef.cols.forEach(c => { row[c.id] = obj[c.name]??''; });
+      try { row._history = JSON.parse(obj['History (JSON)'] || '[]'); } catch(x) {}
+      return row;
+    });
+    saveData(); renderSidebar(); renderMainTable();
+    toast(`✓ Imported ${DATA[A.activeTableId].length} rows`,'s');
+  } catch(e) { toast('Import failed: '+e.message,'e'); }
+}
+function openSyncModal() {
+  document.getElementById('gs-url-input').value = getGsUrl();
+  document.getElementById('gs-conn-res').textContent = '';
+  OM('modal-sync');
+}
+function downloadGS() {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([GS_CODE],{type:'text/plain'}));
+  a.download = 'inventorypro-apps-script.gs'; a.click();
+  toast('Apps Script file downloaded','s');
+}
+
+// ════════ EXPORT ═════════════════════════════════════════════════════════
+function toCSV(tdef, rows) {
+  const h = [...tdef.cols.map(c=>`"${c.name}"`), '"History Count"'].join(',');
+  const r = rows.map(row => [
+    ...tdef.cols.map(c=>`"${String(row[c.id]??'').replace(/"/g,'""')}"`),
+    `"${(row._history||[]).length}"`
+  ].join(','));
+  return [h,...r].join('\n');
+}
+function dlFile(content, fn, mime='text/csv') {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content],{type:mime}));
+  a.download = fn; a.click();
+}
+function exportCSV() {
+  const tdef = getActiveTDef();
+  dlFile(toCSV(tdef, DATA[tdef.id]||[]), tdef.name.replace(/\s+/g,'_')+'.csv');
+  toast('Downloaded CSV','s');
+}
+function exportAllCSV() {
+  const tables = TABLE_DEFS[A.product];
+  tables.forEach((t,i) => setTimeout(() =>
+    dlFile(toCSV(t, DATA[t.id]||[]), A.product+'_'+t.name.replace(/[^a-z0-9]/gi,'_')+'.csv'), i*250));
+  toast(`Downloading ${tables.length} CSVs…`,'s');
+}
+function exportJSON() {
+  const tdef = getActiveTDef();
+  const rows = DATA[tdef.id]||[];
+  dlFile(JSON.stringify({product:A.product,table:tdef.name,rows},null,2),
+    tdef.name.replace(/\s+/g,'_')+'.json','application/json');
+  toast('Downloaded JSON','s');
+}
+
+// ════════ HELPERS ═════════════════════════════════════════════════════════
+function getActiveTDef() {
+  return TABLE_DEFS[A.product].find(t => t.id === A.activeTableId);
+}
+function show(pg) {
+  ['pg-login','pg-product','pg-app'].forEach(id => {
+    const el = document.getElementById(id);
+    if (id === pg) { el.style.display = id==='pg-app'?'flex':'flex'; }
+    else el.style.display = 'none';
+  });
+}
+const OM = id => document.getElementById(id).classList.add('open');
+const CM = id => document.getElementById(id).classList.remove('open');
+document.querySelectorAll('.mover').forEach(o => o.addEventListener('click', e => {
+  if (e.target === o) o.classList.remove('open');
+}));
+function toast(msg, type='i') {
+  const el = document.createElement('div');
+  el.className = `toast t${type}`;
+  el.innerHTML = `<span>${type==='s'?'✓':type==='e'?'✕':'ℹ'}</span><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') document.querySelectorAll('.mover.open').forEach(m => m.classList.remove('open'));
+  if (e.key==='n' && isAdmin() && !document.querySelector('.mover.open') && A.activeTableId) openAddRow();
+});
+</script>
+</body>
+</html>
