@@ -6,7 +6,6 @@
 <title>InventoryPro — COTS & SFF Manager</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════ VARIABLES ═══════════════════════ */
 :root {
   --bg:#0a0a0f; --s1:#111118; --s2:#18181f; --s3:#1f1f28; --s4:#26263a;
   --bdr:#2d2d40; --bdr2:#3a3a50;
@@ -25,7 +24,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--txt);font-size:14p
 ::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px;}
 input,select,textarea,button{font-family:var(--sans);}
 
-/* ═══════════════════════ LOGIN PAGE ═══════════════════════ */
+/* ═══ LOGIN PAGE ═══ */
 #pg-login{
   display:flex;align-items:center;justify-content:center;
   min-height:100vh;padding:20px;
@@ -35,79 +34,34 @@ input,select,textarea,button{font-family:var(--sans);}
 }
 .login-wrap{width:100%;max-width:520px;}
 .login-brand{text-align:center;margin-bottom:28px;}
-.login-brand-logo{
-  width:56px;height:56px;background:var(--acc);border-radius:14px;
-  display:inline-grid;place-items:center;font-size:26px;margin-bottom:12px;
-}
+.login-brand-logo{width:56px;height:56px;background:var(--acc);border-radius:14px;display:inline-grid;place-items:center;font-size:26px;margin-bottom:12px;}
 .login-brand h1{font-size:24px;font-weight:700;font-family:var(--mono);}
 .login-brand h1 span{color:var(--acc);}
 .login-brand p{font-size:13px;color:var(--t2);margin-top:4px;}
-
-.role-switch{
-  display:grid;grid-template-columns:1fr 1fr;gap:3px;
-  background:var(--s3);border-radius:10px;padding:3px;margin-bottom:20px;
-}
-.rs-btn{
-  padding:11px;text-align:center;border-radius:8px;cursor:pointer;
-  transition:all var(--tr);border:none;background:none;color:var(--t2);font-size:13px;font-weight:500;
-}
+.role-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--s3);border-radius:10px;padding:3px;margin-bottom:20px;}
+.rs-btn{padding:11px;text-align:center;border-radius:8px;cursor:pointer;transition:all var(--tr);border:none;background:none;color:var(--t2);font-size:13px;font-weight:500;}
 .rs-btn.active{background:var(--s1);color:var(--txt);box-shadow:0 2px 8px rgba(0,0,0,.3);}
 .rs-btn .rs-icon{font-size:20px;display:block;margin-bottom:3px;}
-
-/* Admin panel — simple ID+password, no name cards */
-
 .lcard{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:24px;}
 .lf{margin-bottom:14px;}
-.lf label{
-  display:block;font-size:10px;font-weight:700;color:var(--t2);
-  text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;
-}
-.lf input{
-  width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--bdr);
-  border-radius:var(--r);color:var(--txt);font-size:13px;outline:none;
-  transition:border-color var(--tr);
-}
+.lf label{display:block;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.lf input{width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);color:var(--txt);font-size:13px;outline:none;transition:border-color var(--tr);}
 .lf input:focus{border-color:var(--acc);}
-.btn-login{
-  width:100%;padding:12px;background:var(--acc);color:#000;border:none;
-  border-radius:var(--r);font-weight:700;font-size:14px;cursor:pointer;
-  transition:opacity var(--tr);letter-spacing:.02em;
-}
+.btn-login{width:100%;padding:12px;background:var(--acc);color:#000;border:none;border-radius:var(--r);font-weight:700;font-size:14px;cursor:pointer;transition:opacity var(--tr);letter-spacing:.02em;}
 .btn-login:hover{opacity:.88;}
-.lerr{
-  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);
-  color:var(--red);border-radius:var(--r);padding:9px 13px;
-  font-size:12px;margin-top:11px;display:none;
-}
-.viewer-hint{
-  background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);
-  border-radius:var(--r);padding:12px;margin-bottom:14px;
-  font-size:12px;color:var(--t2);line-height:1.7;
-}
+.lerr{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:var(--r);padding:9px 13px;font-size:12px;margin-top:11px;display:none;}
+.viewer-hint{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:12px;margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.7;}
 .viewer-hint strong{color:var(--blu);}
 
-/* ═══════════════════════ PRODUCT SELECT PAGE ═══════════════════════ */
-#pg-product{
-  display:none;align-items:center;justify-content:center;
-  min-height:100vh;
-  background:radial-gradient(ellipse 700px 500px at 25% 50%,rgba(245,158,11,.06) 0%,transparent 65%),
-             radial-gradient(ellipse 600px 400px at 75% 50%,rgba(59,130,246,.06) 0%,transparent 65%),
-             var(--bg);
-}
+/* ═══ PRODUCT SELECT PAGE ═══ */
+#pg-product{display:none;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 700px 500px at 25% 50%,rgba(245,158,11,.06) 0%,transparent 65%),radial-gradient(ellipse 600px 400px at 75% 50%,rgba(59,130,246,.06) 0%,transparent 65%),var(--bg);}
 .product-wrap{width:100%;max-width:700px;padding:20px;}
 .product-header{text-align:center;margin-bottom:40px;}
 .product-header h2{font-size:22px;font-weight:700;}
 .product-header p{font-size:13px;color:var(--t2);margin-top:6px;}
 .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.product-card{
-  background:var(--s1);border:1px solid var(--bdr);border-radius:16px;
-  padding:32px 28px;cursor:pointer;transition:all .2s ease;text-align:center;
-  position:relative;overflow:hidden;
-}
-.product-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  border-radius:16px 16px 0 0;
-}
+.product-card{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:32px 28px;cursor:pointer;transition:all .2s ease;text-align:center;position:relative;overflow:hidden;}
+.product-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;}
 .product-card.cots::before{background:var(--cots);}
 .product-card.sff::before{background:var(--sff);}
 .product-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.4);}
@@ -116,118 +70,56 @@ input,select,textarea,button{font-family:var(--sans);}
 .pc-icon{font-size:44px;margin-bottom:14px;}
 .pc-title{font-size:19px;font-weight:700;font-family:var(--mono);margin-bottom:6px;}
 .pc-sub{font-size:12px;color:var(--t2);line-height:1.6;}
-.pc-tables{
-  margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);
-  display:flex;flex-wrap:wrap;gap:5px;justify-content:center;
-}
-.pc-tag{
-  font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500;
-}
+.pc-tables{margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;flex-wrap:wrap;gap:5px;justify-content:center;}
+.pc-tag{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500;}
 .cots .pc-tag{background:rgba(245,158,11,.1);color:var(--cots);border:1px solid rgba(245,158,11,.2);}
 .sff .pc-tag{background:rgba(59,130,246,.1);color:var(--sff);border:1px solid rgba(59,130,246,.2);}
-.product-user{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:24px;background:var(--s2);border:1px solid var(--bdr);
-  border-radius:10px;padding:11px 16px;
-}
+.product-user{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:11px 16px;}
 .puser-info{display:flex;align-items:center;gap:10px;font-size:13px;}
 .puser-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;font-family:var(--mono);}
 .ba{background:rgba(245,158,11,.15);color:var(--acc);border:1px solid rgba(245,158,11,.25);}
 .bv{background:rgba(59,130,246,.12);color:var(--blu);border:1px solid rgba(59,130,246,.2);}
 
-/* ═══════════════════════ MAIN APP PAGE ═══════════════════════ */
+/* ═══ MAIN APP ═══ */
 #pg-app{display:none;height:100vh;flex-direction:column;}
-
-/* Top bar */
-.topbar{
-  height:52px;background:var(--s1);border-bottom:1px solid var(--bdr);
-  display:flex;align-items:center;padding:0 16px;gap:12px;
-  flex-shrink:0;z-index:200;
-}
-.tb-brand{font-family:var(--mono);font-weight:700;font-size:15px;
-  display:flex;align-items:center;gap:7px;}
-.tb-icon{width:27px;height:27px;border-radius:6px;background:var(--acc);
-  display:grid;place-items:center;font-size:12px;}
+.topbar{height:52px;background:var(--s1);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:200;}
+.tb-brand{font-family:var(--mono);font-weight:700;font-size:15px;display:flex;align-items:center;gap:7px;}
+.tb-icon{width:27px;height:27px;border-radius:6px;background:var(--acc);display:grid;place-items:center;font-size:12px;}
 .tb-sep{width:1px;height:20px;background:var(--bdr);}
-.tb-product-badge{
-  display:flex;align-items:center;gap:6px;padding:4px 11px;
-  border-radius:6px;font-size:12px;font-weight:600;font-family:var(--mono);
-  cursor:pointer;transition:all var(--tr);
-}
+.tb-product-badge{display:flex;align-items:center;gap:6px;padding:4px 11px;border-radius:6px;font-size:12px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all var(--tr);}
 .tb-product-badge.cots{background:rgba(245,158,11,.12);color:var(--cots);border:1px solid rgba(245,158,11,.25);}
 .tb-product-badge.sff{background:rgba(59,130,246,.12);color:var(--sff);border:1px solid rgba(59,130,246,.25);}
 .tb-product-badge:hover{opacity:.8;}
 .tb-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
 .tb-user{display:flex;align-items:center;gap:7px;font-size:12px;}
 .tb-uname{font-weight:600;}
-.tbtn{padding:5px 11px;background:var(--s2);border:1px solid var(--bdr);
-  color:var(--t2);border-radius:6px;cursor:pointer;font-size:11px;
-  transition:all var(--tr);}
+.tbtn{padding:5px 11px;background:var(--s2);border:1px solid var(--bdr);color:var(--t2);border-radius:6px;cursor:pointer;font-size:11px;transition:all var(--tr);}
 .tbtn:hover{border-color:var(--red);color:var(--red);}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);}
 .sync-dot.on{background:var(--grn);box-shadow:0 0 6px var(--grn);}
-
-/* App body */
 .app-body{display:flex;flex:1;overflow:hidden;}
 
 /* ═══ SIDEBAR ═══ */
-.sidebar{
-  width:var(--sidebar);background:var(--s1);border-right:1px solid var(--bdr);
-  display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
-}
+.sidebar{width:var(--sidebar);background:var(--s1);border-right:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
 .sb-search{padding:12px 10px 8px;}
-.sb-sbox{
-  display:flex;align-items:center;gap:7px;background:var(--s2);
-  border:1px solid var(--bdr);border-radius:8px;padding:8px 11px;
-}
-.sb-sbox input{
-  background:none;border:none;outline:none;color:var(--txt);
-  font-size:12px;width:100%;
-}
+.sb-sbox{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:8px 11px;}
+.sb-sbox input{background:none;border:none;outline:none;color:var(--txt);font-size:12px;width:100%;}
 .sb-sbox input::placeholder{color:var(--t3);}
-
-/* Not in Office toggle */
 .sb-filter{padding:4px 10px 8px;}
-.nio-toggle{
-  display:flex;align-items:center;gap:8px;padding:8px 10px;
-  background:var(--s2);border:1px solid var(--bdr);border-radius:8px;
-  cursor:pointer;transition:all var(--tr);
-}
+.nio-toggle{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;cursor:pointer;transition:all var(--tr);}
 .nio-toggle:hover{border-color:var(--bdr2);}
 .nio-toggle.active{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
 .nio-toggle.active .nio-label{color:var(--red);}
-.nio-indicator{
-  width:32px;height:18px;border-radius:9px;background:var(--s3);
-  position:relative;transition:background var(--tr);flex-shrink:0;
-}
-.nio-indicator::after{
-  content:'';position:absolute;top:3px;left:3px;
-  width:12px;height:12px;border-radius:50%;background:var(--t2);
-  transition:all var(--tr);
-}
+.nio-indicator{width:32px;height:18px;border-radius:9px;background:var(--s3);position:relative;transition:background var(--tr);flex-shrink:0;}
+.nio-indicator::after{content:'';position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:var(--t2);transition:all var(--tr);}
 .nio-toggle.active .nio-indicator{background:rgba(239,68,68,.3);}
-.nio-toggle.active .nio-indicator::after{
-  background:var(--red);transform:translateX(14px);
-}
+.nio-toggle.active .nio-indicator::after{background:var(--red);transform:translateX(14px);}
 .nio-label{font-size:11px;font-weight:600;color:var(--t2);}
-.nio-count{
-  margin-left:auto;font-family:var(--mono);font-size:10px;
-  background:rgba(239,68,68,.15);color:var(--red);
-  padding:1px 6px;border-radius:10px;
-}
-
-/* Table list */
+.nio-count{margin-left:auto;font-family:var(--mono);font-size:10px;background:rgba(239,68,68,.15);color:var(--red);padding:1px 6px;border-radius:10px;}
 .sb-section{padding:6px 10px 4px;}
-.sb-section-label{
-  font-size:10px;font-weight:700;color:var(--t3);
-  text-transform:uppercase;letter-spacing:.1em;padding:0 4px;
-}
+.sb-section-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:0 4px;}
 .sb-tables{flex:1;overflow-y:auto;padding:4px 8px 8px;}
-.t-item{
-  display:flex;align-items:center;gap:8px;padding:8px 10px;
-  border-radius:7px;cursor:pointer;transition:all var(--tr);
-  border:1px solid transparent;margin-bottom:2px;
-}
+.t-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all var(--tr);border:1px solid transparent;margin-bottom:2px;}
 .t-item:hover{background:var(--s2);}
 .t-item.active{border-color:rgba(245,158,11,.25);}
 .t-item.active.sff-active{border-color:rgba(59,130,246,.25);}
@@ -235,61 +127,38 @@ input,select,textarea,button{font-family:var(--sans);}
 .t-item-name{font-size:12px;font-weight:500;flex:1;line-height:1.3;}
 .t-item.active .t-item-name{color:var(--acc);}
 .t-item.sff-active .t-item-name{color:var(--blu);}
-.t-item-cnt{
-  font-family:var(--mono);font-size:10px;color:var(--t3);
-  background:var(--s3);padding:2px 6px;border-radius:8px;
-}
+.t-item-cnt{font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);padding:2px 6px;border-radius:8px;}
 .sb-bottom{padding:8px;border-top:1px solid var(--bdr);}
 
 /* ═══ MAIN CONTENT ═══ */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.main-head{
-  padding:12px 18px;border-bottom:1px solid var(--bdr);
-  display:flex;align-items:center;gap:10px;flex-shrink:0;
-  background:var(--s1);
-}
+.main-head{padding:12px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--s1);}
 .mh-left h2{font-size:16px;font-weight:700;display:flex;align-items:center;gap:7px;}
 .mh-left .mh-sub{font-size:11px;color:var(--t2);margin-top:2px;font-family:var(--mono);}
 .mh-right{display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap;}
-
-/* Stats */
-.stat-bar{
-  padding:7px 18px;border-bottom:1px solid var(--bdr);
-  display:flex;gap:16px;align-items:center;background:var(--bg);flex-shrink:0;
-}
+.stat-bar{padding:7px 18px;border-bottom:1px solid var(--bdr);display:flex;gap:16px;align-items:center;background:var(--bg);flex-shrink:0;}
 .stat{display:flex;align-items:center;gap:5px;}
 .stat-d{width:6px;height:6px;border-radius:50%;}
 .stat-n{font-family:var(--mono);font-size:12px;font-weight:600;}
 .stat-l{font-size:11px;color:var(--t3);}
 
-/* Search results */
-.search-results{
-  flex:1;overflow-y:auto;padding:12px 18px;
-}
+/* ═══ SEARCH RESULTS ═══ */
+.search-results{flex:1;overflow-y:auto;padding:12px 18px;}
 .sr-header{font-size:12px;color:var(--t2);margin-bottom:10px;padding:0 2px;}
 .sr-group{margin-bottom:18px;}
-.sr-group-title{
-  font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;
-  letter-spacing:.08em;margin-bottom:7px;padding:0 2px;display:flex;align-items:center;gap:6px;
-}
-.sr-row{
-  background:var(--s1);border:1px solid var(--bdr);border-radius:8px;
-  padding:10px 13px;margin-bottom:5px;cursor:pointer;transition:all var(--tr);
-}
+.sr-group-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;padding:0 2px;display:flex;align-items:center;gap:6px;}
+.sr-row{background:var(--s1);border:1px solid var(--bdr);border-radius:8px;padding:10px 13px;margin-bottom:5px;cursor:pointer;transition:all var(--tr);}
 .sr-row:hover{border-color:var(--bdr2);background:var(--s2);}
 .sr-row-name{font-size:13px;font-weight:500;}
 .sr-row-meta{font-size:11px;color:var(--t2);margin-top:3px;}
+/* Highlight matched text in search */
+.sr-match{background:rgba(245,158,11,.2);color:var(--acc2);border-radius:2px;padding:0 2px;}
 
-/* Table area */
+/* ═══ TABLE ═══ */
 .table-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .twrap{flex:1;overflow:auto;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
-thead th{
-  padding:9px 11px;text-align:left;font-family:var(--mono);font-size:10px;
-  font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;
-  background:var(--s2);border-bottom:1px solid var(--bdr);
-  position:sticky;top:0;z-index:5;white-space:nowrap;
-}
+thead th{padding:9px 11px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;background:var(--s2);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:5;white-space:nowrap;}
 thead th:first-child{width:36px;text-align:center;}
 tbody tr{border-bottom:1px solid var(--bdr);transition:background var(--tr);}
 tbody tr:hover{background:rgba(255,255,255,.02);}
@@ -299,55 +168,35 @@ tbody td{padding:8px 11px;vertical-align:middle;}
 tbody td:first-child{text-align:center;}
 .rn{font-family:var(--mono);font-size:10px;color:var(--t3);}
 .acts{display:flex;gap:4px;justify-content:flex-end;}
-.abt{
-  height:26px;padding:0 8px;border-radius:5px;border:1px solid var(--bdr);
-  background:var(--s2);cursor:pointer;display:inline-flex;align-items:center;
-  gap:4px;font-size:11px;transition:all var(--tr);color:var(--t2);white-space:nowrap;
-}
+.abt{height:26px;padding:0 8px;border-radius:5px;border:1px solid var(--bdr);background:var(--s2);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:11px;transition:all var(--tr);color:var(--t2);white-space:nowrap;}
 .abt.e:hover{border-color:var(--acc);color:var(--acc);background:rgba(245,158,11,.07);}
 .abt.d:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.07);}
 .abt.h:hover{border-color:var(--pur);color:var(--pur);background:rgba(139,92,246,.07);}
+.abt.hv:hover{border-color:var(--blu);color:var(--blu);background:rgba(59,130,246,.07);}
 .ct{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.nin-badge{
-  display:inline-flex;align-items:center;gap:3px;padding:2px 7px;
-  border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);
-}
+.nin-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .nin-yes{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .nin-no{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.cond-badge{
-  display:inline-flex;align-items:center;gap:3px;padding:2px 7px;
-  border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);
-}
+.cond-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .cg{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .cf{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
 .cp{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.av-badge{
-  display:inline-flex;align-items:center;gap:3px;padding:2px 7px;
-  border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);
-}
+.av-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .av-avail{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .av-notav{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
 .av-res{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
-.hist-count{
-  display:inline-flex;align-items:center;gap:4px;
-  font-family:var(--mono);font-size:10px;color:var(--pur);
-  background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);
-  padding:2px 7px;border-radius:10px;
-}
-.empty-state{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:60px 20px;color:var(--t3);gap:9px;
-}
+/* FIX 2: History count badge shown in table (both admin & viewer) */
+.hist-count{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;color:var(--pur);background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);padding:2px 7px;border-radius:10px;cursor:pointer;transition:all var(--tr);}
+.hist-count:hover{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4);}
+.hist-count-zero{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);border:1px solid var(--bdr);padding:2px 7px;border-radius:10px;cursor:pointer;transition:all var(--tr);}
+.hist-count-zero:hover{color:var(--pur);border-color:rgba(139,92,246,.3);}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--t3);gap:9px;}
 .empty-state-icon{font-size:40px;opacity:.3;}
 .empty-state h3{font-size:14px;color:var(--t2);}
 .empty-state p{font-size:12px;text-align:center;max-width:240px;line-height:1.6;}
 
-/* ═══════════════════════ BUTTONS ═══════════════════════ */
-.btn{
-  padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;
-  cursor:pointer;border:1px solid;display:inline-flex;align-items:center;
-  gap:5px;white-space:nowrap;transition:all var(--tr);
-}
+/* ═══ BUTTONS ═══ */
+.btn{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;transition:all var(--tr);}
 .bp{background:var(--acc);color:#000;border-color:var(--acc);}
 .bp:hover{background:var(--acc2);}
 .bp.sff-btn{background:var(--sff);color:#fff;border-color:var(--sff);}
@@ -360,18 +209,10 @@ tbody td:first-child{text-align:center;}
 .bg:hover{opacity:.85;}
 .bsm{padding:4px 9px;font-size:11px;}
 
-/* ═══════════════════════ MODALS ═══════════════════════ */
-.mover{
-  position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;
-  align-items:flex-start;justify-content:center;z-index:1000;
-  backdrop-filter:blur(4px);overflow-y:auto;padding:20px;
-}
+/* ═══ MODALS ═══ */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-start;justify-content:center;z-index:1000;backdrop-filter:blur(4px);overflow-y:auto;padding:20px;}
 .mover.open{display:flex;}
-.modal{
-  background:var(--s1);border:1px solid var(--bdr);border-radius:14px;
-  padding:24px;width:580px;max-width:98vw;margin:auto;
-  animation:mIn .16s ease;
-}
+.modal{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:24px;width:580px;max-width:98vw;margin:auto;animation:mIn .16s ease;}
 .modal-xl{width:760px;}
 .modal-sm{width:400px;}
 .modal-hist{width:820px;}
@@ -379,92 +220,53 @@ tbody td:first-child{text-align:center;}
 .mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
 .mhd-title{font-size:16px;font-weight:700;}
 .mhd-sub{font-size:11px;color:var(--t2);margin-top:2px;}
-.mcl{
-  width:30px;height:30px;border:1px solid var(--bdr);background:var(--s2);
-  border-radius:6px;cursor:pointer;display:grid;place-items:center;
-  font-size:14px;color:var(--t2);transition:all var(--tr);
-}
+.mcl{width:30px;height:30px;border:1px solid var(--bdr);background:var(--s2);border-radius:6px;cursor:pointer;display:grid;place-items:center;font-size:14px;color:var(--t2);transition:all var(--tr);}
 .mcl:hover{border-color:var(--red);color:var(--red);}
 .ff{margin-bottom:13px;}
-.ff label{
-  display:block;font-size:10px;font-weight:700;color:var(--t2);
-  text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;
-}
-.ff input,.ff select,.ff textarea{
-  width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--bdr);
-  border-radius:6px;color:var(--txt);font-size:13px;outline:none;
-  transition:border-color var(--tr);
-}
+.ff label{display:block;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+.ff input,.ff select,.ff textarea{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:13px;outline:none;transition:border-color var(--tr);}
 .ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--acc);}
 .ff select option{background:var(--s2);}
 .ff textarea{resize:vertical;min-height:70px;line-height:1.5;}
+/* FIX 3: Auto-filled SL No styling */
+.ff input[readonly]{background:var(--s3);color:var(--acc);font-family:var(--mono);cursor:not-allowed;border-color:rgba(245,158,11,.2);}
 .mft{display:flex;gap:7px;justify-content:flex-end;margin-top:18px;}
 .fg2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
 .fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 .fhint{font-size:11px;color:var(--t3);margin-top:4px;}
 .fdivider{height:1px;background:var(--bdr);margin:14px 0;}
-.fsection{
-  background:var(--s2);border:1px solid var(--bdr);border-radius:8px;
-  padding:13px;margin-bottom:13px;
-}
-.fsection-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;
-  letter-spacing:.07em;margin-bottom:11px;}
+.fsection{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:13px;margin-bottom:13px;}
+.fsection-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:11px;}
 
-/* History entries */
+/* ═══ HISTORY MODAL ═══ */
 .hist-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:360px;overflow-y:auto;}
-.hist-entry{
-  background:var(--s2);border:1px solid var(--bdr);border-radius:8px;
-  padding:12px 13px;position:relative;
-}
+.hist-entry{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:12px 13px;position:relative;}
 .hist-entry-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.hist-entry-num{
-  width:20px;height:20px;border-radius:50%;background:var(--s3);
-  font-family:var(--mono);font-size:10px;font-weight:600;
-  display:grid;place-items:center;color:var(--t2);flex-shrink:0;
-}
+.hist-entry-num{width:20px;height:20px;border-radius:50%;background:var(--s3);font-family:var(--mono);font-size:10px;font-weight:600;display:grid;place-items:center;color:var(--t2);flex-shrink:0;}
 .hist-entry-date{font-size:12px;font-weight:600;}
-.hist-entry-del{
-  margin-left:auto;border:none;background:none;cursor:pointer;
-  color:var(--t3);font-size:12px;padding:3px;border-radius:4px;transition:all var(--tr);
-}
+.hist-entry-del{margin-left:auto;border:none;background:none;cursor:pointer;color:var(--t3);font-size:12px;padding:3px;border-radius:4px;transition:all var(--tr);}
 .hist-entry-del:hover{color:var(--red);background:rgba(239,68,68,.1);}
 .hist-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .hist-field{font-size:12px;}
 .hist-field label{display:block;font-size:10px;color:var(--t3);margin-bottom:2px;}
 .hist-field span{color:var(--txt);}
-.hist-add-btn{
-  width:100%;padding:9px;background:var(--s2);border:1px dashed var(--bdr);
-  color:var(--t2);border-radius:7px;cursor:pointer;font-size:12px;
-  display:flex;align-items:center;justify-content:center;gap:5px;
-  transition:all var(--tr);
-}
+.hist-add-btn{width:100%;padding:9px;background:var(--s2);border:1px dashed var(--bdr);color:var(--t2);border-radius:7px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;gap:5px;transition:all var(--tr);}
 .hist-add-btn:hover{border-color:var(--pur);color:var(--pur);}
-.hist-form{
-  background:var(--s2);border:1px solid var(--pur);border-radius:8px;
-  padding:13px;margin-top:8px;display:none;
-}
+.hist-form{background:var(--s2);border:1px solid var(--pur);border-radius:8px;padding:13px;margin-top:8px;display:none;}
 .hist-form.open{display:block;}
-.hist-form-title{
-  font-size:11px;font-weight:700;color:var(--pur);text-transform:uppercase;
-  letter-spacing:.07em;margin-bottom:10px;
-}
+.hist-form-title{font-size:11px;font-weight:700;color:var(--pur);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;}
 
-/* Sync modal */
+/* ═══ SYNC MODAL ═══ */
 .step-card{background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:13px;margin-bottom:11px;}
 .step-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.step-n{width:22px;height:22px;border-radius:50%;background:var(--acc);color:#000;
-  font-weight:700;font-size:10px;display:grid;place-items:center;flex-shrink:0;font-family:var(--mono);}
+.step-n{width:22px;height:22px;border-radius:50%;background:var(--acc);color:#000;font-weight:700;font-size:10px;display:grid;place-items:center;flex-shrink:0;font-family:var(--mono);}
 .step-t{font-size:12px;font-weight:600;}
 .step-d{font-size:11px;color:var(--t2);line-height:1.75;}
 .step-d strong{color:var(--txt);}
 
 /* ═══ TOAST ═══ */
 #toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:6px;}
-.toast{
-  padding:10px 15px;border-radius:8px;font-size:12px;font-weight:500;
-  display:flex;align-items:center;gap:7px;min-width:200px;max-width:320px;
-  animation:tIn .16s ease;border:1px solid;box-shadow:0 4px 16px rgba(0,0,0,.4);
-}
+.toast{padding:10px 15px;border-radius:8px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:7px;min-width:200px;max-width:320px;animation:tIn .16s ease;border:1px solid;box-shadow:0 4px 16px rgba(0,0,0,.4);}
 @keyframes tIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 .ts{background:#0d2b1f;border-color:rgba(16,185,129,.3);color:var(--grn);}
 .te{background:#2b0d0d;border-color:rgba(239,68,68,.3);color:var(--red);}
@@ -473,9 +275,7 @@ tbody td:first-child{text-align:center;}
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════════════
-     PAGE 1: LOGIN
-══════════════════════════════════════════════════════════════ -->
+<!-- PAGE 1: LOGIN -->
 <div id="pg-login">
   <div class="login-wrap">
     <div class="login-brand">
@@ -483,7 +283,6 @@ tbody td:first-child{text-align:center;}
       <h1>Inventory<span>Pro</span></h1>
       <p>COTS & SFF Inventory Management System</p>
     </div>
-
     <div class="role-switch">
       <button class="rs-btn active" id="rtab-admin" onclick="switchRole('admin')">
         <span class="rs-icon">🔐</span>Admin Login
@@ -492,24 +291,12 @@ tbody td:first-child{text-align:center;}
         <span class="rs-icon">👁</span>Viewer Login
       </button>
     </div>
-
-    <!-- ADMIN PANEL -->
-    <!--
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                  ⚠  ADMIN CREDENTIALS  ⚠                    ║
-    ╠══════════════════════════════════════════════════════════════╣
-    ║  ADMIN 1 → ID: ADM001  |  Password: Admin1@2024             ║
-    ║  ADMIN 2 → ID: ADM002  |  Password: Admin2@2024             ║
-    ║  ADMIN 3 → ID: ADM003  |  Password: Admin3@2024             ║
-    ║  ADMIN 4 → ID: Anil  |  Password: 10698          ║
-    ╚══════════════════════════════════════════════════════════════╝
-    -->
     <div id="panel-admin">
       <div class="lcard">
         <div class="lf">
           <label>Admin ID</label>
-          <input type="text" id="adminId" placeholder="e.g. ADM001"
-            autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('adminPass').focus()">
+          <input type="text" id="adminId" placeholder="e.g. ADM001" autocomplete="off"
+            onkeydown="if(event.key==='Enter')document.getElementById('adminPass').focus()">
         </div>
         <div class="lf">
           <label>Password</label>
@@ -520,25 +307,17 @@ tbody td:first-child{text-align:center;}
         <div class="lerr" id="lerr-admin">❌ Incorrect ID or password. Please try again.</div>
       </div>
     </div>
-
-    <!-- VIEWER PANEL -->
-    <!--
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                  ⚠  VIEWER CREDENTIALS  ⚠                   ║
-    ╠══════════════════════════════════════════════════════════════╣
-    ║  VIEWER  → ID: VIEW01  |  Password: Viewer@2024             ║
-    ╚══════════════════════════════════════════════════════════════╝
-    -->
     <div id="panel-viewer" style="display:none;">
       <div class="lcard">
         <div class="viewer-hint">
           <strong>👁 Viewer Access</strong><br>
           Browse all COTS &amp; SFF inventory, search products, filter not-in-office items. No edits allowed.
         </div>
-        <div class="lf">
-          <label>Viewer ID</label>
-          <input type="text" id="viewerId" placeholder="VIEW01"
-            autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('viewerPass').focus()">
+        <!-- Viewer ID is fixed — user only enters password -->
+        <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 13px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;color:var(--t3);font-family:var(--mono);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Viewer ID:</span>
+          <span style="font-family:var(--mono);font-size:13px;color:var(--blu);font-weight:600;">VIEW01</span>
+          <span style="margin-left:auto;font-size:10px;color:var(--t3);">fixed · read-only</span>
         </div>
         <div class="lf">
           <label>Password</label>
@@ -546,15 +325,13 @@ tbody td:first-child{text-align:center;}
             onkeydown="if(event.key==='Enter')doLogin()">
         </div>
         <button class="btn-login" onclick="doLogin()">Sign In →</button>
-        <div class="lerr" id="lerr-viewer">❌ Incorrect ID or password.</div>
+        <div class="lerr" id="lerr-viewer">❌ Incorrect password.</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     PAGE 2: PRODUCT SELECT
-══════════════════════════════════════════════════════════════ -->
+<!-- PAGE 2: PRODUCT SELECT -->
 <div id="pg-product">
   <div class="product-wrap">
     <div class="product-user">
@@ -564,12 +341,10 @@ tbody td:first-child{text-align:center;}
       </div>
       <button class="tbtn" onclick="doLogout()">Logout</button>
     </div>
-
     <div class="product-header">
       <h2>Select Product Category</h2>
       <p>Choose a product line to view and manage inventory</p>
     </div>
-
     <div class="product-grid">
       <div class="product-card cots" onclick="enterProduct('COTS')">
         <div class="pc-icon">🖥️</div>
@@ -597,24 +372,17 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     PAGE 3: MAIN APP
-══════════════════════════════════════════════════════════════ -->
+<!-- PAGE 3: MAIN APP -->
 <div id="pg-app">
-  <!-- Topbar -->
   <div class="topbar">
     <div class="tb-brand">
       <div class="tb-icon">📦</div>
       <span>Inventory<span style="color:var(--acc)">Pro</span></span>
     </div>
     <div class="tb-sep"></div>
-    <div class="tb-product-badge" id="tb-prod-badge" onclick="goProductSelect()">
-      ← Switch Product
-    </div>
+    <div class="tb-product-badge" id="tb-prod-badge" onclick="goProductSelect()">← Switch Product</div>
     <div class="tb-right">
-      <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);
-        padding:3px 9px;background:var(--s2);border:1px solid var(--bdr);border-radius:5px;
-        cursor:pointer;" onclick="openSyncModal()" title="Sync Settings">
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:3px 9px;background:var(--s2);border:1px solid var(--bdr);border-radius:5px;cursor:pointer;" onclick="openSyncModal()" title="Sync Settings">
         <span class="sync-dot" id="sync-dot"></span>
         <span id="sync-txt">Sheets: Not connected</span>
       </div>
@@ -627,9 +395,7 @@ tbody td:first-child{text-align:center;}
   </div>
 
   <div class="app-body">
-    <!-- Left Sidebar -->
     <div class="sidebar">
-      <!-- 1. Search -->
       <div class="sb-search">
         <div class="sb-sbox">
           <span style="color:var(--t3);font-size:13px;">🔍</span>
@@ -637,8 +403,6 @@ tbody td:first-child{text-align:center;}
             oninput="handleSearch(this.value)">
         </div>
       </div>
-
-      <!-- 2. Not in Office filter -->
       <div class="sb-filter">
         <div class="nio-toggle" id="nio-toggle" onclick="toggleNIO()">
           <div class="nio-indicator" id="nio-ind"></div>
@@ -646,22 +410,17 @@ tbody td:first-child{text-align:center;}
           <span class="nio-count" id="nio-count" style="display:none">0</span>
         </div>
       </div>
-
-      <!-- 3. Table list -->
       <div class="sb-section">
         <div class="sb-section-label" id="sb-prod-label">Tables</div>
       </div>
       <div class="sb-tables" id="sb-tables"></div>
-
       <div class="sb-bottom">
         <button class="btn bp bsm" id="btn-add-row" onclick="openAddRow()"
           style="width:100%;justify-content:center;display:none;">+ Add Row</button>
       </div>
     </div>
 
-    <!-- Main content -->
     <div class="main" id="main-content">
-      <!-- Will be rendered dynamically -->
       <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--t3);">
         <div style="text-align:center">
           <div style="font-size:40px;margin-bottom:12px;opacity:.3">📋</div>
@@ -672,7 +431,7 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
-<!-- ══════════ MODAL: Add / Edit Row ══════════ -->
+<!-- MODAL: Add / Edit Row -->
 <div class="mover" id="modal-row">
   <div class="modal modal-xl">
     <div class="mhd">
@@ -690,7 +449,7 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
-<!-- ══════════ MODAL: History ══════════ -->
+<!-- MODAL: History -->
 <div class="mover" id="modal-hist">
   <div class="modal modal-hist">
     <div class="mhd">
@@ -723,30 +482,18 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
-<!-- ══════════ MODAL: Sync ══════════ -->
+<!-- MODAL: Sync -->
 <div class="mover" id="modal-sync">
   <div class="modal modal-xl">
     <div class="mhd">
       <div class="mhd-title">☁ Google Sheets Sync</div>
       <button class="mcl" onclick="CM('modal-sync')">✕</button>
     </div>
-
     <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:12px;margin-bottom:13px;font-size:12px;color:var(--t2);line-height:1.7;">
-      <!--
-      ╔══════════════════════════════════════════════════════════════════════╗
-      ║  GOOGLE SHEET LINK (paste into Apps Script as SPREADSHEET_ID):      ║
-      ║  https://docs.google.com/spreadsheets/d/                            ║
-      ║  1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit?usp=sharing    ║
-      ║  SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio'  ║
-      ╚══════════════════════════════════════════════════════════════════════╝
-      -->
       📊 <strong style="color:var(--acc)">Your Google Sheet:</strong>
-      <a href="https://docs.google.com/spreadsheets/d/1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit" target="_blank" style="color:var(--acc2);text-decoration:none;">
-        Open Sheet ↗
-      </a>
+      <a href="https://docs.google.com/spreadsheets/d/1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit" target="_blank" style="color:var(--acc2);text-decoration:none;">Open Sheet ↗</a>
       &nbsp;· One sheet, 8 tabs (COTS_* and SFF_*) · No need for new sheet!
     </div>
-
     <div class="step-card">
       <div class="step-hd"><div class="step-n">1</div><div class="step-t">Download & Add Apps Script</div></div>
       <div class="step-d">Open your Sheet → <strong>Extensions → Apps Script</strong> → delete existing → paste script → 💾 Save</div>
@@ -793,63 +540,157 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
+<!-- MODAL: Clear Table Data -->
+<div class="mover" id="modal-clear">
+  <div class="modal modal-sm">
+    <div class="mhd">
+      <div>
+        <div class="mhd-title" style="color:var(--red)">🗑 Clear Table Data</div>
+        <div class="mhd-sub">This will permanently delete rows — cannot be undone</div>
+      </div>
+      <button class="mcl" onclick="CM('modal-clear')">✕</button>
+    </div>
+    <!-- Scope selector -->
+    <div style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">What to clear?</div>
+      <div style="display:flex;flex-direction:column;gap:6px;" id="clear-options">
+        <label style="display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;transition:all .15s ease;" id="clear-opt-active">
+          <input type="radio" name="clearScope" value="active" checked onchange="updateClearPreview()" style="accent-color:var(--red);">
+          <div>
+            <div style="font-size:12px;font-weight:600;" id="clear-active-label">Active table</div>
+            <div style="font-size:11px;color:var(--t3);" id="clear-active-sub">Clears only the currently selected table</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;transition:all .15s ease;" id="clear-opt-product">
+          <input type="radio" name="clearScope" value="product" onchange="updateClearPreview()" style="accent-color:var(--red);">
+          <div>
+            <div style="font-size:12px;font-weight:600;" id="clear-product-label">All COTS tables</div>
+            <div style="font-size:11px;color:var(--t3);" id="clear-product-sub">Clears all tables in current product</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;transition:all .15s ease;" id="clear-opt-all">
+          <input type="radio" name="clearScope" value="all" onchange="updateClearPreview()" style="accent-color:var(--red);">
+          <div>
+            <div style="font-size:12px;font-weight:600;">All tables (COTS + SFF)</div>
+            <div style="font-size:11px;color:var(--t3);">Complete reset — wipes everything</div>
+          </div>
+        </label>
+      </div>
+    </div>
+    <!-- Preview -->
+    <div id="clear-preview" style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:10px 12px;font-size:11px;color:var(--red);margin-bottom:14px;line-height:1.7;"></div>
+    <!-- Confirm type -->
+    <div class="ff" style="margin-bottom:4px;">
+      <label>Type <strong style="color:var(--red);font-family:var(--mono)">DELETE</strong> to confirm</label>
+      <input type="text" id="clear-confirm-input" placeholder="Type DELETE here" autocomplete="off"
+        oninput="document.getElementById('btn-do-clear').disabled = this.value !== 'DELETE'">
+    </div>
+    <div class="mft">
+      <button class="btn bo" onclick="CM('modal-clear')">Cancel</button>
+      <button class="btn br" id="btn-do-clear" onclick="doDataClear()" disabled
+        style="background:rgba(239,68,68,.1);">🗑 Clear Data</button>
+    </div>
+  </div>
+</div>
+
 <div id="toasts"></div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════════════════════════ -->
 <script>
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║                   ⚠  ALL CREDENTIALS — CHANGE BEFORE DEPLOY ⚠          ║
-// ╠══════════════════════════════════════════════════════════════════════════╣
-// ║  ADMIN 1 → ID: ADM001 | Name: Raj Kumar    | Password: Admin1@2024      ║
-// ║  ADMIN 2 → ID: ADM002 | Name: Priya Sharma | Password: Admin2@2024      ║
-// ║  ADMIN 3 → ID: ADM003 | Name: Vikram Singh | Password: Admin3@2024      ║
-// ║  ADMIN 4 → ID: ADM004 | Name: Ankit Patel  | Password: Admin4@2024      ║
-// ╠══════════════════════════════════════════════════════════════════════════╣
-// ║  VIEWER  → ID: VIEW01 |                    | Password: Viewer@2024       ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║                                                                           ║
+// ║   ██████╗██╗  ██╗ █████╗ ███╗   ██╗ ██████╗ ███████╗                    ║
+// ║  ██╔════╝██║  ██║██╔══██╗████╗  ██║██╔════╝ ██╔════╝                    ║
+// ║  ██║     ███████║███████║██╔██╗ ██║██║  ███╗█████╗                      ║
+// ║  ██║     ██╔══██║██╔══██║██║╚██╗██║██║   ██║██╔══╝                      ║
+// ║  ╚██████╗██║  ██║██║  ██║██║ ╚████║╚██████╔╝███████╗                    ║
+// ║   ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝                   ║
+// ║                                                                           ║
+// ║   CREDENTIALS — EDIT HERE TO CHANGE ADMIN IDs AND PASSWORDS              ║
+// ╠═══════════════════════════════════════════════════════════════════════════╣
+// ║                                                                           ║
+// ║  HOW TO CHANGE ADMIN ID & PASSWORD:                                       ║
+// ║  ─────────────────────────────────                                        ║
+// ║  Find the ADMINS array below. Each line = one admin.                      ║
+// ║  Change the values inside the quotes:                                     ║
+// ║    id   → the login ID they type (keep UPPERCASE, e.g. 'ADM001')         ║
+// ║    name → display name shown in the app                                  ║
+// ║    pass → the password they type (case-sensitive!)                        ║
+// ║                                                                           ║
+// ║  EXAMPLE — to change Admin 1 password to "MyNewPass@2025":               ║
+// ║    BEFORE: { id:'ADM001', name:'Raj Kumar', pass:'Admin1@2024', ... }    ║
+// ║    AFTER:  { id:'ADM001', name:'Raj Kumar', pass:'MyNewPass@2025', ... } ║
+// ║                                                                           ║
+// ╠═══════════════════════════════════════════════════════════════════════════╣
+// ║                                                                           ║
+// ║  ⚠  CURRENT ADMIN CREDENTIALS (change the values, not the keys)  ⚠      ║
+// ║                                                                           ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
 
 const ADMINS = [
+  // ┌─────────────────────────────────────────────────────────────────────┐
+  // │  ADMIN 1  ←  Change id, name, pass values below as needed           │
+  // └─────────────────────────────────────────────────────────────────────┘
   { id:'ADM001', name:'Raj Kumar',    pass:'Admin1@2024', color:'var(--acc)' },
-  { id:'ADM002', name:'Priya Sharma', pass:'Admin2@2024', color:'var(--grn)' },
-  { id:'ADM003', name:'Vikram Singh', pass:'Admin3@2024', color:'var(--pur)' },
-  { id:'ADM004', name:'Ankit Patel',  pass:'Admin4@2024', color:'var(--blu)' },
-];
-const VIEWER = { id:'VIEW01', pass:'Viewer@2024' };
 
-// ════════ TABLE DEFINITIONS ════════════════════════════════════════════════
+  // ┌─────────────────────────────────────────────────────────────────────┐
+  // │  ADMIN 2  ←  Change id, name, pass values below as needed           │
+  // └─────────────────────────────────────────────────────────────────────┘
+  { id:'ADM002', name:'Priya Sharma', pass:'Admin2@2024', color:'var(--grn)' },
+
+  // ┌─────────────────────────────────────────────────────────────────────┐
+  // │  ADMIN 3  ←  Change id, name, pass values below as needed           │
+  // └─────────────────────────────────────────────────────────────────────┘
+  { id:'ADM003', name:'Vikram Singh', pass:'Admin3@2024', color:'var(--pur)' },
+
+  // ┌─────────────────────────────────────────────────────────────────────┐
+  // │  ADMIN 4  ←  Change id, name, pass values below as needed           │
+  // └─────────────────────────────────────────────────────────────────────┘
+  { id:'ADM004', name:'VASE ANIL',  pass:'1111', color:'var(--blu)' },
+];
+
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  VIEWER PASSWORD — Change the pass value below                            ║
+// ║  The viewer ID (VIEW01) is fixed and shown on the login screen.           ║
+// ║  Users only need to enter the password. Change it here:                   ║
+// ║                                                                           ║
+// ║  EXAMPLE: pass:'Viewer@2024'  →  pass:'NewViewerPass@2025'               ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+const VIEWER = { id:'VIEW01', pass:'Trident@123' };
+
+// ══════════════════════════════════════════════════════════
+//  TABLE DEFINITIONS
+// ══════════════════════════════════════════════════════════
 const TABLE_DEFS = {
   COTS: [
     {
       id:'cots_t1', name:'Regularly Used Items', icon:'🖥️', hasHistory:true,
       cols:[
-        {id:'slno',   name:'Sl No',              type:'number', req:true},
-        {id:'maker',  name:'Maker',              type:'text'},
-        {id:'pdesc',  name:'Product Description',type:'text'},
-        {id:'model',  name:'Model / Part No',    type:'text'},
-        {id:'serial', name:'Serial No',          type:'text'},
-        {id:'qty',    name:'Qty',                type:'number'},
-        {id:'cond',   name:'Product Condition',  type:'condition'},
-        {id:'remark', name:'Remark',             type:'text'},
-        {id:'inoffice',name:'Present in Office', type:'inoffice'},
+        {id:'slno',    name:'Sl No',               type:'autonumber', req:true},
+        {id:'maker',   name:'Maker',               type:'text'},
+        {id:'pdesc',   name:'Product Description', type:'text'},
+        {id:'model',   name:'Model / Part No',     type:'text'},
+        {id:'serial',  name:'Serial No',           type:'text'},
+        {id:'qty',     name:'Qty',                 type:'number'},
+        {id:'cond',    name:'Product Condition',   type:'condition'},
+        {id:'remark',  name:'Remark',              type:'text'},
+        {id:'inoffice',name:'Present in Office',   type:'inoffice'},
       ]
     },
     {
       id:'cots_t2', name:'Storage Devices Details', icon:'💾',
       cols:[
-        {id:'sn',     name:'SN',                type:'number', req:true},
-        {id:'make',   name:'M.2 Make',          type:'text'},
-        {id:'serial', name:'Serial Number',     type:'text'},
-        {id:'size',   name:'Size',              type:'text'},
-        {id:'type',   name:'Type',              type:'text'},
-        {id:'os',     name:'Loaded OS / Content',type:'text'},
+        {id:'sn',     name:'SN',                  type:'autonumber', req:true},
+        {id:'make',   name:'M.2 Make',             type:'text'},
+        {id:'serial', name:'Serial Number',        type:'text'},
+        {id:'size',   name:'Size',                 type:'text'},
+        {id:'type',   name:'Type',                 type:'text'},
+        {id:'os',     name:'Loaded OS / Content',  type:'text'},
       ]
     },
     {
       id:'cots_t3', name:'Consumables / Deliverables', icon:'📦',
       cols:[
-        {id:'slno',   name:'Sl No',         type:'number', req:true},
+        {id:'slno',   name:'Sl No',         type:'autonumber', req:true},
         {id:'cons',   name:'Consumables',   type:'text'},
         {id:'totqty', name:'Total Qty',     type:'number'},
         {id:'partno', name:'Part No',       type:'text'},
@@ -861,17 +702,17 @@ const TABLE_DEFS = {
     {
       id:'cots_t4', name:'Miscellaneous', icon:'🗂️',
       cols:[
-        {id:'slno',    name:'Sl No',              type:'number', req:true},
-        {id:'desc',    name:'Description',        type:'text'},
-        {id:'sn',      name:'SN',                 type:'text'},
-        {id:'qty',     name:'Qty',                type:'number'},
-        {id:'inoffice',name:'Present in Office',  type:'inoffice'},
+        {id:'slno',    name:'Sl No',             type:'autonumber', req:true},
+        {id:'desc',    name:'Description',       type:'text'},
+        {id:'sn',      name:'SN',                type:'text'},
+        {id:'qty',     name:'Qty',               type:'number'},
+        {id:'inoffice',name:'Present in Office', type:'inoffice'},
       ]
     },
     {
       id:'cots_t5', name:'Pendrive Details', icon:'🔌',
       cols:[
-        {id:'sn',      name:'SN',               type:'number', req:true},
+        {id:'sn',      name:'SN',               type:'autonumber', req:true},
         {id:'brand',   name:'Brand',            type:'text'},
         {id:'cap',     name:'Storage Capacity', type:'text'},
         {id:'usbver',  name:'USB Version',      type:'text'},
@@ -882,7 +723,7 @@ const TABLE_DEFS = {
     {
       id:'cots_t6', name:'Bootable Pendrive Details', icon:'💿',
       cols:[
-        {id:'sn',     name:'SN',            type:'number', req:true},
+        {id:'sn',     name:'SN',            type:'autonumber', req:true},
         {id:'serial', name:'Serial Number', type:'text'},
         {id:'os',     name:'OS',            type:'text'},
       ]
@@ -892,71 +733,63 @@ const TABLE_DEFS = {
     {
       id:'sff_t1', name:'Materials List', icon:'📋', hasHistory:true,
       cols:[
-        {id:'pdetails',name:'Product Details',    type:'text',  req:true},
-        {id:'serial',  name:'Serial Number',      type:'text'},
-        {id:'partno',  name:'Part / Model Number',type:'text'},
-        {id:'qty',     name:'Qty',                type:'number'},
-        {id:'remarks', name:'Remarks',            type:'text'},
-        {id:'inoffice',name:'Present in Office',  type:'inoffice'},
+        {id:'pdetails',name:'Product Details',     type:'text',  req:true},
+        {id:'serial',  name:'Serial Number',       type:'text'},
+        {id:'partno',  name:'Part / Model Number', type:'text'},
+        {id:'qty',     name:'Qty',                 type:'number'},
+        {id:'remarks', name:'Remarks',             type:'text'},
+        {id:'inoffice',name:'Present in Office',   type:'inoffice'},
       ]
     },
     {
       id:'sff_t2', name:'SFF Demo Unit Details', icon:'💻',
       cols:[
-        {id:'sn',      name:'S/N',                type:'number', req:true},
-        {id:'pdesc',   name:'Product Description',type:'text'},
-        {id:'serial',  name:'Serial Number',      type:'text'},
-        {id:'partno',  name:'Part / Model Number',type:'text'},
+        {id:'sn',      name:'S/N',                 type:'autonumber', req:true},
+        {id:'pdesc',   name:'Product Description', type:'text'},
+        {id:'serial',  name:'Serial Number',       type:'text'},
+        {id:'partno',  name:'Part / Model Number', type:'text'},
         {id:'cables',  name:'Cables / Accessories',type:'text'},
-        {id:'status',  name:'Status',             type:'status'},
-        {id:'avail',   name:'Availability',       type:'availability'},
-        {id:'remarks', name:'Remarks',            type:'text'},
+        {id:'status',  name:'Status',              type:'status'},
+        {id:'avail',   name:'Availability',        type:'availability'},
+        {id:'remarks', name:'Remarks',             type:'text'},
       ]
     },
   ]
 };
 
-// ════════ APP STATE ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  APP STATE
+// ══════════════════════════════════════════════════════════
 let A = {
-  user: null,
-  product: null,    // 'COTS' or 'SFF'
-  activeTableId: null,
-  nioFilter: false,
-  searchMode: false,
-  searchQuery: '',
-  editRowId: null,
-  histRowId: null,
-  histTableId: null,
+  user: null, product: null, activeTableId: null,
+  nioFilter: false, searchMode: false, searchQuery: '',
+  editRowId: null, histRowId: null, histTableId: null,
 };
 
-// ════════ DATA STORE ══════════════════════════════════════════════════════
-function saveData() {
-  localStorage.setItem('ip_data', JSON.stringify(DATA));
-}
+// ══════════════════════════════════════════════════════════
+//  DATA STORE
+// ══════════════════════════════════════════════════════════
+function saveData() { localStorage.setItem('ip_data', JSON.stringify(DATA)); }
 function loadData() {
   try {
     const d = JSON.parse(localStorage.getItem('ip_data') || 'null');
     if (d) {
-      // merge: ensure all defined tables exist
-      Object.keys(TABLE_DEFS).forEach(prod => {
-        TABLE_DEFS[prod].forEach(tdef => {
-          if (!d[tdef.id]) d[tdef.id] = [];
-        });
-      });
+      Object.keys(TABLE_DEFS).forEach(prod =>
+        TABLE_DEFS[prod].forEach(tdef => { if (!d[tdef.id]) d[tdef.id] = []; }));
       return d;
     }
   } catch(e) {}
   const fresh = {};
-  Object.keys(TABLE_DEFS).forEach(prod => {
-    TABLE_DEFS[prod].forEach(t => { fresh[t.id] = []; });
-  });
+  Object.keys(TABLE_DEFS).forEach(prod =>
+    TABLE_DEFS[prod].forEach(t => { fresh[t.id] = []; }));
   return fresh;
 }
 let DATA = loadData();
 
-// ════════ AUTH ════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════════════
 let curRole = 'admin';
-
 function switchRole(role) {
   curRole = role;
   document.getElementById('rtab-admin').className = 'rs-btn' + (role==='admin' ? ' active' : '');
@@ -965,29 +798,23 @@ function switchRole(role) {
   document.getElementById('panel-viewer').style.display = role==='viewer' ? 'block' : 'none';
   document.getElementById('lerr-admin').style.display  = 'none';
   document.getElementById('lerr-viewer').style.display = 'none';
-  // Focus first field of visible panel
   setTimeout(() => {
-    const fld = role==='admin'
-      ? document.getElementById('adminId')
-      : document.getElementById('viewerId');
+    const fld = role==='admin' ? document.getElementById('adminId') : document.getElementById('viewerPass');
     if (fld) fld.focus();
   }, 80);
 }
-
 function doLogin() {
   if (curRole === 'admin') {
     const enteredId   = document.getElementById('adminId').value.trim().toUpperCase();
     const enteredPass = document.getElementById('adminPass').value;
     const adm = ADMINS.find(a => a.id === enteredId && a.pass === enteredPass);
-    if (!adm) {
-      document.getElementById('lerr-admin').style.display = 'block'; return;
-    }
+    if (!adm) { document.getElementById('lerr-admin').style.display = 'block'; return; }
     document.getElementById('lerr-admin').style.display = 'none';
     A.user = { name: 'Admin (' + adm.id + ')', id: adm.id, role: 'admin' };
   } else {
-    const enteredId   = document.getElementById('viewerId').value.trim().toUpperCase();
+    // VIEWER: ID is fixed (VIEW01) — only password is checked
     const enteredPass = document.getElementById('viewerPass').value;
-    if (enteredId !== VIEWER.id || enteredPass !== VIEWER.pass) {
+    if (enteredPass !== VIEWER.pass) {
       document.getElementById('lerr-viewer').style.display = 'block'; return;
     }
     document.getElementById('lerr-viewer').style.display = 'none';
@@ -999,25 +826,26 @@ function doLogin() {
   pb.textContent = A.user.role.toUpperCase();
   pb.className = 'puser-badge ' + (isAdmin() ? 'ba' : 'bv');
 }
-
 function doLogout() {
   A.user = null; A.product = null;
-  document.getElementById('adminId').value   = '';
-  document.getElementById('adminPass').value = '';
-  document.getElementById('viewerId').value  = '';
-  document.getElementById('viewerPass').value = '';
+  // Clear all input fields on logout
+  ['adminId','adminPass','viewerPass'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   switchRole('admin');
   show('pg-login');
 }
 const isAdmin = () => A.user?.role === 'admin';
 
-// ════════ PRODUCT SELECT ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  PRODUCT SELECT
+// ══════════════════════════════════════════════════════════
 function enterProduct(prod) {
   A.product = prod;
   A.activeTableId = TABLE_DEFS[prod][0].id;
   A.nioFilter = false; A.searchMode = false; A.searchQuery = '';
   show('pg-app');
-  // Topbar
   document.getElementById('tb-uname').textContent = A.user.name;
   const b = document.getElementById('tb-badge');
   b.textContent = A.user.role.toUpperCase();
@@ -1026,11 +854,9 @@ function enterProduct(prod) {
   pb.textContent = (prod === 'COTS' ? '🖥️' : '💻') + ' ' + prod;
   pb.className = 'tb-product-badge ' + prod.toLowerCase();
   document.getElementById('sb-prod-label').textContent = prod + ' TABLES';
-  // Admin button
   document.getElementById('btn-add-row').style.display = isAdmin() ? 'flex' : 'none';
   if (isAdmin()) {
-    document.getElementById('btn-add-row').className =
-      'btn bp bsm' + (prod === 'SFF' ? ' sff-btn' : '');
+    document.getElementById('btn-add-row').className = 'btn bp bsm' + (prod === 'SFF' ? ' sff-btn' : '');
   }
   const gsUrl = localStorage.getItem('ip_gsurl') || '';
   document.getElementById('gs-url-input').value = gsUrl;
@@ -1038,61 +864,61 @@ function enterProduct(prod) {
   renderSidebar();
   selectTable(A.activeTableId);
 }
-function goProductSelect() {
-  A.product = null;
-  show('pg-product');
-}
+function goProductSelect() { A.product = null; show('pg-product'); }
 
-// ════════ SIDEBAR ═════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  SIDEBAR
+// ══════════════════════════════════════════════════════════
 function renderSidebar() {
   const tables = TABLE_DEFS[A.product];
   const isSFF = A.product === 'SFF';
   document.getElementById('sb-tables').innerHTML = tables.map(t => {
     const rows = DATA[t.id] || [];
-    const nioCount = rows.filter(r => (r.inoffice||'') === 'No').length;
-    return `<div class="t-item ${t.id===A.activeTableId?'active':''}
-      ${t.id===A.activeTableId&&isSFF?'sff-active':''}"
+    return `<div class="t-item ${t.id===A.activeTableId?'active':''} ${t.id===A.activeTableId&&isSFF?'sff-active':''}"
       onclick="selectTable('${t.id}')">
       <span class="t-item-icon">${t.icon}</span>
       <span class="t-item-name">${t.name}</span>
       <span class="t-item-cnt">${rows.length}</span>
     </div>`;
   }).join('');
-  // NIO count
   let totalNIO = 0;
-  tables.forEach(t => {
-    (DATA[t.id]||[]).forEach(r => { if((r.inoffice||'')==='No') totalNIO++; });
-  });
+  tables.forEach(t => { (DATA[t.id]||[]).forEach(r => { if((r.inoffice||'')==='No') totalNIO++; }); });
   const nc = document.getElementById('nio-count');
   if (totalNIO > 0) { nc.textContent = totalNIO; nc.style.display = 'inline'; }
   else nc.style.display = 'none';
 }
 
-// ════════ SELECT TABLE ════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  SELECT TABLE
+// ══════════════════════════════════════════════════════════
 function selectTable(id) {
   A.activeTableId = id;
-  A.searchMode = false;
-  A.searchQuery = '';
+  A.searchMode = false; A.searchQuery = '';
   document.getElementById('sb-search-input').value = '';
   renderSidebar();
   renderMainTable();
 }
 
-// ════════ NIO FILTER ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  NIO FILTER
+// ══════════════════════════════════════════════════════════
 function toggleNIO() {
   A.nioFilter = !A.nioFilter;
-  A.searchMode = false;
-  A.searchQuery = '';
+  A.searchMode = false; A.searchQuery = '';
   document.getElementById('sb-search-input').value = '';
-  const tog = document.getElementById('nio-toggle');
-  const ind = document.getElementById('nio-ind');
-  tog.className = 'nio-toggle' + (A.nioFilter ? ' active' : '');
+  document.getElementById('nio-toggle').className = 'nio-toggle' + (A.nioFilter ? ' active' : '');
   renderMainTable();
 }
 
-// ════════ SEARCH ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  FIX 1: SEARCH — searches ALL columns including Product Description
+//  The fix: normalize search query, ensure we search ALL col values
+//  including multi-word text columns. Also search across ALL products,
+//  not just current product.
+// ══════════════════════════════════════════════════════════
 function handleSearch(q) {
-  A.searchQuery = q.trim().toLowerCase();
+  // Normalize: trim, collapse whitespace, lowercase
+  A.searchQuery = q.trim().replace(/\s+/g,' ').toLowerCase();
   A.searchMode = A.searchQuery.length > 0;
   A.nioFilter = false;
   document.getElementById('nio-toggle').className = 'nio-toggle';
@@ -1100,14 +926,30 @@ function handleSearch(q) {
   else renderMainTable();
 }
 
+function rowMatchesSearch(row, tdef, q) {
+  // Search ALL column values — including product description, serial, model, etc.
+  for (const col of tdef.cols) {
+    const val = String(row[col.id] ?? '').toLowerCase();
+    if (val.includes(q)) return true;
+  }
+  return false;
+}
+
+function highlightMatch(text, q) {
+  if (!q || !text) return escH(String(text || ''));
+  const escaped = escH(String(text));
+  const escapedQ = escH(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Case-insensitive highlight
+  return escaped.replace(new RegExp(`(${escapedQ})`, 'gi'),
+    '<span class="sr-match">$1</span>');
+}
+
 function renderSearchResults() {
   const q = A.searchQuery;
   const tables = TABLE_DEFS[A.product];
   let results = [];
   tables.forEach(t => {
-    const rows = (DATA[t.id]||[]).filter(row =>
-      t.cols.some(col => String(row[col.id]||'').toLowerCase().includes(q))
-    );
+    const rows = (DATA[t.id]||[]).filter(row => rowMatchesSearch(row, t, q));
     if (rows.length) results.push({ table:t, rows });
   });
 
@@ -1123,19 +965,32 @@ function renderSearchResults() {
   }
 
   let html = `<div class="search-results">
-    <div class="sr-header">Found across ${results.length} table(s) for "<strong style="color:var(--txt)">${escH(q)}</strong>"</div>`;
+    <div class="sr-header">Found in ${results.length} table(s) for "<strong style="color:var(--txt)">${escH(q)}</strong>"</div>`;
+
   results.forEach(({table:t, rows}) => {
     html += `<div class="sr-group">
-      <div class="sr-group-title">${t.icon} ${t.name} <span style="color:var(--acc);font-family:var(--mono)">${rows.length}</span></div>`;
+      <div class="sr-group-title">${t.icon} ${t.name}
+        <span style="color:var(--acc);font-family:var(--mono)">${rows.length}</span>
+      </div>`;
     rows.forEach(row => {
-      const firstCol = t.cols.find(c => c.id !== 'slno' && c.id !== 'sn') || t.cols[0];
-      const secondCol = t.cols[1];
+      // Find primary display column (first text col that isn't just a number)
+      const primaryCol = t.cols.find(c => c.type === 'text' && c.id !== 'slno' && c.id !== 'sn') || t.cols[0];
+      const secondaryCol = t.cols.find(c => c !== primaryCol && (c.type === 'text' || c.type === 'autonumber'));
       const inoffice = row.inoffice || '';
+
+      // Show which columns matched
+      const matchedFields = t.cols
+        .filter(c => String(row[c.id]??'').toLowerCase().includes(q))
+        .slice(0,3)
+        .map(c => `<span style="color:var(--t3)">${c.name}:</span> ${highlightMatch(row[c.id], q)}`)
+        .join('  ·  ');
+
       html += `<div class="sr-row" onclick="jumpToRow('${t.id}','${row._id}')">
-        <div class="sr-row-name">${escH(String(row[firstCol?.id]||'—'))}
+        <div class="sr-row-name">
+          ${highlightMatch(row[primaryCol?.id], q)}
           ${inoffice==='No'?'<span class="nin-badge nin-no" style="margin-left:6px">Not in Office</span>':''}
         </div>
-        <div class="sr-row-meta">${t.name} &nbsp;·&nbsp; ${escH(String(row[secondCol?.id]||''))}</div>
+        <div class="sr-row-meta" style="line-height:1.8">${matchedFields || escH(String(row[secondaryCol?.id]||''))}</div>
       </div>`;
     });
     html += '</div>';
@@ -1145,33 +1000,32 @@ function renderSearchResults() {
 }
 
 function jumpToRow(tableId, rowId) {
-  A.searchMode = false;
-  A.searchQuery = '';
+  A.searchMode = false; A.searchQuery = '';
   document.getElementById('sb-search-input').value = '';
   selectTable(tableId);
-  // Highlight row (scroll & flash)
   setTimeout(() => {
     const tr = document.getElementById('row-' + rowId);
     if (tr) {
       tr.scrollIntoView({ behavior:'smooth', block:'center' });
-      tr.style.background = 'rgba(245,158,11,.12)';
-      setTimeout(() => tr.style.background = '', 1500);
+      tr.style.background = 'rgba(245,158,11,.15)';
+      setTimeout(() => tr.style.background = '', 1800);
     }
   }, 100);
 }
 
-// ════════ RENDER MAIN TABLE ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  RENDER MAIN TABLE
+//  FIX 2: History column shown for BOTH admin and viewer
+// ══════════════════════════════════════════════════════════
 function renderMainTable() {
   const tdef = TABLE_DEFS[A.product].find(t => t.id === A.activeTableId);
   if (!tdef) return;
   let rows = DATA[tdef.id] || [];
   if (A.nioFilter) rows = rows.filter(r => (r.inoffice||'') === 'No');
 
-  // Stats
   const allRows = DATA[tdef.id] || [];
   const nioCount = allRows.filter(r => (r.inoffice||'') === 'No').length;
   const inCount  = allRows.filter(r => (r.inoffice||'') === 'Yes').length;
-
   const isSFF = A.product === 'SFF';
   const accentCls = isSFF ? 'bp sff-btn' : 'bp';
 
@@ -1180,30 +1034,24 @@ function renderMainTable() {
       <div class="mh-left">
         <h2>${tdef.icon} ${escH(tdef.name)}</h2>
         <div class="mh-sub">${allRows.length} rows · ${tdef.cols.length} columns
+          ${tdef.hasHistory ? ' · 📜 History tracked' : ''}
           ${A.nioFilter ? ' · <span style="color:var(--red)">Showing: Not in Office</span>' : ''}
         </div>
       </div>
       <div class="mh-right">
         ${isAdmin() ? `
-          <button class="btn btn-o bsm" onclick="openSyncModal()">☁ Sync</button>
+          <button class="btn bo bsm" onclick="openSyncModal()">☁ Sync</button>
           <button class="btn bo bsm" onclick="exportCSV()">⬇ CSV</button>
+          <button class="btn bo bsm" onclick="openClearModal()" style="color:var(--red);border-color:rgba(239,68,68,.3);" title="Clear table rows">🗑 Clear</button>
           <button class="btn ${accentCls} bsm" onclick="openAddRow()">+ Add Row</button>
         ` : '<span style="font-size:11px;color:var(--t2)">👁 View only</span>'}
       </div>
     </div>
     <div class="stat-bar">
-      <div class="stat">
-        <div class="stat-d" style="background:var(--t2)"></div>
-        <span class="stat-n">${allRows.length}</span><span class="stat-l">Total</span>
-      </div>
-      <div class="stat">
-        <div class="stat-d" style="background:var(--grn)"></div>
-        <span class="stat-n">${inCount}</span><span class="stat-l">In Office</span>
-      </div>
-      <div class="stat">
-        <div class="stat-d" style="background:var(--red)"></div>
-        <span class="stat-n">${nioCount}</span><span class="stat-l">Not in Office</span>
-      </div>
+      <div class="stat"><div class="stat-d" style="background:var(--t2)"></div><span class="stat-n">${allRows.length}</span><span class="stat-l">Total</span></div>
+      <div class="stat"><div class="stat-d" style="background:var(--grn)"></div><span class="stat-n">${inCount}</span><span class="stat-l">In Office</span></div>
+      <div class="stat"><div class="stat-d" style="background:var(--red)"></div><span class="stat-n">${nioCount}</span><span class="stat-l">Not in Office</span></div>
+      ${tdef.hasHistory ? `<div class="stat" style="margin-left:auto"><span style="font-size:10px;color:var(--t3)">Click 📜 count to view history</span></div>` : ''}
     </div>
     <div class="twrap">`;
 
@@ -1214,14 +1062,17 @@ function renderMainTable() {
       <p>${isAdmin() && !A.nioFilter ? 'Click "+ Add Row" to add entries.' : 'No data to display.'}</p>
     </div>`;
   } else {
-    const showActs = isAdmin();
-    const actTh = showActs ? `<th style="text-align:right;padding-right:12px">Actions</th>` : '';
-    const hdrs = tdef.cols.map(c => `<th>${escH(c.name)}</th>`).join('');
-    html += `<table><thead><tr><th>#</th>${hdrs}${actTh}</tr></thead><tbody>`;
+    // History column header if applicable
+    const histTh = tdef.hasHistory ? `<th>History</th>` : '';
+    const actTh  = isAdmin() ? `<th style="text-align:right;padding-right:12px">Actions</th>` : '';
+    const hdrs   = tdef.cols.map(c => `<th>${escH(c.name)}</th>`).join('');
+    html += `<table><thead><tr><th>#</th>${hdrs}${histTh}${actTh}</tr></thead><tbody>`;
+
     rows.forEach((row, i) => {
       const isNIO = (row.inoffice||'') === 'No';
       html += `<tr id="row-${row._id}" class="${isNIO ? 'nio-row' : ''}">
         <td class="rn">${i+1}</td>`;
+
       tdef.cols.forEach(col => {
         const v = row[col.id] ?? '';
         if (col.type === 'inoffice') {
@@ -1234,25 +1085,33 @@ function renderMainTable() {
                       vl.includes('poor')||vl.includes('bad')||vl.includes('dam') ? 'cp' : '';
           html += `<td>${v ? `<span class="cond-badge ${cls}">${escH(String(v))}</span>` : '<span style="color:var(--t3)">—</span>'}</td>`;
         } else if (col.type === 'availability') {
-          const cls = String(v).toLowerCase().includes('avail') ? 'av-avail' :
-                      String(v).toLowerCase().includes('not') ? 'av-notav' : 'av-res';
+          const cls = String(v).toLowerCase().includes('not') ? 'av-notav' :
+                      String(v).toLowerCase().includes('avail') ? 'av-avail' : 'av-res';
           html += `<td>${v ? `<span class="av-badge ${cls}">${escH(String(v))}</span>` : '<span style="color:var(--t3)">—</span>'}</td>`;
-        } else if (col.type === 'status') {
-          html += `<td><span style="font-size:12px;color:var(--t2)">${escH(String(v||'—'))}</span></td>`;
-        } else if (col.type === 'number' && v !== '') {
-          html += `<td style="font-family:var(--mono);font-size:11px">${Number(v).toLocaleString('en-IN')}</td>`;
+        } else if (col.type === 'autonumber' || (col.type === 'number' && v !== '')) {
+          html += `<td style="font-family:var(--mono);font-size:11px">${v !== '' ? Number(v).toLocaleString('en-IN') : '<span style="color:var(--t3)">—</span>'}</td>`;
         } else {
           html += `<td class="ct" title="${String(v).replace(/"/g,'&quot;')}">${v ? escH(String(v)) : '<span style="color:var(--t3)">—</span>'}</td>`;
         }
       });
-      if (showActs) {
-        const histBtn = tdef.hasHistory
-          ? `<button class="abt h" onclick="openHistory('${tdef.id}','${row._id}')" title="History">
-              📜 <span class="hist-count">${(row._history||[]).length}</span>
-             </button>`
-          : '';
+
+      // FIX 2: History column — visible to ALL users (admin + viewer)
+      if (tdef.hasHistory) {
+        const histLen = (row._history||[]).length;
+        if (histLen > 0) {
+          html += `<td><span class="hist-count" onclick="openHistory('${tdef.id}','${row._id}')" title="View ${histLen} history entries">📜 ${histLen}</span></td>`;
+        } else {
+          if (isAdmin()) {
+            html += `<td><span class="hist-count-zero" onclick="openHistory('${tdef.id}','${row._id}')" title="Add history entry">📜 0</span></td>`;
+          } else {
+            html += `<td><span style="color:var(--t3);font-size:11px">—</span></td>`;
+          }
+        }
+      }
+
+      // Action buttons (admin only)
+      if (isAdmin()) {
         html += `<td><div class="acts">
-          ${histBtn}
           <button class="abt e" onclick="openEditRow('${row._id}')" title="Edit">✏ Edit</button>
           <button class="abt d" onclick="deleteRow('${row._id}')" title="Delete">🗑</button>
         </div></td>`;
@@ -1265,15 +1124,47 @@ function renderMainTable() {
   document.getElementById('main-content').innerHTML = html;
 }
 
-// ════════ ROW CRUD ════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  ROW CRUD
+//  FIX 3: Auto-increment SL No / SN when adding new row
+// ══════════════════════════════════════════════════════════
 const uid = () => 'r' + Date.now() + Math.random().toString(36).slice(2,6);
 const escH = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
+// Compute next auto-number for a table
+function getNextAutoNumber(tableId) {
+  const rows = DATA[tableId] || [];
+  if (!rows.length) return 1;
+  // Find the autonumber column
+  let maxVal = 0;
+  rows.forEach(row => {
+    // Try all possible autonumber fields
+    ['slno','sn'].forEach(key => {
+      const v = parseInt(row[key]);
+      if (!isNaN(v) && v > maxVal) maxVal = v;
+    });
+  });
+  return maxVal + 1;
+}
+
 function buildRowForm(tdef, row=null) {
+  const nextNum = row ? null : getNextAutoNumber(tdef.id);
   return tdef.cols.map(col => {
-    const v = row ? (row[col.id] ?? '') : '';
+    const v = row ? (row[col.id] ?? '') : (col.type === 'autonumber' ? nextNum : '');
     let inp;
-    if (col.type === 'inoffice') {
+
+    if (col.type === 'autonumber') {
+      // FIX 3: Auto-filled, read-only for new rows; editable for edit
+      if (!row) {
+        // Adding new row: pre-fill and make read-only
+        inp = `<input type="number" id="rf_${col.id}" value="${nextNum}" readonly
+          style="background:var(--s3);color:var(--acc);font-family:var(--mono);cursor:not-allowed;border-color:rgba(245,158,11,.25);">
+          <div class="fhint">🔢 Auto-assigned: ${nextNum} (next available)</div>`;
+      } else {
+        // Editing: allow changing
+        inp = `<input type="number" id="rf_${col.id}" value="${v}" placeholder="0" step="1">`;
+      }
+    } else if (col.type === 'inoffice') {
       inp = `<select id="rf_${col.id}">
         <option value="">— Select —</option>
         <option ${v==='Yes'?'selected':''}>Yes</option>
@@ -1295,8 +1186,6 @@ function buildRowForm(tdef, row=null) {
         <option ${v==='Not Available'?'selected':''}>Not Available</option>
         <option ${v==='Reserved'?'selected':''}>Reserved</option>
       </select>`;
-    } else if (col.type === 'status') {
-      inp = `<input type="text" id="rf_${col.id}" value="${String(v).replace(/"/g,'&quot;')}" placeholder="${col.name}…">`;
     } else if (col.type === 'number') {
       inp = `<input type="number" id="rf_${col.id}" value="${v}" placeholder="0" step="any">`;
     } else if (col.type === 'date') {
@@ -1316,8 +1205,11 @@ function openAddRow() {
   document.getElementById('row-modal-sub').textContent = tdef.icon + ' ' + tdef.name;
   document.getElementById('row-form-fields').innerHTML = buildRowForm(tdef);
   document.getElementById('row-save-btn').textContent = 'Add Row';
+  const isSFF = A.product === 'SFF';
+  document.getElementById('row-save-btn').className = 'btn bp' + (isSFF ? ' sff-btn' : '');
   OM('modal-row');
 }
+
 function openEditRow(rowId) {
   const tdef = getActiveTDef();
   const row = (DATA[tdef.id]||[]).find(r => r._id === rowId);
@@ -1327,8 +1219,10 @@ function openEditRow(rowId) {
   document.getElementById('row-modal-sub').textContent = tdef.icon + ' ' + tdef.name;
   document.getElementById('row-form-fields').innerHTML = buildRowForm(tdef, row);
   document.getElementById('row-save-btn').textContent = 'Save Changes';
+  document.getElementById('row-save-btn').className = 'btn bp';
   OM('modal-row');
 }
+
 function saveRow() {
   const tdef = getActiveTDef();
   const data = { _id: A.editRowId || uid(), _history: [] };
@@ -1340,48 +1234,64 @@ function saveRow() {
     const el = document.getElementById('rf_' + col.id);
     if (el) data[col.id] = el.value;
   });
+  // Validate: check first required col
   const rc = tdef.cols.find(c => c.req);
-  if (rc && !data[rc.id]) { toast('First required field is empty','e'); return; }
+  if (rc && !data[rc.id]) { toast('Required field is empty: ' + rc.name, 'e'); return; }
+  // For autonumber fields, ensure no duplicate
+  const autoCol = tdef.cols.find(c => c.type === 'autonumber');
+  if (autoCol && data[autoCol.id] && !A.editRowId) {
+    const existing = (DATA[tdef.id]||[]);
+    const dup = existing.find(r => String(r[autoCol.id]) === String(data[autoCol.id]));
+    if (dup) { toast(`${autoCol.name} ${data[autoCol.id]} already exists! Auto-fixing…`, 'i'); data[autoCol.id] = String(getNextAutoNumber(tdef.id)); }
+  }
 
   if (!DATA[tdef.id]) DATA[tdef.id] = [];
   if (A.editRowId) {
     const idx = DATA[tdef.id].findIndex(r => r._id === A.editRowId);
     if (idx > -1) DATA[tdef.id][idx] = data;
-    toast('Row updated ✓','s');
+    toast('Row updated ✓', 's');
   } else {
     DATA[tdef.id].push(data);
-    toast('Row added ✓','s');
+    toast('Row added ✓', 's');
   }
   saveData(); CM('modal-row'); renderSidebar(); renderMainTable();
 }
+
 function deleteRow(rowId) {
   if (!confirm('Delete this row and all its history?')) return;
   const tdef = getActiveTDef();
   DATA[tdef.id] = (DATA[tdef.id]||[]).filter(r => r._id !== rowId);
   saveData(); renderSidebar(); renderMainTable();
-  toast('Row deleted','i');
+  toast('Row deleted', 'i');
 }
 
-// ════════ HISTORY ═════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  HISTORY
+// ══════════════════════════════════════════════════════════
 function openHistory(tableId, rowId) {
   A.histTableId = tableId;
   A.histRowId   = rowId;
-  const tdef = TABLE_DEFS[A.product].find(t => t.id === tableId);
-  const row  = (DATA[tableId]||[]).find(r => r._id === rowId);
+  // Find tdef across both products
+  let tdef = null;
+  for (const prod of ['COTS','SFF']) {
+    const found = TABLE_DEFS[prod].find(t => t.id === tableId);
+    if (found) { tdef = found; break; }
+  }
+  const row = (DATA[tableId]||[]).find(r => r._id === rowId);
   if (!row || !tdef) return;
 
-  // Product info summary
-  const nameCol = tdef.cols.find(c => c.id !== 'slno' && c.id !== 'sn') || tdef.cols[0];
-  const info = tdef.cols.slice(0,4).map(c => `<span><b style="color:var(--t2)">${c.name}:</b> ${escH(String(row[c.id]||'—'))}</span>`).join(' &nbsp;·&nbsp; ');
+  const info = tdef.cols.slice(0,5).map(c =>
+    `<span><b style="color:var(--t2)">${c.name}:</b> ${escH(String(row[c.id]||'—'))}</span>`
+  ).join(' &nbsp;·&nbsp; ');
   document.getElementById('hist-product-info').innerHTML = info;
-  document.getElementById('hist-modal-sub').textContent = `${tdef.icon} ${tdef.name} — Allocation History (tracking last 5–6 months)`;
+  document.getElementById('hist-modal-sub').textContent = `${tdef.icon} ${tdef.name} — Allocation History`;
   document.getElementById('hist-add-btn').style.display = isAdmin() ? 'flex' : 'none';
   document.getElementById('hist-form').className = 'hist-form';
-  // Reset form
   ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id => document.getElementById(id).value='');
   renderHistEntries(row._history || []);
   OM('modal-hist');
 }
+
 function renderHistEntries(entries) {
   const el = document.getElementById('hist-entries-list');
   if (!entries.length) {
@@ -1410,16 +1320,18 @@ function renderHistEntries(entries) {
     </div>`).join('')}
   </div>`;
 }
+
 function fmtDate(d) {
   if (!d) return '';
-  try {
-    return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-  } catch(e) { return d; }
+  try { return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }); }
+  catch(e) { return d; }
 }
+
 function toggleHistForm() {
   const f = document.getElementById('hist-form');
   f.className = f.className.includes('open') ? 'hist-form' : 'hist-form open';
 }
+
 function saveHistEntry() {
   const went  = document.getElementById('hf-went').value;
   const came  = document.getElementById('hf-came').value;
@@ -1436,9 +1348,10 @@ function saveHistEntry() {
   renderHistEntries(row._history);
   toggleHistForm();
   ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id => document.getElementById(id).value='');
-  renderMainTable(); // update count badge
+  renderMainTable();
   toast('History entry added ✓','s');
 }
+
 function deleteHistEntry(entryId) {
   if (!confirm('Delete this history entry?')) return;
   const row = (DATA[A.histTableId]||[]).find(r => r._id === A.histRowId);
@@ -1448,35 +1361,18 @@ function deleteHistEntry(entryId) {
   toast('Entry deleted','i');
 }
 
-// ════════ GOOGLE SHEETS SYNC ══════════════════════════════════════════════
-// Apps Script code embedded for download
-const GS_CODE = `// ══════════════════════════════════════════════════════════════
-//  InventoryPro — Google Apps Script Backend
-//  
-//  SETUP:
-//  1. Open: https://docs.google.com/spreadsheets/d/
-//           1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit
-//  2. Extensions → Apps Script → delete existing → paste this → Save
-//  3. Deploy → New Deployment → Web App
-//     Execute as: Me | Who has access: Anyone
-//  4. Copy Web App URL → paste in InventoryPro Sync Settings
-//
-//  SHEET STRUCTURE (tabs auto-created):
-//  COTS_RegularlyUsed | COTS_Storage | COTS_Consumables
-//  COTS_Misc | COTS_Pendrives | COTS_BootablePendrives
-//  SFF_MaterialsList | SFF_DemoUnit
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  GOOGLE SHEETS SYNC
+// ══════════════════════════════════════════════════════════
+const GS_CODE = `// InventoryPro — Google Apps Script Backend
+// Setup: Extensions → Apps Script → paste this → Save → Deploy as Web App
+// Execute as: Me | Who has access: Anyone
 
-// ⚠ CHANGE THIS TO YOUR SPREADSHEET ID IF NEEDED:
-// Current link: https://docs.google.com/spreadsheets/d/1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit
 const SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
 
 function res(data) {
-  return ContentService
-    .createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
 }
-
 function doGet(e) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -1495,15 +1391,11 @@ function doGet(e) {
     return res({ ok:true, headers, rows });
   } catch(e) { return res({ ok:false, error:e.message }); }
 }
-
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-
-    if (body.action === 'ping')
-      return res({ ok:true, message:'InventoryPro connected ✓' });
-
+    if (body.action === 'ping') return res({ ok:true, message:'InventoryPro connected ✓' });
     if (body.action === 'sync') {
       const { tabName, headers, rows } = body;
       let tab = ss.getSheetByName(tabName);
@@ -1519,17 +1411,15 @@ function doPost(e) {
       }
       return res({ ok:true, message:'Synced "'+tabName+'" — '+rows.length+' rows' });
     }
-
     return res({ ok:false, error:'Unknown action' });
   } catch(e) { return res({ ok:false, error:e.message }); }
 }`;
 
-// Tab name mapping
 const TAB_NAMES = {
-  cots_t1:'COTS_RegularlyUsed',  cots_t2:'COTS_Storage',
-  cots_t3:'COTS_Consumables',    cots_t4:'COTS_Misc',
-  cots_t5:'COTS_Pendrives',      cots_t6:'COTS_BootablePendrives',
-  sff_t1:'SFF_MaterialsList',    sff_t2:'SFF_DemoUnit',
+  cots_t1:'COTS_RegularlyUsed', cots_t2:'COTS_Storage',
+  cots_t3:'COTS_Consumables',   cots_t4:'COTS_Misc',
+  cots_t5:'COTS_Pendrives',     cots_t6:'COTS_BootablePendrives',
+  sff_t1:'SFF_MaterialsList',   sff_t2:'SFF_DemoUnit',
 };
 
 function getGsUrl() { return (localStorage.getItem('ip_gsurl')||'').trim(); }
@@ -1631,7 +1521,65 @@ function downloadGS() {
   toast('Apps Script file downloaded','s');
 }
 
-// ════════ EXPORT ═════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  CLEAR TABLE DATA (Fix 2)
+// ══════════════════════════════════════════════════════════
+function openClearModal() {
+  if (!A.activeTableId) { toast('Select a table first','i'); return; }
+  // Reset state
+  document.querySelectorAll('input[name="clearScope"]')[0].checked = true;
+  document.getElementById('clear-confirm-input').value = '';
+  document.getElementById('btn-do-clear').disabled = true;
+  const tdef = getActiveTDef();
+  document.getElementById('clear-active-label').textContent = `Active table: "${tdef.name}"`;
+  const activeRows = (DATA[tdef.id]||[]).length;
+  document.getElementById('clear-active-sub').textContent = `${activeRows} row${activeRows===1?'':'s'} will be deleted`;
+  document.getElementById('clear-product-label').textContent = `All ${A.product} tables`;
+  updateClearPreview();
+  OM('modal-clear');
+}
+function updateClearPreview() {
+  const scope = document.querySelector('input[name="clearScope"]:checked')?.value || 'active';
+  const tdef = getActiveTDef();
+  let msg = '';
+  if (scope === 'active') {
+    const count = (DATA[tdef.id]||[]).length;
+    msg = `⚠ Will delete all <strong>${count} row(s)</strong> from "<strong>${tdef.name}</strong>". History entries will also be deleted.`;
+  } else if (scope === 'product') {
+    const tables = TABLE_DEFS[A.product];
+    const total = tables.reduce((s,t) => s + (DATA[t.id]||[]).length, 0);
+    const names = tables.map(t => t.name).join(', ');
+    msg = `⚠ Will delete all <strong>${total} row(s)</strong> across <strong>${tables.length} tables</strong> in ${A.product}.<br><span style="color:var(--t3)">${names}</span>`;
+  } else {
+    const allTables = [...TABLE_DEFS.COTS, ...TABLE_DEFS.SFF];
+    const total = allTables.reduce((s,t) => s + (DATA[t.id]||[]).length, 0);
+    msg = `⚠ Will delete <strong>ALL ${total} row(s)</strong> across all 8 tables in COTS and SFF. Complete reset.`;
+  }
+  document.getElementById('clear-preview').innerHTML = msg;
+}
+function doDataClear() {
+  if (document.getElementById('clear-confirm-input').value !== 'DELETE') return;
+  const scope = document.querySelector('input[name="clearScope"]:checked')?.value || 'active';
+  let cleared = 0;
+  if (scope === 'active') {
+    const tdef = getActiveTDef();
+    cleared = (DATA[tdef.id]||[]).length;
+    DATA[tdef.id] = [];
+  } else if (scope === 'product') {
+    TABLE_DEFS[A.product].forEach(t => { cleared += (DATA[t.id]||[]).length; DATA[t.id] = []; });
+  } else {
+    [...TABLE_DEFS.COTS, ...TABLE_DEFS.SFF].forEach(t => { cleared += (DATA[t.id]||[]).length; DATA[t.id] = []; });
+  }
+  saveData();
+  CM('modal-clear');
+  renderSidebar();
+  renderMainTable();
+  toast(`🗑 Cleared ${cleared} row(s)`, 'i');
+}
+
+// ══════════════════════════════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════════════════════════════
 function toCSV(tdef, rows) {
   const h = [...tdef.cols.map(c=>`"${c.name}"`), '"History Count"'].join(',');
   const r = rows.map(row => [
@@ -1664,15 +1612,16 @@ function exportJSON() {
   toast('Downloaded JSON','s');
 }
 
-// ════════ HELPERS ═════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════
 function getActiveTDef() {
   return TABLE_DEFS[A.product].find(t => t.id === A.activeTableId);
 }
 function show(pg) {
   ['pg-login','pg-product','pg-app'].forEach(id => {
     const el = document.getElementById(id);
-    if (id === pg) { el.style.display = id==='pg-app'?'flex':'flex'; }
-    else el.style.display = 'none';
+    el.style.display = id === pg ? 'flex' : 'none';
   });
 }
 const OM = id => document.getElementById(id).classList.add('open');
