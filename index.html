@@ -645,7 +645,7 @@ const ADMINS = [
   // ┌─────────────────────────────────────────────────────────────────────┐
   // │  ADMIN 4  ←  Change id, name, pass values below as needed           │
   // └─────────────────────────────────────────────────────────────────────┘
-  { id:'ADM004', name:'VASE ANIL',  pass:'1111', color:'var(--blu)' },
+  { id:'ADM004', name:'Ankit Patel',  pass:'10698', color:'var(--blu)' },
 ];
 
 // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -655,7 +655,7 @@ const ADMINS = [
 // ║                                                                           ║
 // ║  EXAMPLE: pass:'Viewer@2024'  →  pass:'NewViewerPass@2025'               ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
-const VIEWER = { id:'VIEW01', pass:'Trident@123' };
+const VIEWER = { id:'VIEW01', pass:'Viewer@2024' };
 
 // ══════════════════════════════════════════════════════════
 //  TABLE DEFINITIONS
@@ -1364,55 +1364,155 @@ function deleteHistEntry(entryId) {
 // ══════════════════════════════════════════════════════════
 //  GOOGLE SHEETS SYNC
 // ══════════════════════════════════════════════════════════
-const GS_CODE = `// InventoryPro — Google Apps Script Backend
-// Setup: Extensions → Apps Script → paste this → Save → Deploy as Web App
-// Execute as: Me | Who has access: Anyone
+const GS_CODE = `// ============================================================
+//  InventoryPro — Google Apps Script Backend  (v2 Fixed)
+//
+//  SETUP:
+//  1. Extensions → Apps Script → delete all → paste this → Save
+//  2. Deploy → New deployment → Web App
+//     Execute as: Me | Who has access: Anyone → Deploy → Authorize
+//  3. Copy Web App URL → paste in InventoryPro Sync modal Step 3
+//  4. OPTIONAL: Run setupAllTabs() from editor to pre-create tabs
+//
+//  NOTE: After any code edit, create a NEW deployment.
+// ============================================================
 
 const SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
+const MAX_HISTORY_CHARS = 45000;
 
 function res(data) {
-  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
 }
+
+// GET: used for import (read sheet → app) and health check
 function doGet(e) {
   try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = e.parameter.sheet;
-    if (!sheet) return res({ ok:true, sheets:ss.getSheets().map(s=>s.getName()) });
-    const tab = ss.getSheetByName(sheet);
-    if (!tab) return res({ ok:false, error:'Sheet tab not found: '+sheet });
-    const vals = tab.getDataRange().getValues();
-    if (!vals.length) return res({ ok:true, headers:[], rows:[] });
-    const headers = vals[0].map(String);
-    const rows = vals.slice(1).map(r => {
-      const obj = {};
-      headers.forEach((h,i) => obj[h] = String(r[i]??''));
+    var params = e.parameter || {};
+    if (params.action === 'ping') return res({ ok:true, message:'InventoryPro connected ✓' });
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    if (!params.sheet) {
+      var names = ss.getSheets().map(function(s) { return s.getName(); });
+      return res({ ok:true, sheets:names });
+    }
+    var tab = ss.getSheetByName(params.sheet);
+    if (!tab) return res({ ok:false, error:'Tab not found: '+params.sheet });
+    var lastRow = tab.getLastRow();
+    var lastCol = tab.getLastColumn();
+    if (lastRow < 1 || lastCol < 1) return res({ ok:true, headers:[], rows:[] });
+    var allVals = tab.getRange(1, 1, lastRow, lastCol).getValues();
+    if (allVals.length < 2) return res({ ok:true, headers:allVals[0].map(String), rows:[] });
+    var headers = allVals[0].map(String);
+    var rows = allVals.slice(1).map(function(r) {
+      var obj = {};
+      headers.forEach(function(h,i) {
+        obj[h] = (r[i]===null||r[i]===undefined) ? '' : String(r[i]);
+      });
       return obj;
     });
-    return res({ ok:true, headers, rows });
-  } catch(e) { return res({ ok:false, error:e.message }); }
+    return res({ ok:true, headers:headers, rows:rows });
+  } catch(err) {
+    console.error('doGet error:', err.message);
+    return res({ ok:false, error:'doGet failed: '+err.message });
+  }
 }
+
+// POST: used for sync (write app data → sheet) and ping
+// Content-Type is sent as 'text/plain' from the app — this is intentional.
+// It bypasses CORS preflight (OPTIONS) which Apps Script does not handle.
+// The body is still valid JSON and is parsed with JSON.parse().
 function doPost(e) {
   try {
-    const body = JSON.parse(e.postData.contents);
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var body;
+    try {
+      body = JSON.parse(e.postData.contents);
+    } catch(parseErr) {
+      return res({ ok:false, error:'Invalid JSON body: '+parseErr.message });
+    }
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     if (body.action === 'ping') return res({ ok:true, message:'InventoryPro connected ✓' });
     if (body.action === 'sync') {
-      const { tabName, headers, rows } = body;
-      let tab = ss.getSheetByName(tabName);
-      if (!tab) tab = ss.insertSheet(tabName);
-      else tab.clearContents();
-      if (rows.length > 0 || headers.length > 0) {
-        const vals = [headers, ...rows];
-        tab.getRange(1,1,vals.length,headers.length).setValues(vals);
-        const hdrRange = tab.getRange(1,1,1,headers.length);
-        hdrRange.setBackground('#1e1e2e').setFontColor('#f59e0b').setFontWeight('bold');
-        tab.setFrozenRows(1);
-        try { tab.autoResizeColumns(1,headers.length); } catch(x) {}
+      var tabName = body.tabName;
+      var headers = body.headers;
+      var rows    = body.rows;
+      if (!tabName) return res({ ok:false, error:'tabName required' });
+      if (!Array.isArray(headers)||headers.length===0) return res({ ok:false, error:'headers required' });
+      if (!Array.isArray(rows)) return res({ ok:false, error:'rows must be array' });
+      var tab = ss.getSheetByName(tabName);
+      if (!tab) {
+        tab = ss.insertSheet(tabName);
+      } else {
+        // FIX: tab.clear() not tab.clearContents()
+        // clearContents() only removes values — stale rows below new data remain visible.
+        // clear() removes values + formatting completely — clean slate every sync.
+        tab.clear();
       }
-      return res({ ok:true, message:'Synced "'+tabName+'" — '+rows.length+' rows' });
+      // Sanitize: cap History JSON column to avoid Sheets 50k char/cell limit
+      var histColIdx = headers.length - 1;
+      var safeRows = rows.map(function(rowArr) {
+        return rowArr.map(function(cell, colIdx) {
+          var s = (cell===null||cell===undefined) ? '' : String(cell);
+          if (colIdx===histColIdx && s.length>MAX_HISTORY_CHARS) {
+            s = '[{"_truncated":true,"note":"History too large. Export from app for full data."}]';
+            console.warn('History cell truncated in '+tabName);
+          }
+          return s;
+        });
+      });
+      var writeData = [headers].concat(safeRows);
+      if (writeData.length > 0) {
+        tab.getRange(1, 1, writeData.length, headers.length).setValues(writeData);
+      }
+      var hdrRange = tab.getRange(1, 1, 1, headers.length);
+      hdrRange.setBackground('#1e1e2e');
+      hdrRange.setFontColor('#f59e0b');
+      hdrRange.setFontWeight('bold');
+      hdrRange.setFontSize(10);
+      tab.setFrozenRows(1);
+      try { tab.autoResizeColumns(1, headers.length); } catch(x) {}
+      SpreadsheetApp.flush();
+      return res({ ok:true, message:'Synced "'+tabName+'" — '+rows.length+' row(s)' });
     }
-    return res({ ok:false, error:'Unknown action' });
-  } catch(e) { return res({ ok:false, error:e.message }); }
+    return res({ ok:false, error:'Unknown action: '+body.action });
+  } catch(err) {
+    console.error('doPost error:', err.message);
+    return res({ ok:false, error:'doPost failed: '+err.message });
+  }
+}
+
+// Run from editor (one time) to create all 8 tabs with correct headers
+function setupAllTabs() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var tabs = [
+    { name:'COTS_RegularlyUsed',     h:['Sl No','Maker','Product Description','Model / Part No','Serial No','Qty','Product Condition','Remark','Present in Office','History (JSON)'] },
+    { name:'COTS_Storage',           h:['SN','M.2 Make','Serial Number','Size','Type','Loaded OS / Content','History (JSON)'] },
+    { name:'COTS_Consumables',       h:['Sl No','Consumables','Total Qty','Part No','Size','Qty Available','Usage','History (JSON)'] },
+    { name:'COTS_Misc',              h:['Sl No','Description','SN','Qty','Present in Office','History (JSON)'] },
+    { name:'COTS_Pendrives',         h:['SN','Brand','Storage Capacity','USB Version','Serial Numbers','With Whom?','History (JSON)'] },
+    { name:'COTS_BootablePendrives', h:['SN','Serial Number','OS','History (JSON)'] },
+    { name:'SFF_MaterialsList',      h:['Product Details','Serial Number','Part / Model Number','Qty','Remarks','Present in Office','History (JSON)'] },
+    { name:'SFF_DemoUnit',           h:['S/N','Product Description','Serial Number','Part / Model Number','Cables / Accessories','Status','Availability','Remarks','History (JSON)'] }
+  ];
+  tabs.forEach(function(t) {
+    var tab = ss.getSheetByName(t.name);
+    if (!tab) { tab = ss.insertSheet(t.name); } else { tab.clear(); }
+    var hdr = tab.getRange(1,1,1,t.h.length);
+    hdr.setValues([t.h]);
+    hdr.setBackground('#1e1e2e').setFontColor('#f59e0b').setFontWeight('bold').setFontSize(10);
+    tab.setFrozenRows(1);
+    try { tab.autoResizeColumns(1, t.h.length); } catch(x) {}
+    console.log('Ready: '+t.name);
+  });
+  SpreadsheetApp.flush();
+  console.log('All 8 tabs ready.');
+}
+
+// Run from editor to verify spreadsheet connection
+function testConnection() {
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheets = ss.getSheets().map(function(s){return s.getName();});
+  console.log('Connected. Tabs ('+sheets.length+'): '+sheets.join(', '));
 }`;
 
 const TAB_NAMES = {
