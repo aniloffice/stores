@@ -6,8 +6,17 @@
 <title>InventoryPro — COTS & SFF Manager</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════════
+   CONFIGURATION NOTICE (for developers)
+   ═══════════════════════════════════════════════
+   Two things to configure before deploying:
+   1. SPREADSHEET_ID  — search for "CONFIG_SPREADSHEET_ID" in <script>
+   2. GS_URL          — entered by admin in the Sync modal (saved to localStorage)
+                        OR hardcoded at "CONFIG_DEFAULT_GS_URL" in <script>
+   ═══════════════════════════════════════════════ */
+
 :root {
-  --bg:#0a0a0f; --s1:#111118; --s2:#18181f; --s3:#1f1f28; --s4:#26263a;
+  --bg:#0a0a0f; --s1:#111118; --s2:#18181f; --s3:#1f1f28;
   --bdr:#2d2d40; --bdr2:#3a3a50;
   --acc:#f59e0b; --acc2:#fbbf24;
   --grn:#10b981; --red:#ef4444; --blu:#3b82f6; --pur:#8b5cf6; --orn:#f97316;
@@ -16,6 +25,7 @@
   --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif;
   --r:8px; --tr:.15s ease;
   --sidebar:260px;
+  --topbar:52px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
@@ -23,158 +33,181 @@ body{font-family:var(--sans);background:var(--bg);color:var(--txt);font-size:14p
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px;}
 input,select,textarea,button{font-family:var(--sans);}
-#pg-login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:radial-gradient(ellipse 600px 400px at 20% 50%,rgba(245,158,11,.07) 0%,transparent 70%),radial-gradient(ellipse 500px 350px at 80% 20%,rgba(59,130,246,.06) 0%,transparent 60%),var(--bg);}
-.login-wrap{width:100%;max-width:520px;}
-.login-brand{text-align:center;margin-bottom:28px;}
-.login-brand-logo{width:56px;height:56px;background:var(--acc);border-radius:14px;display:inline-grid;place-items:center;font-size:26px;margin-bottom:12px;}
-.login-brand h1{font-size:24px;font-weight:700;font-family:var(--mono);}
+
+/* ── LOGIN ── */
+#pg-login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;
+  background:radial-gradient(ellipse 600px 400px at 20% 50%,rgba(245,158,11,.07) 0%,transparent 70%),
+             radial-gradient(ellipse 500px 350px at 80% 20%,rgba(59,130,246,.06) 0%,transparent 60%),var(--bg);}
+.login-wrap{width:100%;max-width:480px;}
+.login-brand{text-align:center;margin-bottom:24px;}
+.login-brand-logo{width:52px;height:52px;background:var(--acc);border-radius:14px;display:inline-grid;place-items:center;font-size:24px;margin-bottom:10px;}
+.login-brand h1{font-size:22px;font-weight:700;font-family:var(--mono);}
 .login-brand h1 span{color:var(--acc);}
-.login-brand p{font-size:13px;color:var(--t2);margin-top:4px;}
-.role-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--s3);border-radius:10px;padding:3px;margin-bottom:20px;}
-.rs-btn{padding:11px;text-align:center;border-radius:8px;cursor:pointer;transition:all var(--tr);border:none;background:none;color:var(--t2);font-size:13px;font-weight:500;}
+.login-brand p{font-size:12px;color:var(--t2);margin-top:4px;}
+.role-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--s3);border-radius:10px;padding:3px;margin-bottom:18px;}
+.rs-btn{padding:10px;text-align:center;border-radius:8px;cursor:pointer;transition:all var(--tr);border:none;background:none;color:var(--t2);font-size:13px;font-weight:500;}
 .rs-btn.active{background:var(--s1);color:var(--txt);box-shadow:0 2px 8px rgba(0,0,0,.3);}
-.rs-btn .rs-icon{font-size:20px;display:block;margin-bottom:3px;}
-.lcard{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:24px;}
-.lf{margin-bottom:14px;}
-.lf label{display:block;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
-.lf input{width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);color:var(--txt);font-size:13px;outline:none;transition:border-color var(--tr);}
+.rs-btn .rs-icon{font-size:18px;display:block;margin-bottom:3px;}
+.lcard{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:22px;}
+.lf{margin-bottom:13px;}
+.lf label{display:block;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+.lf input{width:100%;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);color:var(--txt);font-size:13px;outline:none;transition:border-color var(--tr);}
 .lf input:focus{border-color:var(--acc);}
-.btn-login{width:100%;padding:12px;background:var(--acc);color:#000;border:none;border-radius:var(--r);font-weight:700;font-size:14px;cursor:pointer;transition:opacity var(--tr);letter-spacing:.02em;}
+.btn-login{width:100%;padding:12px;background:var(--acc);color:#000;border:none;border-radius:var(--r);font-weight:700;font-size:14px;cursor:pointer;transition:opacity var(--tr);}
 .btn-login:hover{opacity:.88;}
-.lerr{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:var(--r);padding:9px 13px;font-size:12px;margin-top:11px;display:none;}
-.viewer-hint{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:12px;margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.7;}
+.btn-login:active{opacity:.75;}
+.lerr{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:var(--r);padding:9px 12px;font-size:12px;margin-top:10px;display:none;}
+.viewer-hint{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:11px;margin-bottom:13px;font-size:12px;color:var(--t2);line-height:1.7;}
 .viewer-hint strong{color:var(--blu);}
-#pg-product{display:none;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 700px 500px at 25% 50%,rgba(245,158,11,.06) 0%,transparent 65%),radial-gradient(ellipse 600px 400px at 75% 50%,rgba(59,130,246,.06) 0%,transparent 65%),var(--bg);}
-.product-wrap{width:100%;max-width:700px;padding:20px;}
-.product-header{text-align:center;margin-bottom:40px;}
-.product-header h2{font-size:22px;font-weight:700;}
-.product-header p{font-size:13px;color:var(--t2);margin-top:6px;}
-.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.product-card{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:32px 28px;cursor:pointer;transition:all .2s ease;text-align:center;position:relative;overflow:hidden;}
-.product-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;}
+
+/* ── PRODUCT SELECT ── */
+#pg-product{display:none;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse 700px 500px at 25% 50%,rgba(245,158,11,.06) 0%,transparent 65%),
+             radial-gradient(ellipse 600px 400px at 75% 50%,rgba(59,130,246,.06) 0%,transparent 65%),var(--bg);}
+.product-wrap{width:100%;max-width:680px;padding:20px;}
+.product-header{text-align:center;margin-bottom:32px;}
+.product-header h2{font-size:20px;font-weight:700;}
+.product-header p{font-size:12px;color:var(--t2);margin-top:5px;}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.product-card{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:28px 22px;cursor:pointer;transition:all .2s ease;text-align:center;position:relative;overflow:hidden;}
+.product-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
 .product-card.cots::before{background:var(--cots);}
 .product-card.sff::before{background:var(--sff);}
 .product-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.4);}
 .product-card.cots:hover{border-color:rgba(245,158,11,.35);}
 .product-card.sff:hover{border-color:rgba(59,130,246,.35);}
-.pc-icon{font-size:44px;margin-bottom:14px;}
-.pc-title{font-size:19px;font-weight:700;font-family:var(--mono);margin-bottom:6px;}
-.pc-sub{font-size:12px;color:var(--t2);line-height:1.6;}
-.pc-tables{margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr);display:flex;flex-wrap:wrap;gap:5px;justify-content:center;}
-.pc-tag{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500;}
+.pc-icon{font-size:40px;margin-bottom:12px;}
+.pc-title{font-size:18px;font-weight:700;font-family:var(--mono);margin-bottom:5px;}
+.pc-sub{font-size:11px;color:var(--t2);line-height:1.6;}
+.pc-tables{margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr);display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
+.pc-tag{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;}
 .cots .pc-tag{background:rgba(245,158,11,.1);color:var(--cots);border:1px solid rgba(245,158,11,.2);}
 .sff .pc-tag{background:rgba(59,130,246,.1);color:var(--sff);border:1px solid rgba(59,130,246,.2);}
-.product-user{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:11px 16px;}
-.puser-info{display:flex;align-items:center;gap:10px;font-size:13px;}
-.puser-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;font-family:var(--mono);}
+.product-user{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;background:var(--s2);border:1px solid var(--bdr);border-radius:9px;padding:10px 14px;}
+.puser-info{display:flex;align-items:center;gap:9px;font-size:13px;}
+.puser-badge{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;font-family:var(--mono);}
 .ba{background:rgba(245,158,11,.15);color:var(--acc);border:1px solid rgba(245,158,11,.25);}
 .bv{background:rgba(59,130,246,.12);color:var(--blu);border:1px solid rgba(59,130,246,.2);}
+
+/* ── MAIN APP ── */
 #pg-app{display:none;height:100vh;flex-direction:column;}
-.topbar{height:52px;background:var(--s1);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:200;}
-.tb-brand{font-family:var(--mono);font-weight:700;font-size:15px;display:flex;align-items:center;gap:7px;}
-.tb-icon{width:27px;height:27px;border-radius:6px;background:var(--acc);display:grid;place-items:center;font-size:12px;}
-.tb-sep{width:1px;height:20px;background:var(--bdr);}
-.tb-product-badge{display:flex;align-items:center;gap:6px;padding:4px 11px;border-radius:6px;font-size:12px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all var(--tr);}
+.topbar{height:var(--topbar);background:var(--s1);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;z-index:200;}
+.tb-brand{font-family:var(--mono);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;}
+.tb-icon{width:26px;height:26px;border-radius:6px;background:var(--acc);display:grid;place-items:center;font-size:12px;}
+.tb-sep{width:1px;height:18px;background:var(--bdr);}
+.tb-product-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all var(--tr);}
 .tb-product-badge.cots{background:rgba(245,158,11,.12);color:var(--cots);border:1px solid rgba(245,158,11,.25);}
 .tb-product-badge.sff{background:rgba(59,130,246,.12);color:var(--sff);border:1px solid rgba(59,130,246,.25);}
 .tb-product-badge:hover{opacity:.8;}
-.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
-.tb-user{display:flex;align-items:center;gap:7px;font-size:12px;}
-.tb-uname{font-weight:600;}
-.tbtn{padding:5px 11px;background:var(--s2);border:1px solid var(--bdr);color:var(--t2);border-radius:6px;cursor:pointer;font-size:11px;transition:all var(--tr);}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:7px;}
+.tb-user{display:flex;align-items:center;gap:6px;font-size:11px;}
+.tb-uname{font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tbtn{padding:5px 10px;background:var(--s2);border:1px solid var(--bdr);color:var(--t2);border-radius:6px;cursor:pointer;font-size:11px;transition:all var(--tr);}
 .tbtn:hover{border-color:var(--red);color:var(--red);}
-.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);flex-shrink:0;}
 .sync-dot.on{background:var(--grn);box-shadow:0 0 6px var(--grn);}
-.app-body{display:flex;flex:1;overflow:hidden;}
-.sidebar{width:var(--sidebar);background:var(--s1);border-right:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
-.sb-search{padding:12px 10px 8px;}
-.sb-sbox{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:8px 11px;}
+.sync-pill{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:4px 9px;background:var(--s2);border:1px solid var(--bdr);border-radius:5px;cursor:pointer;transition:all var(--tr);white-space:nowrap;}
+.sync-pill:hover{border-color:var(--grn);color:var(--grn);}
+/* Mobile menu toggle */
+.mob-menu-btn{display:none;background:var(--s2);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:6px 9px;cursor:pointer;font-size:16px;}
+.app-body{display:flex;flex:1;overflow:hidden;position:relative;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:var(--s1);border-right:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:transform .25s ease;}
+.sb-search{padding:10px 9px 7px;}
+.sb-sbox{display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;padding:7px 10px;}
 .sb-sbox input{background:none;border:none;outline:none;color:var(--txt);font-size:12px;width:100%;}
 .sb-sbox input::placeholder{color:var(--t3);}
-.sb-filter{padding:4px 10px 8px;}
-.nio-toggle{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;cursor:pointer;transition:all var(--tr);}
-.nio-toggle:hover{border-color:var(--bdr2);}
+.sb-filter{padding:3px 9px 7px;}
+.nio-toggle{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;transition:all var(--tr);}
 .nio-toggle.active{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
 .nio-toggle.active .nio-label{color:var(--red);}
-.nio-indicator{width:32px;height:18px;border-radius:9px;background:var(--s3);position:relative;transition:background var(--tr);flex-shrink:0;}
-.nio-indicator::after{content:'';position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:var(--t2);transition:all var(--tr);}
+.nio-indicator{width:30px;height:16px;border-radius:8px;background:var(--s3);position:relative;transition:background var(--tr);flex-shrink:0;}
+.nio-indicator::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--t2);transition:all var(--tr);}
 .nio-toggle.active .nio-indicator{background:rgba(239,68,68,.3);}
 .nio-toggle.active .nio-indicator::after{background:var(--red);transform:translateX(14px);}
 .nio-label{font-size:11px;font-weight:600;color:var(--t2);}
-.nio-count{margin-left:auto;font-family:var(--mono);font-size:10px;background:rgba(239,68,68,.15);color:var(--red);padding:1px 6px;border-radius:10px;}
-.sb-section{padding:6px 10px 4px;}
-.sb-section-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:0 4px;}
-.sb-tables{flex:1;overflow-y:auto;padding:4px 8px 8px;}
-.t-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all var(--tr);border:1px solid transparent;margin-bottom:2px;}
+.nio-count{margin-left:auto;font-family:var(--mono);font-size:10px;background:rgba(239,68,68,.15);color:var(--red);padding:1px 5px;border-radius:8px;}
+.sb-section{padding:5px 9px 3px;}
+.sb-section-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:0 3px;}
+.sb-tables{flex:1;overflow-y:auto;padding:3px 7px 7px;}
+.t-item{display:flex;align-items:center;gap:7px;padding:8px 9px;border-radius:7px;cursor:pointer;transition:all var(--tr);border:1px solid transparent;margin-bottom:2px;}
 .t-item:hover{background:var(--s2);}
 .t-item.active{border-color:rgba(245,158,11,.25);}
 .t-item.active.sff-active{border-color:rgba(59,130,246,.25);}
-.t-item-icon{font-size:14px;flex-shrink:0;}
+.t-item-icon{font-size:13px;flex-shrink:0;}
 .t-item-name{font-size:12px;font-weight:500;flex:1;line-height:1.3;}
 .t-item.active .t-item-name{color:var(--acc);}
 .t-item.sff-active .t-item-name{color:var(--blu);}
-.t-item-cnt{font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);padding:2px 6px;border-radius:8px;}
-.sb-bottom{padding:8px;border-top:1px solid var(--bdr);}
+.t-item-cnt{font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);padding:2px 5px;border-radius:7px;}
+.sb-bottom{padding:7px;border-top:1px solid var(--bdr);}
+
+/* ── MAIN CONTENT ── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.main-head{padding:12px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--s1);}
-.mh-left h2{font-size:16px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.main-head{padding:11px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--s1);}
+.mh-left h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;}
 .mh-left .mh-sub{font-size:11px;color:var(--t2);margin-top:2px;font-family:var(--mono);}
-.mh-right{display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap;}
-.stat-bar{padding:7px 18px;border-bottom:1px solid var(--bdr);display:flex;gap:16px;align-items:center;background:var(--bg);flex-shrink:0;}
-.stat{display:flex;align-items:center;gap:5px;}
+.mh-right{display:flex;align-items:center;gap:5px;margin-left:auto;flex-wrap:wrap;}
+.stat-bar{padding:6px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:14px;align-items:center;background:var(--bg);flex-shrink:0;}
+.stat{display:flex;align-items:center;gap:4px;}
 .stat-d{width:6px;height:6px;border-radius:50%;}
 .stat-n{font-family:var(--mono);font-size:12px;font-weight:600;}
 .stat-l{font-size:11px;color:var(--t3);}
-.search-results{flex:1;overflow-y:auto;padding:12px 18px;}
-.sr-header{font-size:12px;color:var(--t2);margin-bottom:10px;padding:0 2px;}
-.sr-group{margin-bottom:18px;}
-.sr-group-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;padding:0 2px;display:flex;align-items:center;gap:6px;}
-.sr-row{background:var(--s1);border:1px solid var(--bdr);border-radius:8px;padding:10px 13px;margin-bottom:5px;cursor:pointer;transition:all var(--tr);}
+.search-results{flex:1;overflow-y:auto;padding:12px 16px;}
+.sr-header{font-size:12px;color:var(--t2);margin-bottom:9px;}
+.sr-group{margin-bottom:16px;}
+.sr-group-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.sr-row{background:var(--s1);border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;margin-bottom:4px;cursor:pointer;transition:all var(--tr);}
 .sr-row:hover{border-color:var(--bdr2);background:var(--s2);}
 .sr-row-name{font-size:13px;font-weight:500;}
 .sr-row-meta{font-size:11px;color:var(--t2);margin-top:3px;}
 .sr-match{background:rgba(245,158,11,.2);color:var(--acc2);border-radius:2px;padding:0 2px;}
+
+/* ── TABLE ── */
 .table-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.twrap{flex:1;overflow:auto;}
+.twrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
-thead th{padding:9px 11px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;background:var(--s2);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:5;white-space:nowrap;}
+thead th{padding:8px 10px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;background:var(--s2);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:5;white-space:nowrap;}
 thead th:first-child{width:36px;text-align:center;}
 tbody tr{border-bottom:1px solid var(--bdr);transition:background var(--tr);}
 tbody tr:hover{background:rgba(255,255,255,.02);}
 tbody tr.nio-row{background:rgba(239,68,68,.04);}
 tbody tr.nio-row:hover{background:rgba(239,68,68,.07);}
-tbody td{padding:8px 11px;vertical-align:middle;}
+tbody td{padding:7px 10px;vertical-align:middle;}
 tbody td:first-child{text-align:center;}
 .rn{font-family:var(--mono);font-size:10px;color:var(--t3);}
-.acts{display:flex;gap:4px;justify-content:flex-end;}
-.abt{height:26px;padding:0 8px;border-radius:5px;border:1px solid var(--bdr);background:var(--s2);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:11px;transition:all var(--tr);color:var(--t2);white-space:nowrap;}
+.acts{display:flex;gap:3px;justify-content:flex-end;}
+.abt{height:26px;padding:0 8px;border-radius:5px;border:1px solid var(--bdr);background:var(--s2);cursor:pointer;display:inline-flex;align-items:center;gap:3px;font-size:11px;transition:all var(--tr);color:var(--t2);white-space:nowrap;}
 .abt.e:hover{border-color:var(--acc);color:var(--acc);background:rgba(245,158,11,.07);}
 .abt.d:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.07);}
-.ct{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.nin-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);}
+.ct{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nin-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .nin-yes{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .nin-no{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.cond-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);}
+.cond-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .cg{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .cf{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
 .cp{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.av-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:12px;font-size:10px;font-weight:600;font-family:var(--mono);}
+.av-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .av-avail{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .av-notav{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
 .av-res{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
-.hist-count{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;color:var(--pur);background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);padding:2px 7px;border-radius:10px;cursor:pointer;transition:all var(--tr);}
-.hist-count:hover{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4);}
-.hist-count-zero{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);border:1px solid var(--bdr);padding:2px 7px;border-radius:10px;cursor:pointer;transition:all var(--tr);}
+.hist-count{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:10px;color:var(--pur);background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);padding:2px 6px;border-radius:9px;cursor:pointer;transition:all var(--tr);}
+.hist-count:hover{background:rgba(139,92,246,.2);}
+.hist-count-zero{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);border:1px solid var(--bdr);padding:2px 6px;border-radius:9px;cursor:pointer;transition:all var(--tr);}
 .hist-count-zero:hover{color:var(--pur);border-color:rgba(139,92,246,.3);}
-.lub-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;color:var(--blu);background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.18);padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.lub-badge{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:10px;color:var(--blu);background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.18);padding:2px 7px;border-radius:9px;white-space:nowrap;}
 .lub-badge-none{font-size:10px;color:var(--t3);}
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--t3);gap:9px;}
-.empty-state-icon{font-size:40px;opacity:.3;}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--t3);gap:8px;}
+.empty-state-icon{font-size:36px;opacity:.3;}
 .empty-state h3{font-size:14px;color:var(--t2);}
-.empty-state p{font-size:12px;text-align:center;max-width:240px;line-height:1.6;}
-.btn{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;transition:all var(--tr);}
+.empty-state p{font-size:12px;text-align:center;max-width:220px;line-height:1.6;}
+
+/* ── BUTTONS ── */
+.btn{padding:6px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;transition:all var(--tr);}
 .bp{background:var(--acc);color:#000;border-color:var(--acc);}
 .bp:hover{background:var(--acc2);}
+.bp:active{opacity:.8;}
 .bp.sff-btn{background:var(--sff);color:#fff;border-color:var(--sff);}
 .bp.sff-btn:hover{background:#2563eb;}
 .bo{background:transparent;color:var(--t2);border-color:var(--bdr);}
@@ -183,72 +216,167 @@ tbody td:first-child{text-align:center;}
 .br:hover{background:rgba(239,68,68,.07);}
 .bg{background:var(--grn);color:#000;border-color:var(--grn);}
 .bg:hover{opacity:.85;}
-.bsm{padding:4px 9px;font-size:11px;}
-.mover{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-start;justify-content:center;z-index:1000;backdrop-filter:blur(4px);overflow-y:auto;padding:20px;}
+.bsm{padding:4px 8px;font-size:11px;}
+
+/* ── MODALS ── */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-start;justify-content:center;z-index:1000;backdrop-filter:blur(4px);overflow-y:auto;padding:16px;}
 .mover.open{display:flex;}
-.modal{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:24px;width:580px;max-width:98vw;margin:auto;animation:mIn .16s ease;}
-.modal-xl{width:760px;}
-.modal-sm{width:400px;}
-.modal-hist{width:820px;}
+.modal{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:22px;width:560px;max-width:98vw;margin:auto;animation:mIn .16s ease;}
+.modal-xl{width:740px;}
+.modal-sm{width:390px;}
+.modal-hist{width:800px;}
 @keyframes mIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.mhd-title{font-size:16px;font-weight:700;}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.mhd-title{font-size:15px;font-weight:700;}
 .mhd-sub{font-size:11px;color:var(--t2);margin-top:2px;}
-.mcl{width:30px;height:30px;border:1px solid var(--bdr);background:var(--s2);border-radius:6px;cursor:pointer;display:grid;place-items:center;font-size:14px;color:var(--t2);transition:all var(--tr);}
+.mcl{width:28px;height:28px;border:1px solid var(--bdr);background:var(--s2);border-radius:6px;cursor:pointer;display:grid;place-items:center;font-size:13px;color:var(--t2);transition:all var(--tr);}
 .mcl:hover{border-color:var(--red);color:var(--red);}
-.ff{margin-bottom:13px;}
-.ff label{display:block;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
-.ff input,.ff select,.ff textarea{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:13px;outline:none;transition:border-color var(--tr);}
+.ff{margin-bottom:12px;}
+.ff label{display:block;font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.ff input,.ff select,.ff textarea{width:100%;padding:9px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:13px;outline:none;transition:border-color var(--tr);}
 .ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--acc);}
 .ff select option{background:var(--s2);}
-.ff textarea{resize:vertical;min-height:70px;line-height:1.5;}
+.ff textarea{resize:vertical;min-height:65px;line-height:1.5;}
 .ff input[readonly]{background:var(--s3);color:var(--acc);font-family:var(--mono);cursor:not-allowed;border-color:rgba(245,158,11,.2);}
-.mft{display:flex;gap:7px;justify-content:flex-end;margin-top:18px;}
-.fg2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
-.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-.fhint{font-size:11px;color:var(--t3);margin-top:4px;}
-.fdivider{height:1px;background:var(--bdr);margin:14px 0;}
-.fsection{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:13px;margin-bottom:13px;}
-.fsection-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:11px;}
-.hist-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:360px;overflow-y:auto;}
-.hist-entry{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:12px 13px;position:relative;}
-.hist-entry-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.mft{display:flex;gap:6px;justify-content:flex-end;margin-top:16px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fhint{font-size:11px;color:var(--t3);margin-top:3px;}
+
+/* History modal */
+.hist-list{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;max-height:340px;overflow-y:auto;}
+.hist-entry{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:11px 12px;}
+.hist-entry-head{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
 .hist-entry-num{width:20px;height:20px;border-radius:50%;background:var(--s3);font-family:var(--mono);font-size:10px;font-weight:600;display:grid;place-items:center;color:var(--t2);flex-shrink:0;}
 .hist-entry-date{font-size:12px;font-weight:600;}
 .hist-entry-del{margin-left:auto;border:none;background:none;cursor:pointer;color:var(--t3);font-size:12px;padding:3px;border-radius:4px;transition:all var(--tr);}
 .hist-entry-del:hover{color:var(--red);background:rgba(239,68,68,.1);}
-.hist-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.hist-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .hist-field{font-size:12px;}
 .hist-field label{display:block;font-size:10px;color:var(--t3);margin-bottom:2px;}
 .hist-field span{color:var(--txt);}
-.hist-add-btn{width:100%;padding:9px;background:var(--s2);border:1px dashed var(--bdr);color:var(--t2);border-radius:7px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;gap:5px;transition:all var(--tr);}
+.hist-add-btn{width:100%;padding:8px;background:var(--s2);border:1px dashed var(--bdr);color:var(--t2);border-radius:7px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;gap:5px;transition:all var(--tr);}
 .hist-add-btn:hover{border-color:var(--pur);color:var(--pur);}
-.hist-form{background:var(--s2);border:1px solid var(--pur);border-radius:8px;padding:13px;margin-top:8px;display:none;}
+.hist-form{background:var(--s2);border:1px solid var(--pur);border-radius:8px;padding:12px;margin-top:7px;display:none;}
 .hist-form.open{display:block;}
-.hist-form-title{font-size:11px;font-weight:700;color:var(--pur);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;}
-.step-card{background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:13px;margin-bottom:11px;}
-.step-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.hist-form-title{font-size:11px;font-weight:700;color:var(--pur);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px;}
+
+/* Sync modal */
+.sync-quickbar{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:9px;padding:13px 15px;margin-bottom:13px;}
+.sync-quickbar-title{font-size:11px;font-weight:700;color:var(--grn);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px;display:flex;align-items:center;gap:5px;}
+.sync-url-row{display:flex;gap:6px;align-items:center;}
+.sync-url-row input{flex:1;padding:8px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:12px;outline:none;transition:border-color var(--tr);font-family:var(--mono);}
+.sync-url-row input:focus{border-color:var(--grn);}
+.sync-url-row input.has-url{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04);}
+.sync-status-row{display:flex;align-items:center;gap:7px;margin-top:8px;flex-wrap:wrap;}
+.step-card{background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px;}
+.step-hd{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
 .step-n{width:22px;height:22px;border-radius:50%;background:var(--acc);color:#000;font-weight:700;font-size:10px;display:grid;place-items:center;flex-shrink:0;font-family:var(--mono);}
 .step-t{font-size:12px;font-weight:600;}
 .step-d{font-size:11px;color:var(--t2);line-height:1.75;}
 .step-d strong{color:var(--txt);}
-.sync-quickbar{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
-.sync-quickbar-title{font-size:11px;font-weight:700;color:var(--grn);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.sync-url-row{display:flex;gap:7px;align-items:center;}
-.sync-url-row input{flex:1;padding:9px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:12px;outline:none;transition:border-color var(--tr);font-family:var(--mono);}
-.sync-url-row input:focus{border-color:var(--grn);}
-.sync-url-row input.has-url{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04);}
-.sync-status-row{display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap;}
-#toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:6px;}
-.toast{padding:10px 15px;border-radius:8px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:7px;min-width:200px;max-width:320px;animation:tIn .16s ease;border:1px solid;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+
+/* Loading overlay */
+.loading-overlay{position:fixed;inset:0;background:rgba(10,10,15,.85);z-index:2000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;backdrop-filter:blur(4px);}
+.loading-overlay.open{display:flex;}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{font-size:13px;color:var(--t2);font-family:var(--mono);}
+
+/* Auto-sync badge */
+.autosync-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);padding:3px 8px;border-radius:5px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:var(--grn);cursor:pointer;transition:all var(--tr);}
+.autosync-badge.off{background:var(--s2);border-color:var(--bdr);color:var(--t3);}
+.autosync-badge:hover{opacity:.8;}
+
+/* Toast */
+#toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:5px;}
+.toast{padding:10px 14px;border-radius:8px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;min-width:190px;max-width:300px;animation:tIn .16s ease;border:1px solid;box-shadow:0 4px 16px rgba(0,0,0,.4);}
 @keyframes tIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
 .ts{background:#0d2b1f;border-color:rgba(16,185,129,.3);color:var(--grn);}
 .te{background:#2b0d0d;border-color:rgba(239,68,68,.3);color:var(--red);}
 .ti{background:#0d1a2b;border-color:rgba(59,130,246,.3);color:var(--blu);}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:768px){
+  :root{--sidebar:260px;}
+  html,body{overflow:auto;}
+  body{overflow:auto;}
+  #pg-app{height:100%;min-height:100dvh;}
+  .app-body{overflow:visible;}
+
+  /* Sidebar becomes a slide-in drawer */
+  .sidebar{
+    position:fixed;left:0;top:var(--topbar);bottom:0;
+    transform:translateX(-100%);z-index:300;
+    box-shadow:4px 0 24px rgba(0,0,0,.6);
+  }
+  .sidebar.mob-open{transform:translateX(0);}
+
+  /* Overlay behind open sidebar */
+  .mob-overlay{position:fixed;inset:0;top:var(--topbar);background:rgba(0,0,0,.6);z-index:299;display:none;}
+  .mob-overlay.open{display:block;}
+
+  .mob-menu-btn{display:flex;}
+  .tb-brand span{display:none;}
+  .tb-uname{display:none;}
+  .tb-product-badge span:first-child{display:none;}
+  .tb-sep{display:none;}
+
+  /* Main fills full width */
+  .main{width:100%;}
+
+  /* Table scrolls horizontally */
+  .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:600px;}
+
+  /* Buttons smaller on mobile */
+  .mh-right .btn{padding:4px 7px;font-size:10px;}
+  .mh-right{gap:3px;}
+
+  /* Product grid stacks */
+  .product-grid{grid-template-columns:1fr;}
+  .product-card{padding:22px 18px;}
+
+  /* Modals full-width on mobile */
+  .modal,.modal-xl,.modal-sm,.modal-hist{width:98vw;padding:16px;}
+  .mover{padding:8px;}
+
+  /* Form grids collapse */
+  .fg2{grid-template-columns:1fr;}
+  .hist-grid{grid-template-columns:1fr;}
+
+  /* Stat bar scrolls */
+  .stat-bar{overflow-x:auto;gap:12px;}
+  .stat{flex-shrink:0;}
+
+  /* Sync URL row stacks */
+  .sync-url-row{flex-wrap:wrap;}
+  .sync-url-row input{width:100%;flex:none;}
+
+  /* Toast at bottom-center on mobile */
+  #toasts{right:10px;left:10px;bottom:10px;align-items:center;}
+  .toast{min-width:unset;width:100%;justify-content:center;}
+}
+
+@media(max-width:480px){
+  .topbar{padding:0 10px;gap:7px;}
+  .tb-icon{display:none;}
+  .puser-badge{display:none;}
+  .product-user{padding:9px 12px;}
+}
 </style>
 </head>
 <body>
 
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-msg" id="loading-msg">Syncing…</div>
+</div>
+
+<!-- MOBILE SIDEBAR OVERLAY -->
+<div class="mob-overlay" id="mob-overlay" onclick="closeMobSidebar()"></div>
+
+<!-- PAGE 1: LOGIN -->
 <div id="pg-login">
   <div class="login-wrap">
     <div class="login-brand">
@@ -281,7 +409,7 @@ tbody td:first-child{text-align:center;}
     <div id="panel-viewer" style="display:none;">
       <div class="lcard">
         <div class="viewer-hint"><strong>👁 Viewer Access</strong><br>Browse all inventory. No edits allowed.</div>
-        <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 13px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 12px;margin-bottom:13px;display:flex;align-items:center;gap:8px;">
           <span style="font-size:11px;color:var(--t3);font-family:var(--mono);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Viewer ID:</span>
           <span style="font-family:var(--mono);font-size:13px;color:var(--blu);font-weight:600;">VIEW01</span>
           <span style="margin-left:auto;font-size:10px;color:var(--t3);">fixed · read-only</span>
@@ -297,6 +425,7 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
+<!-- PAGE 2: PRODUCT SELECT -->
 <div id="pg-product">
   <div class="product-wrap">
     <div class="product-user">
@@ -337,18 +466,23 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
+<!-- PAGE 3: MAIN APP -->
 <div id="pg-app">
   <div class="topbar">
+    <button class="mob-menu-btn" onclick="toggleMobSidebar()">☰</button>
     <div class="tb-brand">
       <div class="tb-icon">📦</div>
       <span>Inventory<span style="color:var(--acc)">Pro</span></span>
     </div>
     <div class="tb-sep"></div>
-    <div class="tb-product-badge" id="tb-prod-badge" onclick="goProductSelect()">← Switch Product</div>
+    <div class="tb-product-badge" id="tb-prod-badge" onclick="goProductSelect()">← Switch</div>
     <div class="tb-right">
-      <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:3px 9px;background:var(--s2);border:1px solid var(--bdr);border-radius:5px;cursor:pointer;" onclick="openSyncModal()" title="Click to configure Google Sheets sync">
+      <div class="sync-pill" onclick="openSyncModal()" title="Google Sheets Sync">
         <span class="sync-dot" id="sync-dot"></span>
-        <span id="sync-txt">Sheets: Not connected</span>
+        <span id="sync-txt">Not connected</span>
+      </div>
+      <div class="autosync-badge off" id="autosync-badge" onclick="toggleAutoSync()" title="Auto-sync: saves data to Sheets after every change">
+        <span id="autosync-icon">○</span><span id="autosync-label">Auto</span>
       </div>
       <div class="tb-user">
         <span class="tb-uname" id="tb-uname"></span>
@@ -357,8 +491,9 @@ tbody td:first-child{text-align:center;}
       <button class="tbtn" onclick="doLogout()">Logout</button>
     </div>
   </div>
+
   <div class="app-body">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="sb-search">
         <div class="sb-sbox">
           <span style="color:var(--t3);font-size:13px;">🔍</span>
@@ -367,7 +502,7 @@ tbody td:first-child{text-align:center;}
       </div>
       <div class="sb-filter">
         <div class="nio-toggle" id="nio-toggle" onclick="toggleNIO()">
-          <div class="nio-indicator" id="nio-ind"></div>
+          <div class="nio-indicator"></div>
           <span class="nio-label">Not in Office</span>
           <span class="nio-count" id="nio-count" style="display:none">0</span>
         </div>
@@ -380,10 +515,11 @@ tbody td:first-child{text-align:center;}
         <button class="btn bp bsm" id="btn-add-row" onclick="openAddRow()" style="width:100%;justify-content:center;display:none;">+ Add Row</button>
       </div>
     </div>
+
     <div class="main" id="main-content">
       <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--t3);">
         <div style="text-align:center">
-          <div style="font-size:40px;margin-bottom:12px;opacity:.3">📋</div>
+          <div style="font-size:36px;margin-bottom:12px;opacity:.3">📋</div>
           <div style="font-size:14px;">Select a table from the sidebar</div>
         </div>
       </div>
@@ -419,19 +555,19 @@ tbody td:first-child{text-align:center;}
       </div>
       <button class="mcl" onclick="CM('modal-hist')">✕</button>
     </div>
-    <div id="hist-product-info" style="background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--t2);"></div>
+    <div id="hist-product-info" style="background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:11px;margin-bottom:13px;font-size:12px;color:var(--t2);"></div>
     <div id="hist-entries-list"></div>
     <button class="hist-add-btn" id="hist-add-btn" onclick="toggleHistForm()" style="display:none;">+ Add History Entry</button>
     <div class="hist-form" id="hist-form">
       <div class="hist-form-title">New History Entry</div>
       <div class="fg2">
-        <div class="ff" style="margin-bottom:10px"><label>Went Date</label><input type="date" id="hf-went"></div>
-        <div class="ff" style="margin-bottom:10px"><label>Came Back Date</label><input type="date" id="hf-came"></div>
-        <div class="ff" style="margin-bottom:10px"><label>Location / Site</label><input type="text" id="hf-loc" placeholder="e.g. Client Site, Workshop…"></div>
-        <div class="ff" style="margin-bottom:10px"><label>Customer / Person</label><input type="text" id="hf-cust" placeholder="Name or organization"></div>
+        <div class="ff" style="margin-bottom:9px"><label>Went Date</label><input type="date" id="hf-went"></div>
+        <div class="ff" style="margin-bottom:9px"><label>Came Back Date</label><input type="date" id="hf-came"></div>
+        <div class="ff" style="margin-bottom:9px"><label>Location / Site</label><input type="text" id="hf-loc" placeholder="e.g. Client Site…"></div>
+        <div class="ff" style="margin-bottom:9px"><label>Customer / Person</label><input type="text" id="hf-cust" placeholder="Name or org"></div>
       </div>
-      <div class="ff" style="margin-bottom:10px"><label>Remarks</label><textarea id="hf-rem" style="min-height:55px" placeholder="Any notes…"></textarea></div>
-      <div style="display:flex;gap:7px;">
+      <div class="ff" style="margin-bottom:9px"><label>Remarks</label><textarea id="hf-rem" style="min-height:55px" placeholder="Notes…"></textarea></div>
+      <div style="display:flex;gap:6px;">
         <button class="btn bp bsm" onclick="saveHistEntry()">Save Entry</button>
         <button class="btn bo bsm" onclick="toggleHistForm()">Cancel</button>
       </div>
@@ -447,52 +583,78 @@ tbody td:first-child{text-align:center;}
       <div class="mhd-title">☁ Google Sheets Sync</div>
       <button class="mcl" onclick="CM('modal-sync')">✕</button>
     </div>
+
+    <!-- ══════════════════════════════════════════════
+         STEP 1: PASTE YOUR APPS SCRIPT URL HERE
+         This URL comes from your deployed Apps Script
+         Web App (Deploy → New Deployment → Web App)
+         ══════════════════════════════════════════════ -->
     <div class="sync-quickbar">
-      <div class="sync-quickbar-title">⚡ Step 1 — Paste Your Apps Script URL Here</div>
+      <div class="sync-quickbar-title">⚡ Paste Your Apps Script Web App URL</div>
       <div class="sync-url-row">
-        <input type="text" id="gs-url-input" placeholder="https://script.google.com/macros/s/…/exec" oninput="saveGsUrl(this.value)">
+        <input type="text" id="gs-url-input"
+          placeholder="https://script.google.com/macros/s/…/exec"
+          oninput="saveGsUrl(this.value)">
         <button class="btn bg bsm" onclick="testGsConn()">🔌 Test</button>
-        <button class="btn bo bsm" onclick="clearGsUrl()">✕ Clear</button>
+        <button class="btn bo bsm" onclick="clearGsUrl()">✕</button>
       </div>
       <div class="sync-status-row">
         <span class="sync-dot" id="sync-dot-modal" style="width:8px;height:8px;"></span>
         <span id="gs-conn-res" style="font-size:11px;color:var(--t3)">Not connected — paste URL above and click Test</span>
       </div>
     </div>
-    <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:11px 13px;margin-bottom:13px;font-size:12px;color:var(--t2);line-height:1.7;">
-      📊 <strong style="color:var(--acc)">Your Google Sheet:</strong>
-      <a href="https://docs.google.com/spreadsheets/d/1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio/edit?gid=82628675#gid=82628675" target="_blank" style="color:var(--acc2);text-decoration:none;">Open Sheet ↗</a>
+
+    <!-- Sheet link -->
+    <!-- ══════════════════════════════════════════════
+         YOUR GOOGLE SHEET LINK — Update this URL
+         to point to your own spreadsheet if needed.
+         Currently set to SPREADSHEET_ID in the script.
+         ══════════════════════════════════════════════ -->
+    <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.7;">
+      📊 <strong style="color:var(--acc)">Google Sheet:</strong>
+      <a id="sheet-link" href="#" target="_blank" style="color:var(--acc2);text-decoration:none;">Open Sheet ↗</a>
+      &nbsp;·&nbsp; <span style="color:var(--t3)">8 tabs (COTS_* and SFF_*)</span>
     </div>
+
+    <!-- Auto-sync notice -->
+    <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--t2);">
+      💡 <strong style="color:var(--blu)">Tip — Data on other devices:</strong>
+      Enable <strong>Auto-sync</strong> (topbar button) so every save automatically pushes to Google Sheets.
+      On another device, open the app, connect Sheets, then click <strong>⬇ Import from Sheet</strong> to load the data.
+    </div>
+
     <div style="margin-bottom:9px;">
-      <button class="btn bo bsm" onclick="toggleSetupSteps()" id="toggle-steps-btn" style="width:100%;justify-content:center;">▼ Show Setup Instructions (first time only)</button>
+      <button class="btn bo bsm" onclick="toggleSetupSteps()" id="toggle-steps-btn" style="width:100%;justify-content:center;">▼ Show Setup Instructions</button>
     </div>
     <div id="setup-steps" style="display:none;">
       <div class="step-card">
-        <div class="step-hd"><div class="step-n">1</div><div class="step-t">Download & Add Apps Script</div></div>
-        <div class="step-d">Open your Sheet → <strong>Extensions → Apps Script</strong> → delete existing code → paste the downloaded script → 💾 Save</div>
-        <div style="margin-top:9px;"><button class="btn bo bsm" style="background:rgba(59,130,246,.08);border-color:var(--blu);color:var(--blu);" onclick="downloadGS()">⬇ Download apps-script.gs</button></div>
+        <div class="step-hd"><div class="step-n">1</div><div class="step-t">Open Apps Script</div></div>
+        <div class="step-d">Open your Google Sheet → <strong>Extensions → Apps Script</strong> → delete existing code → paste the <strong>apps-script.gs</strong> code (see separate file) → 💾 Save</div>
       </div>
       <div class="step-card">
         <div class="step-hd"><div class="step-n">2</div><div class="step-t">Deploy as Web App</div></div>
-        <div class="step-d">In Apps Script: <strong>Deploy → New Deployment → Web App</strong><br>Execute as: <strong>Me</strong> | Who has access: <strong>Anyone</strong> → Deploy → Authorize → <strong>Copy URL</strong></div>
+        <div class="step-d"><strong>Deploy → New Deployment → Web App</strong><br>Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong> → Deploy → Authorize → <strong>Copy URL</strong></div>
       </div>
       <div class="step-card">
-        <div class="step-hd"><div class="step-n">3</div><div class="step-t">Paste URL & Test</div></div>
-        <div class="step-d">Paste the <strong>Web App URL</strong> in the green box above and click <strong>🔌 Test</strong>.</div>
+        <div class="step-hd"><div class="step-n">3</div><div class="step-t">Connect & Sync</div></div>
+        <div class="step-d">Paste URL in the green box above → click <strong>🔌 Test</strong>. Then click <strong>⬆ Sync All</strong>.</div>
       </div>
     </div>
+
+    <!-- Sync actions -->
     <div class="step-card">
-      <div class="step-hd"><div class="step-n" style="background:var(--grn);">↑</div><div class="step-t">Sync Data to Google Sheets</div></div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap;">
+      <div class="step-hd"><div class="step-n" style="background:var(--grn);">↑</div><div class="step-t">Sync Actions</div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="btn bg bsm" onclick="syncAll()">⬆ Sync All Tables</button>
         <button class="btn bo bsm" onclick="syncActive()">⬆ Sync Active Table</button>
         <button class="btn bo bsm" onclick="importActive()">⬇ Import from Sheet</button>
+        <button class="btn bo bsm" onclick="importAll()">⬇ Import All Tables</button>
       </div>
-      <div style="margin-top:11px;padding-top:11px;border-top:1px solid var(--bdr);">
-        <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:8px;">⬇ Local Export (no sync needed)</div>
-        <div style="display:flex;gap:7px;flex-wrap:wrap;">
-          <button class="btn bo bsm" onclick="exportCSV()">📄 CSV (active)</button>
-          <button class="btn bo bsm" onclick="exportAllCSV()">📦 All Tables CSV</button>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr);">
+        <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:7px;">⬇ Local Export</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn bo bsm" onclick="exportCSV()">📄 CSV</button>
+          <button class="btn bo bsm" onclick="exportAllCSV()">📦 All CSVs</button>
           <button class="btn bo bsm" onclick="exportJSON()">{ } JSON</button>
         </div>
       </div>
@@ -507,45 +669,39 @@ tbody td:first-child{text-align:center;}
     <div class="mhd">
       <div>
         <div class="mhd-title" style="color:var(--red)">🗑 Clear Table Data</div>
-        <div class="mhd-sub">This will permanently delete rows</div>
+        <div class="mhd-sub">Permanently deletes rows — cannot be undone</div>
       </div>
       <button class="mcl" onclick="CM('modal-clear')">✕</button>
     </div>
-    <div style="margin-bottom:14px;">
-      <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">What to clear?</div>
-      <div style="display:flex;flex-direction:column;gap:6px;" id="clear-options">
-        <label style="display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;" id="clear-opt-active">
+    <div style="margin-bottom:13px;">
+      <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">What to clear?</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <label style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;">
           <input type="radio" name="clearScope" value="active" checked onchange="updateClearPreview()" style="accent-color:var(--red);">
-          <div>
-            <div style="font-size:12px;font-weight:600;" id="clear-active-label">Active table</div>
-            <div style="font-size:11px;color:var(--t3);" id="clear-active-sub">Clears only the currently selected table</div>
-          </div>
+          <div><div style="font-size:12px;font-weight:600;" id="clear-active-label">Active table</div>
+          <div style="font-size:11px;color:var(--t3);" id="clear-active-sub">Currently selected table</div></div>
         </label>
-        <label style="display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;">
+        <label style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;">
           <input type="radio" name="clearScope" value="product" onchange="updateClearPreview()" style="accent-color:var(--red);">
-          <div>
-            <div style="font-size:12px;font-weight:600;" id="clear-product-label">All COTS tables</div>
-            <div style="font-size:11px;color:var(--t3);" id="clear-product-sub">Clears all tables in current product</div>
-          </div>
+          <div><div style="font-size:12px;font-weight:600;" id="clear-product-label">All product tables</div>
+          <div style="font-size:11px;color:var(--t3);" id="clear-product-sub">All tables in current product</div></div>
         </label>
-        <label style="display:flex;align-items:center;gap:9px;padding:10px 12px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;">
+        <label style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;">
           <input type="radio" name="clearScope" value="all" onchange="updateClearPreview()" style="accent-color:var(--red);">
-          <div>
-            <div style="font-size:12px;font-weight:600;">All tables (COTS + SFF)</div>
-            <div style="font-size:11px;color:var(--t3);">Complete reset</div>
-          </div>
+          <div><div style="font-size:12px;font-weight:600;">All tables (COTS + SFF)</div>
+          <div style="font-size:11px;color:var(--t3);">Complete reset</div></div>
         </label>
       </div>
     </div>
-    <div id="clear-preview" style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:10px 12px;font-size:11px;color:var(--red);margin-bottom:14px;line-height:1.7;"></div>
+    <div id="clear-preview" style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:9px 11px;font-size:11px;color:var(--red);margin-bottom:13px;line-height:1.7;"></div>
     <div class="ff" style="margin-bottom:4px;">
       <label>Type <strong style="color:var(--red);font-family:var(--mono)">DELETE</strong> to confirm</label>
       <input type="text" id="clear-confirm-input" placeholder="Type DELETE here" autocomplete="off"
-        oninput="document.getElementById('btn-do-clear').disabled = this.value !== 'DELETE'">
+        oninput="document.getElementById('btn-do-clear').disabled=this.value!=='DELETE'">
     </div>
     <div class="mft">
       <button class="btn bo" onclick="CM('modal-clear')">Cancel</button>
-      <button class="btn br" id="btn-do-clear" onclick="doDataClear()" disabled style="background:rgba(239,68,68,.1);">🗑 Clear Data</button>
+      <button class="btn br" id="btn-do-clear" onclick="doDataClear()" disabled style="background:rgba(239,68,68,.1);">🗑 Clear</button>
     </div>
   </div>
 </div>
@@ -553,134 +709,213 @@ tbody td:first-child{text-align:center;}
 <div id="toasts"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-//  CREDENTIALS
-// ═══════════════════════════════════════════════════════════
-const ADMINS = [
-  { id:'ADM001', name:'Raj Kumar',    pass:'Admin1@2024', color:'var(--acc)' },
-  { id:'ADM002', name:'Priya Sharma', pass:'Admin2@2024', color:'var(--grn)' },
-  { id:'ADM003', name:'Vikram Singh', pass:'Admin3@2024', color:'var(--pur)' },
-  { id:'Anil4',  name:'Anil Vase',    pass:'10698',       color:'var(--blu)' },
-];
-const VIEWER = { id:'VIEW01', pass:'Viewer@2024' };
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  InventoryPro v4 — Configuration                             ║
+// ║                                                              ║
+// ║  ① SPREADSHEET_ID — change to your Google Sheet ID          ║
+// ║    Find it in the sheet URL:                                 ║
+// ║    docs.google.com/spreadsheets/d/[ID HERE]/edit             ║
+// ║                                                              ║
+// ║  ② CONFIG_DEFAULT_GS_URL — optionally hardcode your         ║
+// ║    Apps Script Web App URL here so all users are             ║
+// ║    connected automatically without pasting the URL.          ║
+// ║    Leave as '' to require manual entry.                      ║
+// ║                                                              ║
+// ║  ③ ADMINS — edit IDs, names, and passwords below            ║
+// ╚══════════════════════════════════════════════════════════════╝
 
-// ═══════════════════════════════════════════════════════════
+// ── ① YOUR SPREADSHEET ID ───────────────────────────────────────
+const CONFIG_SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
+// ────────────────────────────────────────────────────────────────
+
+// ── ② DEFAULT APPS SCRIPT URL (optional — leave '' if not used) ─
+const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbwSi92YB88y46lKJKqRvNhYtep3Zx6998BvxCGuKH7kNW5LLtc_kR6QNaW43SOcbyzf/exec';
+// ── If you hardcode a URL above, all users share it automatically.
+// ────────────────────────────────────────────────────────────────
+
+// Set the sheet link in sync modal
+document.getElementById('sheet-link').href =
+  'https://docs.google.com/spreadsheets/d/' + CONFIG_SPREADSHEET_ID + '/edit';
+
+// ═══════════════════════════════════════════════════════════════
+//  ③ ADMIN CREDENTIALS — Edit below
+// ═══════════════════════════════════════════════════════════════
+const ADMINS = [
+  { id:'ADM001', name:'Raj Kumar',    pass:'Admin1@2024' },
+  { id:'ADM002', name:'Priya Sharma', pass:'Admin2@2024' },
+  { id:'ADM003', name:'Vikram Singh', pass:'Admin3@2024' },
+  { id:'Anil4',  name:'Anil Vase',    pass:'10698'       },
+];
+const VIEWER = { id:'VIEW01', pass:'View@123' };
+
+// ═══════════════════════════════════════════════════════════════
 //  TABLE DEFINITIONS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 const TABLE_DEFS = {
-  COTS: [
-    { id:'cots_t1', name:'Regularly Used Items', icon:'🖥️', hasHistory:true,
-      cols:[
-        {id:'slno',          name:'Sl No',               type:'autonumber', req:true},
-        {id:'maker',         name:'Maker',               type:'text'},
-        {id:'pdesc',         name:'Product Description', type:'text'},
-        {id:'model',         name:'Model / Part No',     type:'text'},
-        {id:'serial',        name:'Serial No',           type:'text'},
-        {id:'qty',           name:'Qty',                 type:'number'},
-        {id:'cond',          name:'Product Condition',   type:'condition'},
-        {id:'remark',        name:'Remark',              type:'text'},
-        {id:'inoffice',      name:'Present in Office',   type:'inoffice'},
-        {id:'lastupdatedby', name:'Last Updated By',     type:'autoadmin', readonly:true},
-      ]},
-    { id:'cots_t2', name:'Storage Devices Details', icon:'💾',
-      cols:[
-        {id:'sn',            name:'SN',                  type:'autonumber', req:true},
-        {id:'make',          name:'M.2 Make',             type:'text'},
-        {id:'serial',        name:'Serial Number',        type:'text'},
-        {id:'size',          name:'Size',                 type:'text'},
-        {id:'type',          name:'Type',                 type:'text'},
-        {id:'os',            name:'Loaded OS / Content',  type:'text'},
-        {id:'lastupdatedby', name:'Last Updated By',      type:'autoadmin', readonly:true},
-      ]},
-    { id:'cots_t3', name:'Consumables / Deliverables', icon:'📦',
-      cols:[
-        {id:'slno',          name:'Sl No',         type:'autonumber', req:true},
-        {id:'cons',          name:'Consumables',   type:'text'},
-        {id:'totqty',        name:'Total Qty',     type:'number'},
-        {id:'partno',        name:'Part No',       type:'text'},
-        {id:'size',          name:'Size',          type:'text'},
-        {id:'avail',         name:'Qty Available', type:'number'},
-        {id:'usage',         name:'Usage',         type:'text'},
-        {id:'lastupdatedby', name:'Last Updated By', type:'autoadmin', readonly:true},
-      ]},
-    { id:'cots_t4', name:'Miscellaneous', icon:'🗂️',
-      cols:[
-        {id:'slno',          name:'Sl No',             type:'autonumber', req:true},
-        {id:'desc',          name:'Description',       type:'text'},
-        {id:'sn',            name:'SN',                type:'text'},
-        {id:'qty',           name:'Qty',               type:'number'},
-        {id:'inoffice',      name:'Present in Office', type:'inoffice'},
-        {id:'lastupdatedby', name:'Last Updated By',   type:'autoadmin', readonly:true},
-      ]},
-    { id:'cots_t5', name:'Pendrive Details', icon:'🔌',
-      cols:[
-        {id:'sn',            name:'SN',               type:'autonumber', req:true},
-        {id:'brand',         name:'Brand',            type:'text'},
-        {id:'cap',           name:'Storage Capacity', type:'text'},
-        {id:'usbver',        name:'USB Version',      type:'text'},
-        {id:'serial',        name:'Serial Numbers',   type:'text'},
-        {id:'withwhom',      name:'With Whom?',       type:'text'},
-        {id:'lastupdatedby', name:'Last Updated By',  type:'autoadmin', readonly:true},
-      ]},
-    { id:'cots_t6', name:'Bootable Pendrive Details', icon:'💿',
-      cols:[
-        {id:'sn',            name:'SN',            type:'autonumber', req:true},
-        {id:'serial',        name:'Serial Number', type:'text'},
-        {id:'os',            name:'OS',            type:'text'},
-        {id:'lastupdatedby', name:'Last Updated By', type:'autoadmin', readonly:true},
-      ]},
+  COTS:[
+    {id:'cots_t1',name:'Regularly Used Items',icon:'🖥️',hasHistory:true,cols:[
+      {id:'slno',name:'Sl No',type:'autonumber',req:true},
+      {id:'maker',name:'Maker',type:'text'},
+      {id:'pdesc',name:'Product Description',type:'text'},
+      {id:'model',name:'Model / Part No',type:'text'},
+      {id:'serial',name:'Serial No',type:'text'},
+      {id:'qty',name:'Qty',type:'number'},
+      {id:'cond',name:'Product Condition',type:'condition'},
+      {id:'remark',name:'Remark',type:'text'},
+      {id:'inoffice',name:'Present in Office',type:'inoffice'},
+      {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
+    ]},
+    {id:'cots_t2',name:'Storage Devices Details',icon:'💾',cols:[
+      {id:'sn',name:'SN',type:'autonumber',req:true},
+      {id:'make',name:'M.2 Make',type:'text'},
+      {id:'serial',name:'Serial Number',type:'text'},
+      {id:'size',name:'Size',type:'text'},
+      {id:'type',name:'Type',type:'text'},
+      {id:'os',name:'Loaded OS / Content',type:'text'},
+      {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
+    ]},
+    {id:'cots_t3',name:'Consumables / Deliverables',icon:'📦',cols:[
+      {id:'slno',name:'Sl No',type:'autonumber',req:true},
+      {id:'cons',name:'Consumables',type:'text'},
+      {id:'totqty',name:'Total Qty',type:'number'},
+      {id:'partno',name:'Part No',type:'text'},
+      {id:'size',name:'Size',type:'text'},
+      {id:'avail',name:'Qty Available',type:'number'},
+      {id:'usage',name:'Usage',type:'text'},
+      {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
+    ]},
+    {id:'cots_t4',name:'Miscellaneous',icon:'🗂️',cols:[
+      {id:'slno',name:'Sl No',type:'autonumber',req:true},
+      {id:'desc',name:'Description',type:'text'},
+      {id:'sn',name:'SN',type:'text'},
+      {id:'qty',name:'Qty',type:'number'},
+      {id:'inoffice',name:'Present in Office',type:'inoffice'},
+      {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
+    ]},
+    {id:'cots_t5',name:'Pendrive Details',icon:'🔌',cols:[
+      {id:'sn',name:'SN',type:'autonumber',req:true},
+      {id:'brand',name:'Brand',type:'text'},
+      {id:'cap',name:'Storage Capacity',type:'text'},
+      {id:'usbver',name:'USB Version',type:'text'},
+      {id:'serial',name:'Serial Numbers',type:'text'},
+      {id:'withwhom',name:'With Whom?',type:'text'},
+      {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
+    ]},
+    {id:'cots_t6',name:'Bootable Pendrive Details',icon:'💿',cols:[
+      {id:'sn',name:'SN',type:'autonumber',req:true},
+      {id:'serial',name:'Serial Number',type:'text'},
+      {id:'os',name:'OS',type:'text'},
+      {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
+    ]},
   ],
-  SFF: [
-    { id:'sff_t1', name:'Materials List', icon:'📋', hasHistory:true,
-      cols:[
-        {id:'pdetails',      name:'Product Details',     type:'text', req:true},
-        {id:'serial',        name:'Serial Number',       type:'text'},
-        {id:'partno',        name:'Part / Model Number', type:'text'},
-        {id:'qty',           name:'Qty',                 type:'number'},
-        {id:'remarks',       name:'Remarks',             type:'text'},
-        {id:'inoffice',      name:'Present in Office',   type:'inoffice'},
-        {id:'lastupdatedby', name:'Last Updated By',     type:'autoadmin', readonly:true},
-      ]},
-    { id:'sff_t2', name:'SFF Demo Unit Details', icon:'💻',
-      cols:[
-        {id:'sn',            name:'S/N',                 type:'autonumber', req:true},
-        {id:'pdesc',         name:'Product Description', type:'text'},
-        {id:'serial',        name:'Serial Number',       type:'text'},
-        {id:'partno',        name:'Part / Model Number', type:'text'},
-        {id:'cables',        name:'Cables / Accessories',type:'text'},
-        {id:'status',        name:'Status',              type:'status'},
-        {id:'avail',         name:'Availability',        type:'availability'},
-        {id:'remarks',       name:'Remarks',             type:'text'},
-        {id:'lastupdatedby', name:'Last Updated By',     type:'autoadmin', readonly:true},
-      ]},
+  SFF:[
+    {id:'sff_t1',name:'Materials List',icon:'📋',hasHistory:true,cols:[
+      {id:'pdetails',name:'Product Details',type:'text',req:true},
+      {id:'serial',name:'Serial Number',type:'text'},
+      {id:'partno',name:'Part / Model Number',type:'text'},
+      {id:'qty',name:'Qty',type:'number'},
+      {id:'remarks',name:'Remarks',type:'text'},
+      {id:'inoffice',name:'Present in Office',type:'inoffice'},
+      {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
+    ]},
+    {id:'sff_t2',name:'SFF Demo Unit Details',icon:'💻',cols:[
+      {id:'sn',name:'S/N',type:'autonumber',req:true},
+      {id:'pdesc',name:'Product Description',type:'text'},
+      {id:'serial',name:'Serial Number',type:'text'},
+      {id:'partno',name:'Part / Model Number',type:'text'},
+      {id:'cables',name:'Cables / Accessories',type:'text'},
+      {id:'status',name:'Status',type:'status'},
+      {id:'avail',name:'Availability',type:'availability'},
+      {id:'remarks',name:'Remarks',type:'text'},
+      {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
+    ]},
   ]
 };
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  APP STATE
-// ═══════════════════════════════════════════════════════════
-let A = { user:null, product:null, activeTableId:null, nioFilter:false, searchMode:false, searchQuery:'', editRowId:null, histRowId:null, histTableId:null };
+// ═══════════════════════════════════════════════════════════════
+let A = {user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null};
 
-function saveData() { localStorage.setItem('ip_data', JSON.stringify(DATA)); }
+// Auto-sync state (persisted)
+let autoSyncEnabled = localStorage.getItem('ip_autosync') === '1';
+
+const TAB_NAMES={
+  cots_t1:'COTS_RegularlyUsed',cots_t2:'COTS_Storage',
+  cots_t3:'COTS_Consumables',cots_t4:'COTS_Misc',
+  cots_t5:'COTS_Pendrives',cots_t6:'COTS_BootablePendrives',
+  sff_t1:'SFF_MaterialsList',sff_t2:'SFF_DemoUnit',
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA STORE
+//  FIX 1: localStorage is device-local — use Google Sheets as the
+//  source of truth. On login, if GS URL exists and autoSync is on,
+//  we import fresh data from Sheets so all devices see same data.
+// ═══════════════════════════════════════════════════════════════
+function saveData() {
+  localStorage.setItem('ip_data', JSON.stringify(DATA));
+}
 function loadData() {
   try {
     const d = JSON.parse(localStorage.getItem('ip_data') || 'null');
     if (d) {
-      Object.keys(TABLE_DEFS).forEach(p => TABLE_DEFS[p].forEach(t => { if (!d[t.id]) d[t.id]=[]; }));
+      Object.keys(TABLE_DEFS).forEach(p=>TABLE_DEFS[p].forEach(t=>{if(!d[t.id])d[t.id]=[];}));
       return d;
     }
   } catch(e){}
   const f={};
-  Object.keys(TABLE_DEFS).forEach(p => TABLE_DEFS[p].forEach(t => { f[t.id]=[]; }));
+  Object.keys(TABLE_DEFS).forEach(p=>TABLE_DEFS[p].forEach(t=>{f[t.id]=[];}));
   return f;
 }
 let DATA = loadData();
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  LOADING OVERLAY
+// ═══════════════════════════════════════════════════════════════
+function showLoading(msg='Syncing…'){
+  document.getElementById('loading-msg').textContent=msg;
+  document.getElementById('loading-overlay').classList.add('open');
+}
+function hideLoading(){
+  document.getElementById('loading-overlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MOBILE SIDEBAR
+// ═══════════════════════════════════════════════════════════════
+function toggleMobSidebar(){
+  const sb=document.getElementById('sidebar');const ov=document.getElementById('mob-overlay');
+  const open=sb.classList.toggle('mob-open');
+  ov.classList.toggle('open',open);
+}
+function closeMobSidebar(){
+  document.getElementById('sidebar').classList.remove('mob-open');
+  document.getElementById('mob-overlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AUTO-SYNC TOGGLE
+// ═══════════════════════════════════════════════════════════════
+function toggleAutoSync(){
+  autoSyncEnabled=!autoSyncEnabled;
+  localStorage.setItem('ip_autosync',autoSyncEnabled?'1':'0');
+  updateAutoSyncBadge();
+  toast(autoSyncEnabled?'Auto-sync ON — saves push to Sheets after each change':'Auto-sync OFF', autoSyncEnabled?'s':'i');
+}
+function updateAutoSyncBadge(){
+  const b=document.getElementById('autosync-badge');
+  const icon=document.getElementById('autosync-icon');
+  const lbl=document.getElementById('autosync-label');
+  if(autoSyncEnabled){b.className='autosync-badge';icon.textContent='●';lbl.textContent='Auto';}
+  else{b.className='autosync-badge off';icon.textContent='○';lbl.textContent='Auto';}
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  AUTH
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 let curRole='admin';
-function switchRole(role) {
+function switchRole(role){
   curRole=role;
   document.getElementById('rtab-admin').className='rs-btn'+(role==='admin'?' active':'');
   document.getElementById('rtab-viewer').className='rs-btn'+(role==='viewer'?' active':'');
@@ -690,36 +925,37 @@ function switchRole(role) {
   document.getElementById('lerr-viewer').style.display='none';
   setTimeout(()=>{const f=role==='admin'?document.getElementById('adminId'):document.getElementById('viewerPass');if(f)f.focus();},80);
 }
-function doLogin() {
-  if (curRole==='admin') {
+function doLogin(){
+  if(curRole==='admin'){
     const entId=document.getElementById('adminId').value.trim();
     const entPw=document.getElementById('adminPass').value;
     const adm=ADMINS.find(a=>a.id.toUpperCase()===entId.toUpperCase()&&a.pass===entPw);
-    if (!adm){document.getElementById('lerr-admin').style.display='block';return;}
+    if(!adm){document.getElementById('lerr-admin').style.display='block';return;}
     document.getElementById('lerr-admin').style.display='none';
     A.user={name:adm.name+' ('+adm.id.toUpperCase()+')',id:adm.id.toUpperCase(),role:'admin'};
   } else {
-    if (document.getElementById('viewerPass').value!==VIEWER.pass){document.getElementById('lerr-viewer').style.display='block';return;}
+    if(document.getElementById('viewerPass').value!==VIEWER.pass){document.getElementById('lerr-viewer').style.display='block';return;}
     document.getElementById('lerr-viewer').style.display='none';
     A.user={name:'Viewer',id:VIEWER.id,role:'viewer'};
   }
   show('pg-product');
   document.getElementById('pu-name').textContent=A.user.name;
   const pb=document.getElementById('pu-badge');
-  pb.textContent=A.user.role.toUpperCase();
-  pb.className='puser-badge '+(isAdmin()?'ba':'bv');
+  pb.textContent=A.user.role.toUpperCase();pb.className='puser-badge '+(isAdmin()?'ba':'bv');
 }
-function doLogout() {
+function doLogout(){
   A.user=null;A.product=null;
   ['adminId','adminPass','viewerPass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   switchRole('admin');show('pg-login');
 }
 const isAdmin=()=>A.user?.role==='admin';
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  PRODUCT SELECT
-// ═══════════════════════════════════════════════════════════
-function enterProduct(prod) {
+//  FIX 1: On entering product, if GS URL is set AND autoSync is on,
+//  silently import fresh data from Sheets in the background.
+// ═══════════════════════════════════════════════════════════════
+function enterProduct(prod){
   A.product=prod;A.activeTableId=TABLE_DEFS[prod][0].id;
   A.nioFilter=false;A.searchMode=false;A.searchQuery='';
   show('pg-app');
@@ -729,20 +965,62 @@ function enterProduct(prod) {
   document.getElementById('sb-prod-label').textContent=prod+' TABLES';
   document.getElementById('btn-add-row').style.display=isAdmin()?'flex':'none';
   if(isAdmin())document.getElementById('btn-add-row').className='btn bp bsm'+(prod==='SFF'?' sff-btn':'');
-  const gsUrl=localStorage.getItem('ip_gsurl')||'';
+  updateAutoSyncBadge();
+
+  // Initialise GS URL (default or saved)
+  if(CONFIG_DEFAULT_GS_URL && !localStorage.getItem('ip_gsurl')){
+    localStorage.setItem('ip_gsurl', CONFIG_DEFAULT_GS_URL);
+  }
+  const gsUrl=getGsUrl();
   updateSyncDot(!!gsUrl);
+
   renderSidebar();selectTable(A.activeTableId);
+
+  // FIX 1 — Background import if autoSync enabled and GS connected
+  if(gsUrl && autoSyncEnabled){
+    silentImportAll();
+  }
 }
 function goProductSelect(){A.product=null;show('pg-product');}
 
-// ═══════════════════════════════════════════════════════════
+// Silent background import — no loading overlay, just a toast
+async function silentImportAll(){
+  try {
+    const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
+    let imported=0;
+    for(const id of allIds){
+      const tabName=TAB_NAMES[id];
+      const tdef=tdefForId(id);
+      const data=await gsPost({action:'import',tabName});
+      if(data.rows&&data.rows.length){
+        DATA[id]=data.rows.map(obj=>{
+          const row={_id:uid(),_history:[]};
+          tdef.cols.forEach(c=>{row[c.id]=obj[c.name]??'';});
+          try{row._history=JSON.parse(obj['History (JSON)']||'[]');}catch(x){row._history=[];}
+          return row;
+        });
+        imported++;
+      }
+    }
+    if(imported>0){
+      saveData();renderSidebar();renderMainTable();
+      toast(`✓ Data refreshed from Sheets (${imported} tables)`,'s');
+    }
+  } catch(e){
+    // Silent failure — don't alarm the user, just skip
+    console.warn('Background import failed:',e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  SIDEBAR
-// ═══════════════════════════════════════════════════════════
-function renderSidebar() {
+// ═══════════════════════════════════════════════════════════════
+function renderSidebar(){
   const tables=TABLE_DEFS[A.product];const isSFF=A.product==='SFF';
   document.getElementById('sb-tables').innerHTML=tables.map(t=>{
     const rows=DATA[t.id]||[];
-    return `<div class="t-item ${t.id===A.activeTableId?'active':''} ${t.id===A.activeTableId&&isSFF?'sff-active':''}" onclick="selectTable('${t.id}')">
+    return`<div class="t-item ${t.id===A.activeTableId?'active':''} ${t.id===A.activeTableId&&isSFF?'sff-active':''}"
+      onclick="selectTable('${t.id}');closeMobSidebar();">
       <span class="t-item-icon">${t.icon}</span>
       <span class="t-item-name">${t.name}</span>
       <span class="t-item-cnt">${rows.length}</span>
@@ -753,14 +1031,24 @@ function renderSidebar() {
   const nc=document.getElementById('nio-count');
   if(totalNIO>0){nc.textContent=totalNIO;nc.style.display='inline';}else nc.style.display='none';
 }
-function selectTable(id){A.activeTableId=id;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';renderSidebar();renderMainTable();}
-function toggleNIO(){A.nioFilter=!A.nioFilter;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';document.getElementById('nio-toggle').className='nio-toggle'+(A.nioFilter?' active':'');renderMainTable();}
+function selectTable(id){
+  A.activeTableId=id;A.searchMode=false;A.searchQuery='';
+  document.getElementById('sb-search-input').value='';
+  renderSidebar();renderMainTable();
+}
+function toggleNIO(){
+  A.nioFilter=!A.nioFilter;A.searchMode=false;A.searchQuery='';
+  document.getElementById('sb-search-input').value='';
+  document.getElementById('nio-toggle').className='nio-toggle'+(A.nioFilter?' active':'');
+  renderMainTable();
+}
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  SEARCH
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function handleSearch(q){
-  A.searchQuery=q.trim().replace(/\s+/g,' ').toLowerCase();A.searchMode=A.searchQuery.length>0;A.nioFilter=false;
+  A.searchQuery=q.trim().replace(/\s+/g,' ').toLowerCase();
+  A.searchMode=A.searchQuery.length>0;A.nioFilter=false;
   document.getElementById('nio-toggle').className='nio-toggle';
   if(A.searchMode)renderSearchResults();else renderMainTable();
 }
@@ -774,23 +1062,24 @@ function renderSearchResults(){
   const q=A.searchQuery;const tables=TABLE_DEFS[A.product];let results=[];
   tables.forEach(t=>{const rows=(DATA[t.id]||[]).filter(row=>rowMatchesSearch(row,t,q));if(rows.length)results.push({table:t,rows});});
   const main=document.getElementById('main-content');
-  if(!results.length){main.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div class="empty-state"><div class="empty-state-icon">🔍</div><h3>No results found</h3><p>No products match "<strong style="color:var(--txt)">${escH(q)}</strong>"</p></div></div>`;return;}
+  if(!results.length){
+    main.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div class="empty-state"><div class="empty-state-icon">🔍</div><h3>No results</h3><p>No match for "<strong style="color:var(--txt)">${escH(q)}</strong>"</p></div></div>`;return;
+  }
   let html=`<div class="search-results"><div class="sr-header">Found in ${results.length} table(s) for "<strong style="color:var(--txt)">${escH(q)}</strong>"</div>`;
   results.forEach(({table:t,rows})=>{
     html+=`<div class="sr-group"><div class="sr-group-title">${t.icon} ${t.name} <span style="color:var(--acc);font-family:var(--mono)">${rows.length}</span></div>`;
     rows.forEach(row=>{
       const pc=t.cols.find(c=>c.type==='text'&&c.id!=='slno'&&c.id!=='sn')||t.cols[0];
       const sc=t.cols.find(c=>c!==pc&&(c.type==='text'||c.type==='autonumber'));
-      const mf=t.cols.filter(c=>String(row[c.id]??'').toLowerCase().includes(q)).slice(0,3).map(c=>`<span style="color:var(--t3)">${c.name}:</span> ${highlightMatch(row[c.id],q)}`).join('  ·  ');
+      const mf=t.cols.filter(c=>String(row[c.id]??'').toLowerCase().includes(q)).slice(0,3).map(c=>`<span style="color:var(--t3)">${c.name}:</span> ${highlightMatch(row[c.id],q)}`).join(' · ');
       html+=`<div class="sr-row" onclick="jumpToRow('${t.id}','${row._id}')">
         <div class="sr-row-name">${highlightMatch(row[pc?.id],q)}${(row.inoffice||'')==='No'?'<span class="nin-badge nin-no" style="margin-left:6px">Not in Office</span>':''}</div>
-        <div class="sr-row-meta" style="line-height:1.8">${mf||escH(String(row[sc?.id]||''))}</div>
+        <div class="sr-row-meta">${mf||escH(String(row[sc?.id]||''))}</div>
       </div>`;
     });
     html+='</div>';
   });
-  html+='</div>';
-  main.innerHTML=html;
+  html+='</div>';main.innerHTML=html;
 }
 function jumpToRow(tableId,rowId){
   A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';
@@ -798,9 +1087,9 @@ function jumpToRow(tableId,rowId){
   setTimeout(()=>{const tr=document.getElementById('row-'+rowId);if(tr){tr.scrollIntoView({behavior:'smooth',block:'center'});tr.style.background='rgba(245,158,11,.15)';setTimeout(()=>tr.style.background='',1800);}},100);
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  RENDER MAIN TABLE
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function renderMainTable(){
   const tdef=TABLE_DEFS[A.product].find(t=>t.id===A.activeTableId);if(!tdef)return;
   let rows=DATA[tdef.id]||[];if(A.nioFilter)rows=rows.filter(r=>(r.inoffice||'')==='No');
@@ -808,22 +1097,24 @@ function renderMainTable(){
   const isSFF=A.product==='SFF';const accentCls=isSFF?'bp sff-btn':'bp';
   let html=`<div class="table-area"><div class="main-head"><div class="mh-left">
     <h2>${tdef.icon} ${escH(tdef.name)}</h2>
-    <div class="mh-sub">${allRows.length} rows · ${tdef.cols.length} columns${tdef.hasHistory?' · 📜 History tracked':''}${A.nioFilter?' · <span style="color:var(--red)">Showing: Not in Office</span>':''}</div>
+    <div class="mh-sub">${allRows.length} rows${tdef.hasHistory?' · 📜 history':''}${A.nioFilter?' · <span style="color:var(--red)">Not in Office</span>':''}</div>
   </div><div class="mh-right">
-    ${isAdmin()?`<button class="btn bo bsm" onclick="openSyncModal()">☁ Sync</button>
-    <button class="btn bo bsm" onclick="exportCSV()">⬇ CSV</button>
-    <button class="btn bo bsm" onclick="openClearModal()" style="color:var(--red);border-color:rgba(239,68,68,.3);">🗑 Clear</button>
-    <button class="btn ${accentCls} bsm" onclick="openAddRow()">+ Add Row</button>`:'<span style="font-size:11px;color:var(--t2)">👁 View only</span>'}
+    ${isAdmin()?`<button class="btn bo bsm" onclick="openSyncModal()">☁</button>
+    <button class="btn bo bsm" onclick="exportCSV()">⬇CSV</button>
+    <button class="btn bo bsm" onclick="openClearModal()" style="color:var(--red);border-color:rgba(239,68,68,.3);">🗑</button>
+    <button class="btn ${accentCls} bsm" onclick="openAddRow()">+ Add</button>`
+    :'<span style="font-size:11px;color:var(--t2)">👁 View only</span>'}
   </div></div>
   <div class="stat-bar">
     <div class="stat"><div class="stat-d" style="background:var(--t2)"></div><span class="stat-n">${allRows.length}</span><span class="stat-l">Total</span></div>
     <div class="stat"><div class="stat-d" style="background:var(--grn)"></div><span class="stat-n">${inCount}</span><span class="stat-l">In Office</span></div>
-    <div class="stat"><div class="stat-d" style="background:var(--red)"></div><span class="stat-n">${nioCount}</span><span class="stat-l">Not in Office</span></div>
+    <div class="stat"><div class="stat-d" style="background:var(--red)"></div><span class="stat-n">${nioCount}</span><span class="stat-l">Not In</span></div>
   </div><div class="twrap">`;
   if(!rows.length){
-    html+=`<div class="empty-state"><div class="empty-state-icon">${tdef.icon}</div><h3>${A.nioFilter?'No items out of office':'No rows yet'}</h3><p>${isAdmin()&&!A.nioFilter?'Click "+ Add Row" to add entries.':'No data to display.'}</p></div>`;
+    html+=`<div class="empty-state"><div class="empty-state-icon">${tdef.icon}</div><h3>${A.nioFilter?'No items out of office':'No rows yet'}</h3><p>${isAdmin()&&!A.nioFilter?'Click "+ Add" to add entries.':'No data.'}</p></div>`;
   } else {
-    const histTh=tdef.hasHistory?`<th>History</th>`:'';const actTh=isAdmin()?`<th style="text-align:right;padding-right:12px">Actions</th>`:'';
+    const histTh=tdef.hasHistory?`<th>History</th>`:'';
+    const actTh=isAdmin()?`<th style="text-align:right;padding-right:10px">Actions</th>`:'';
     const hdrs=tdef.cols.map(c=>`<th>${escH(c.name)}</th>`).join('');
     html+=`<table><thead><tr><th>#</th>${hdrs}${histTh}${actTh}</tr></thead><tbody>`;
     rows.forEach((row,i)=>{
@@ -833,27 +1124,27 @@ function renderMainTable(){
         const v=row[col.id]??'';
         if(col.type==='autoadmin'){
           html+=`<td>${v?`<span class="lub-badge">👤 ${escH(String(v))}</span>`:`<span class="lub-badge-none">—</span>`}</td>`;
-        } else if(col.type==='inoffice'){
+        }else if(col.type==='inoffice'){
           const cls=v==='Yes'?'nin-yes':v==='No'?'nin-no':'';
           html+=`<td>${v?`<span class="nin-badge ${cls}">${v==='Yes'?'✓ Yes':'✗ No'}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
-        } else if(col.type==='condition'){
+        }else if(col.type==='condition'){
           const vl=String(v).toLowerCase();const cls=vl.includes('good')||vl.includes('new')||vl.includes('work')?'cg':vl.includes('fair')||vl.includes('avg')?'cf':vl.includes('poor')||vl.includes('bad')||vl.includes('dam')?'cp':'';
           html+=`<td>${v?`<span class="cond-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
-        } else if(col.type==='availability'){
+        }else if(col.type==='availability'){
           const cls=String(v).toLowerCase().includes('not')?'av-notav':String(v).toLowerCase().includes('avail')?'av-avail':'av-res';
           html+=`<td>${v?`<span class="av-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
-        } else if(col.type==='autonumber'||(col.type==='number'&&v!=='')){
+        }else if(col.type==='autonumber'||(col.type==='number'&&v!=='')){
           html+=`<td style="font-family:var(--mono);font-size:11px">${v!==''?Number(v).toLocaleString('en-IN'):'<span style="color:var(--t3)">—</span>'}</td>`;
-        } else {
+        }else{
           html+=`<td class="ct" title="${String(v).replace(/"/g,'&quot;')}">${v?escH(String(v)):'<span style="color:var(--t3)">—</span>'}</td>`;
         }
       });
       if(tdef.hasHistory){
         const hl=(row._history||[]).length;
-        if(hl>0){html+=`<td><span class="hist-count" onclick="openHistory('${tdef.id}','${row._id}')" title="View ${hl} history entries">📜 ${hl}</span></td>`;}
-        else{html+=isAdmin()?`<td><span class="hist-count-zero" onclick="openHistory('${tdef.id}','${row._id}')">📜 0</span></td>`:`<td><span style="color:var(--t3);font-size:11px">—</span></td>`;}
+        if(hl>0)html+=`<td><span class="hist-count" onclick="openHistory('${tdef.id}','${row._id}')">📜 ${hl}</span></td>`;
+        else html+=isAdmin()?`<td><span class="hist-count-zero" onclick="openHistory('${tdef.id}','${row._id}')">📜 0</span></td>`:`<td>—</td>`;
       }
-      if(isAdmin())html+=`<td><div class="acts"><button class="abt e" onclick="openEditRow('${row._id}')">✏ Edit</button><button class="abt d" onclick="deleteRow('${row._id}')">🗑</button></div></td>`;
+      if(isAdmin())html+=`<td><div class="acts"><button class="abt e" onclick="openEditRow('${row._id}')">✏</button><button class="abt d" onclick="deleteRow('${row._id}')">🗑</button></div></td>`;
       html+='</tr>';
     });
     html+='</tbody></table>';
@@ -862,9 +1153,11 @@ function renderMainTable(){
   document.getElementById('main-content').innerHTML=html;
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  ROW CRUD
-// ═══════════════════════════════════════════════════════════
+//  FIX 2 (auto-sync): after every save/delete, if autoSync is
+//  enabled, silently push the active table to Sheets.
+// ═══════════════════════════════════════════════════════════════
 const uid=()=>'r'+Date.now()+Math.random().toString(36).slice(2,6);
 const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
@@ -879,24 +1172,24 @@ function buildRowForm(tdef,row=null){
     const v=row?(row[col.id]??''):(col.type==='autonumber'?nextNum:'');let inp;
     if(col.type==='autoadmin'){
       inp=`<input type="text" id="rf_${col.id}" value="${escH(adminId)}" readonly style="background:var(--s3);color:var(--blu);font-family:var(--mono);cursor:not-allowed;border-color:rgba(59,130,246,.2);">
-      <div class="fhint">👤 Auto-assigned from your login: <strong style="color:var(--blu);font-family:var(--mono)">${escH(adminId)}</strong></div>`;
-    } else if(col.type==='autonumber'){
-      if(!row){inp=`<input type="number" id="rf_${col.id}" value="${nextNum}" readonly style="background:var(--s3);color:var(--acc);font-family:var(--mono);cursor:not-allowed;border-color:rgba(245,158,11,.25);"><div class="fhint">🔢 Auto-assigned: ${nextNum}</div>`;}
-      else{inp=`<input type="number" id="rf_${col.id}" value="${v}" placeholder="0" step="1">`;}
-    } else if(col.type==='inoffice'){
+      <div class="fhint">👤 Auto-assigned: <strong style="color:var(--blu);font-family:var(--mono)">${escH(adminId)}</strong></div>`;
+    }else if(col.type==='autonumber'){
+      if(!row)inp=`<input type="number" id="rf_${col.id}" value="${nextNum}" readonly style="background:var(--s3);color:var(--acc);font-family:var(--mono);cursor:not-allowed;border-color:rgba(245,158,11,.25);"><div class="fhint">🔢 Auto-assigned: ${nextNum}</div>`;
+      else inp=`<input type="number" id="rf_${col.id}" value="${v}" placeholder="0" step="1">`;
+    }else if(col.type==='inoffice'){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Yes'?'selected':''}>Yes</option><option ${v==='No'?'selected':''}>No</option></select>`;
-    } else if(col.type==='condition'){
+    }else if(col.type==='condition'){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Good / Working'?'selected':''}>Good / Working</option><option ${v==='Fair'?'selected':''}>Fair</option><option ${v==='Poor'?'selected':''}>Poor</option><option ${v==='Damaged'?'selected':''}>Damaged</option><option ${v==='New'?'selected':''}>New</option></select>`;
-    } else if(col.type==='availability'){
+    }else if(col.type==='availability'){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Available'?'selected':''}>Available</option><option ${v==='Not Available'?'selected':''}>Not Available</option><option ${v==='Reserved'?'selected':''}>Reserved</option></select>`;
-    } else if(col.type==='number'){
+    }else if(col.type==='number'){
       inp=`<input type="number" id="rf_${col.id}" value="${v}" placeholder="0" step="any">`;
-    } else if(col.type==='date'){
+    }else if(col.type==='date'){
       inp=`<input type="date" id="rf_${col.id}" value="${v}">`;
-    } else {
+    }else{
       inp=`<input type="text" id="rf_${col.id}" value="${String(v).replace(/"/g,'&quot;')}" placeholder="${col.name}…">`;
     }
-    return `<div class="ff"><label>${col.name}${col.req?' *':''}</label>${inp}</div>`;
+    return`<div class="ff"><label>${col.name}${col.req?' *':''}</label>${inp}</div>`;
   }).join('');
 }
 function openAddRow(){
@@ -924,34 +1217,41 @@ function saveRow(){
   const data={_id:A.editRowId||uid(),_history:[]};
   if(A.editRowId){const ex=(DATA[tdef.id]||[]).find(r=>r._id===A.editRowId);if(ex)data._history=ex._history||[];}
   tdef.cols.forEach(col=>{
-    if(col.type==='autoadmin'){data[col.id]=A.user?.id||'';}
+    if(col.type==='autoadmin')data[col.id]=A.user?.id||'';
     else{const el=document.getElementById('rf_'+col.id);if(el)data[col.id]=el.value;}
   });
-  const rc=tdef.cols.find(c=>c.req);if(rc&&!data[rc.id]){toast('Required field is empty: '+rc.name,'e');return;}
+  const rc=tdef.cols.find(c=>c.req);if(rc&&!data[rc.id]){toast('Required: '+rc.name,'e');return;}
   const autoCol=tdef.cols.find(c=>c.type==='autonumber');
   if(autoCol&&data[autoCol.id]&&!A.editRowId){
     const dup=(DATA[tdef.id]||[]).find(r=>String(r[autoCol.id])===String(data[autoCol.id]));
-    if(dup){toast(`${autoCol.name} ${data[autoCol.id]} already exists! Auto-fixing…`,'i');data[autoCol.id]=String(getNextAutoNumber(tdef.id));}
+    if(dup){data[autoCol.id]=String(getNextAutoNumber(tdef.id));}
   }
   if(!DATA[tdef.id])DATA[tdef.id]=[];
   if(A.editRowId){const idx=DATA[tdef.id].findIndex(r=>r._id===A.editRowId);if(idx>-1)DATA[tdef.id][idx]=data;toast('Row updated ✓','s');}
   else{DATA[tdef.id].push(data);toast('Row added ✓','s');}
   saveData();CM('modal-row');renderSidebar();renderMainTable();
+  // FIX 2: Auto-sync after save
+  if(autoSyncEnabled && getGsUrl()){
+    syncTableById(A.activeTableId).catch(e=>console.warn('Auto-sync:',e.message));
+  }
 }
 function deleteRow(rowId){
-  if(!confirm('Delete this row and all its history?'))return;
+  if(!confirm('Delete this row?'))return;
   const tdef=getActiveTDef();DATA[tdef.id]=(DATA[tdef.id]||[]).filter(r=>r._id!==rowId);
   saveData();renderSidebar();renderMainTable();toast('Row deleted','i');
+  if(autoSyncEnabled && getGsUrl()){
+    syncTableById(A.activeTableId).catch(e=>console.warn('Auto-sync:',e.message));
+  }
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  HISTORY
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function openHistory(tableId,rowId){
   A.histTableId=tableId;A.histRowId=rowId;let tdef=null;
   for(const p of['COTS','SFF']){const f=TABLE_DEFS[p].find(t=>t.id===tableId);if(f){tdef=f;break;}}
   const row=(DATA[tableId]||[]).find(r=>r._id===rowId);if(!row||!tdef)return;
-  const info=tdef.cols.slice(0,5).map(c=>`<span><b style="color:var(--t2)">${c.name}:</b> ${escH(String(row[c.id]||'—'))}</span>`).join(' &nbsp;·&nbsp; ');
+  const info=tdef.cols.slice(0,5).map(c=>`<span><b style="color:var(--t2)">${c.name}:</b> ${escH(String(row[c.id]||'—'))}</span>`).join(' · ');
   document.getElementById('hist-product-info').innerHTML=info;
   document.getElementById('hist-modal-sub').textContent=`${tdef.icon} ${tdef.name} — Allocation History`;
   document.getElementById('hist-add-btn').style.display=isAdmin()?'flex':'none';
@@ -961,18 +1261,18 @@ function openHistory(tableId,rowId){
 }
 function renderHistEntries(entries){
   const el=document.getElementById('hist-entries-list');
-  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--t3);font-size:13px;">No history entries yet.${isAdmin()?' Click "+ Add History Entry" to track allocations.':''}</div>`;return;}
+  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--t3);font-size:13px;">No history yet.${isAdmin()?' Click "+ Add" to track.':''}</div>`;return;}
   el.innerHTML=`<div class="hist-list">${entries.map((e,i)=>`
     <div class="hist-entry">
       <div class="hist-entry-head">
         <div class="hist-entry-num">${i+1}</div>
-        <div class="hist-entry-date">${e.wentDate?'📤 '+fmtDate(e.wentDate):''}${e.cameDate?' → 📥 '+fmtDate(e.cameDate):''}${!e.wentDate&&!e.cameDate?'No dates recorded':''}</div>
+        <div class="hist-entry-date">${e.wentDate?'📤 '+fmtDate(e.wentDate):''}${e.cameDate?' → 📥 '+fmtDate(e.cameDate):''}${!e.wentDate&&!e.cameDate?'No dates':''}</div>
         ${isAdmin()?`<button class="hist-entry-del" onclick="deleteHistEntry('${e._id}')">🗑</button>`:''}
       </div>
       <div class="hist-grid">
-        <div class="hist-field"><label>Location / Site</label><span>${escH(e.location||'—')}</span></div>
-        <div class="hist-field"><label>Customer / Person</label><span>${escH(e.customer||'—')}</span></div>
-        <div class="hist-field"><label>Went Date</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.wentDate)||'—'}</span></div>
+        <div class="hist-field"><label>Location</label><span>${escH(e.location||'—')}</span></div>
+        <div class="hist-field"><label>Customer</label><span>${escH(e.customer||'—')}</span></div>
+        <div class="hist-field"><label>Went</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.wentDate)||'—'}</span></div>
         <div class="hist-field"><label>Came Back</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.cameDate)||'—'}</span></div>
         ${e.remarks?`<div class="hist-field" style="grid-column:1/-1"><label>Remarks</label><span>${escH(e.remarks)}</span></div>`:''}
       </div>
@@ -981,39 +1281,40 @@ function renderHistEntries(entries){
 function fmtDate(d){if(!d)return'';try{return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
 function toggleHistForm(){const f=document.getElementById('hist-form');f.className=f.className.includes('open')?'hist-form':'hist-form open';}
 function saveHistEntry(){
-  const went=document.getElementById('hf-went').value,came=document.getElementById('hf-came').value,loc=document.getElementById('hf-loc').value.trim(),cust=document.getElementById('hf-cust').value.trim(),rem=document.getElementById('hf-rem').value.trim();
-  if(!went&&!loc){toast('Enter at least a went date or location','e');return;}
+  const went=document.getElementById('hf-went').value,came=document.getElementById('hf-came').value,
+        loc=document.getElementById('hf-loc').value.trim(),cust=document.getElementById('hf-cust').value.trim(),
+        rem=document.getElementById('hf-rem').value.trim();
+  if(!went&&!loc){toast('Enter a date or location','e');return;}
   const entry={_id:uid(),wentDate:went,cameDate:came,location:loc,customer:cust,remarks:rem};
   const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
   if(!row._history)row._history=[];row._history.push(entry);
   saveData();renderHistEntries(row._history);toggleHistForm();
   ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id=>document.getElementById(id).value='');
   renderMainTable();toast('History entry added ✓','s');
+  if(autoSyncEnabled&&getGsUrl()){
+    syncTableById(A.histTableId).catch(e=>console.warn('Auto-sync:',e.message));
+  }
 }
 function deleteHistEntry(entryId){
-  if(!confirm('Delete this history entry?'))return;
+  if(!confirm('Delete entry?'))return;
   const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
   row._history=(row._history||[]).filter(e=>e._id!==entryId);
-  saveData();renderHistEntries(row._history);renderMainTable();toast('Entry deleted','i');
+  saveData();renderHistEntries(row._history);renderMainTable();toast('Deleted','i');
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  GOOGLE SHEETS SYNC
-//  KEY FIXES:
-//  1. All requests use POST (GET is CORS-blocked by Google auth redirect)
-//  2. importActive() uses POST {action:'import'} — NOT fetch GET
-//  3. syncTableById() ensures header array length = row array length
-//  4. Backend GS_CODE updated with 'import' action handler
-// ═══════════════════════════════════════════════════════════
-
-const TAB_NAMES={
-  cots_t1:'COTS_RegularlyUsed', cots_t2:'COTS_Storage',
-  cots_t3:'COTS_Consumables',   cots_t4:'COTS_Misc',
-  cots_t5:'COTS_Pendrives',     cots_t6:'COTS_BootablePendrives',
-  sff_t1:'SFF_MaterialsList',   sff_t2:'SFF_DemoUnit',
-};
-
-function getGsUrl(){return(localStorage.getItem('ip_gsurl')||'').trim();}
+//  FIX 2: Show loading overlay during manual sync/import
+//  FIX 1: importAll available for cross-device data loading
+//
+//  NOTE: The Apps Script (.gs) code is NOT embedded here.
+//  See the separate apps-script.gs file. The GS_CODE variable
+//  has been removed — deploy the .gs file separately.
+// ═══════════════════════════════════════════════════════════════
+function getGsUrl(){
+  // Use hardcoded default if set, otherwise use saved URL
+  return (CONFIG_DEFAULT_GS_URL||localStorage.getItem('ip_gsurl')||'').trim();
+}
 function saveGsUrl(val){
   const u=(val||'').trim();localStorage.setItem('ip_gsurl',u);updateSyncDot(!!u);
   const inp=document.getElementById('gs-url-input');if(inp)inp.className=u?'has-url':'';
@@ -1028,105 +1329,126 @@ function clearGsUrl(){
 function toggleSetupSteps(){
   const steps=document.getElementById('setup-steps');const btn=document.getElementById('toggle-steps-btn');
   const h=steps.style.display==='none';steps.style.display=h?'block':'none';
-  btn.textContent=h?'▲ Hide Setup Instructions':'▼ Show Setup Instructions (first time only)';
+  btn.textContent=h?'▲ Hide Setup Instructions':'▼ Show Setup Instructions';
 }
 function updateSyncDot(on){
   const dot=document.getElementById('sync-dot');if(dot)dot.className='sync-dot'+(on?' on':'');
-  const txt=document.getElementById('sync-txt');if(txt)txt.textContent=on?'Sheets: Connected':'Sheets: Not connected';
+  const txt=document.getElementById('sync-txt');if(txt)txt.textContent=on?'Connected':'Not connected';
   const mdot=document.getElementById('sync-dot-modal');if(mdot)mdot.className='sync-dot'+(on?' on':'');
 }
 
-// ── ALL requests go via POST to avoid CORS GET redirect ──────
-async function gsPost(payload) {
-  const url = getGsUrl();
-  if (!url) throw new Error('No Apps Script URL — paste it in the green box above.');
-  const r = await fetch(url, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) });
-  const d = await r.json();
-  if (!d.ok) throw new Error(d.error || 'Apps Script returned an error');
+// ── Core POST helper ────────────────────────────────────────
+async function gsPost(payload){
+  const url=getGsUrl();
+  if(!url)throw new Error('No Apps Script URL — paste it in the Sync modal.');
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+  const d=await r.json();
+  if(!d.ok)throw new Error(d.error||'Apps Script error');
   return d;
 }
 
-// ── Test connection via POST ping ─────────────────────────────
-async function testGsConn() {
-  const el   = document.getElementById('gs-conn-res');
-  const mdot = document.getElementById('sync-dot-modal');
-  const url  = getGsUrl();
-  if (!url) {
-    el.textContent = '✗ No URL entered — paste your Web App URL above';
-    el.style.color = 'var(--red)'; return;
-  }
-  el.textContent = 'Testing…'; el.style.color = 'var(--t3)';
-  try {
-    const d = await gsPost({ action:'ping' });
-    el.style.color = 'var(--grn)'; el.textContent = '✓ ' + d.message;
-    if (mdot) mdot.className = 'sync-dot on';
-    updateSyncDot(true); toast('Connected to Google Sheets ✓','s');
-  } catch(e) {
-    el.style.color = 'var(--red)'; el.textContent = '✗ ' + e.message;
-    if (mdot) mdot.className = 'sync-dot';
-    updateSyncDot(false); toast('Connection failed: '+e.message,'e');
+// ── Test connection ─────────────────────────────────────────
+async function testGsConn(){
+  const el=document.getElementById('gs-conn-res');const mdot=document.getElementById('sync-dot-modal');
+  const url=getGsUrl();
+  if(!url){el.textContent='✗ No URL entered';el.style.color='var(--red)';return;}
+  el.textContent='Testing…';el.style.color='var(--t3)';
+  try{
+    const d=await gsPost({action:'ping'});
+    el.style.color='var(--grn)';el.textContent='✓ '+d.message;
+    if(mdot)mdot.className='sync-dot on';
+    updateSyncDot(true);toast('Connected to Google Sheets ✓','s');
+  }catch(e){
+    el.style.color='var(--red)';el.textContent='✗ '+e.message;
+    if(mdot)mdot.className='sync-dot';
+    updateSyncDot(false);toast('Connection failed: '+e.message,'e');
   }
 }
 
-// ── Sync one table → Sheet ────────────────────────────────────
-async function syncTableById(tableId) {
-  const tdef = tdefForId(tableId);
-  if (!tdef) throw new Error('Table def not found: ' + tableId);
-  const tabName = TAB_NAMES[tableId];
-  if (!tabName) throw new Error('No tab name mapped for: ' + tableId);
-  // Headers: all display-name columns + History (JSON)
-  const headers = [...tdef.cols.map(c => c.name), 'History (JSON)'];
-  const colCount = headers.length;
-  // Rows: each cell value aligned to headers, exact colCount length
-  const rows = (DATA[tableId] || []).map(row => {
-    const vals = [...tdef.cols.map(c => String(row[c.id] ?? '')), JSON.stringify(row._history || [])];
-    while (vals.length < colCount) vals.push('');
-    return vals.slice(0, colCount);
+// ── Sync one table ──────────────────────────────────────────
+async function syncTableById(tableId){
+  const tdef=tdefForId(tableId);if(!tdef)throw new Error('Table not found: '+tableId);
+  const tabName=TAB_NAMES[tableId];if(!tabName)throw new Error('No tab mapped: '+tableId);
+  const headers=[...tdef.cols.map(c=>c.name),'History (JSON)'];
+  const colCount=headers.length;
+  const rows=(DATA[tableId]||[]).map(row=>{
+    const vals=[...tdef.cols.map(c=>String(row[c.id]??'')),JSON.stringify(row._history||[])];
+    while(vals.length<colCount)vals.push('');
+    return vals.slice(0,colCount);
   });
-  return gsPost({ action:'sync', tabName, headers, rows });
+  return gsPost({action:'sync',tabName,headers,rows});
 }
 
-async function syncActive() {
-  if (!A.activeTableId) { toast('Select a table first','i'); return; }
-  if (!getGsUrl()) { openSyncModal(); toast('Paste your Apps Script URL first','i'); return; }
-  toast('Syncing…','i');
-  try { const d = await syncTableById(A.activeTableId); toast('✓ '+d.message,'s'); }
-  catch(e) { toast('Sync failed: '+e.message,'e'); }
+// ── FIX 2: Sync with loading overlay ───────────────────────
+async function syncActive(){
+  if(!A.activeTableId){toast('Select a table first','i');return;}
+  if(!getGsUrl()){openSyncModal();toast('Paste your Apps Script URL first','i');return;}
+  showLoading('Syncing table…');
+  try{const d=await syncTableById(A.activeTableId);toast('✓ '+d.message,'s');}
+  catch(e){toast('Sync failed: '+e.message,'e');}
+  finally{hideLoading();}
 }
 
-async function syncAll() {
-  if (!getGsUrl()) { toast('Paste your Apps Script URL first','e'); openSyncModal(); return; }
-  const ids = [...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
-  toast(`Syncing ${ids.length} tables…`,'i');
+async function syncAll(){
+  if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
+  const ids=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
+  showLoading(`Syncing ${ids.length} tables…`);
   let ok=0,fail=0;
-  for (const id of ids) { try { await syncTableById(id); ok++; } catch(e) { fail++; } }
+  for(const id of ids){
+    document.getElementById('loading-msg').textContent=`Syncing ${TAB_NAMES[id]}…`;
+    try{await syncTableById(id);ok++;}catch(e){fail++;console.warn('Sync fail '+id,e.message);}
+  }
+  hideLoading();
   toast(fail?`${ok} synced, ${fail} failed`:`✓ All ${ok} tables synced`,'s');
 }
 
-// ── FIX: Import uses POST {action:'import'} NOT fetch GET ─────
-// Google's auth causes a redirect on GET requests that browsers
-// cannot follow cross-origin. POST with Content-Type: text/plain
-// bypasses the preflight and the redirect issue entirely.
-async function importActive() {
-  if (!A.activeTableId) { toast('Select a table first','i'); return; }
-  if (!getGsUrl()) { toast('Paste your Apps Script URL first','e'); openSyncModal(); return; }
-  const tdef = getActiveTDef();
-  const tabName = TAB_NAMES[A.activeTableId];
-  toast(`Importing ${tabName}…`,'i');
-  try {
-    const data = await gsPost({ action:'import', tabName });
-    if (!data.rows || !data.rows.length) { toast('Sheet tab is empty — sync data first','i'); return; }
-    const localCount = (DATA[A.activeTableId]||[]).length;
-    if (!confirm(`Replace ${localCount} local rows with ${data.rows.length} rows from Google Sheets?\nThis cannot be undone.`)) return;
-    DATA[A.activeTableId] = data.rows.map(obj => {
-      const row = { _id:uid(), _history:[] };
-      tdef.cols.forEach(c => { row[c.id] = obj[c.name] ?? ''; });
-      try { row._history = JSON.parse(obj['History (JSON)'] || '[]'); } catch(x) { row._history=[]; }
+// ── FIX 1 & 2: Import with loading overlay ─────────────────
+async function importActive(){
+  if(!A.activeTableId){toast('Select a table first','i');return;}
+  if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
+  const tdef=getActiveTDef();const tabName=TAB_NAMES[A.activeTableId];
+  showLoading(`Importing ${tabName}…`);
+  try{
+    const data=await gsPost({action:'import',tabName});
+    hideLoading();
+    if(!data.rows||!data.rows.length){toast('Sheet tab is empty — sync first','i');return;}
+    const lc=(DATA[A.activeTableId]||[]).length;
+    if(!confirm(`Replace ${lc} local rows with ${data.rows.length} from Sheets?\nThis cannot be undone.`))return;
+    DATA[A.activeTableId]=data.rows.map(obj=>{
+      const row={_id:uid(),_history:[]};
+      tdef.cols.forEach(c=>{row[c.id]=obj[c.name]??'';});
+      try{row._history=JSON.parse(obj['History (JSON)']||'[]');}catch(x){row._history=[];}
       return row;
     });
-    saveData(); renderSidebar(); renderMainTable();
+    saveData();renderSidebar();renderMainTable();
     toast(`✓ Imported ${DATA[A.activeTableId].length} rows`,'s');
-  } catch(e) { toast('Import failed: '+e.message,'e'); }
+  }catch(e){hideLoading();toast('Import failed: '+e.message,'e');}
+}
+
+// ── FIX 1: Import ALL tables (for cross-device setup) ───────
+async function importAll(){
+  if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
+  if(!confirm(`Import ALL 8 tables from Google Sheets?\nThis will REPLACE all local data. Continue?`))return;
+  const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
+  showLoading('Importing all tables…');
+  let ok=0,fail=0;
+  for(const id of allIds){
+    const tabName=TAB_NAMES[id];const tdef=tdefForId(id);
+    document.getElementById('loading-msg').textContent=`Importing ${tabName}…`;
+    try{
+      const data=await gsPost({action:'import',tabName});
+      if(data.rows&&data.rows.length){
+        DATA[id]=data.rows.map(obj=>{
+          const row={_id:uid(),_history:[]};
+          tdef.cols.forEach(c=>{row[c.id]=obj[c.name]??'';});
+          try{row._history=JSON.parse(obj['History (JSON)']||'[]');}catch(x){row._history=[];}
+          return row;
+        });ok++;
+      }
+    }catch(e){fail++;console.warn('Import fail '+id,e.message);}
+  }
+  hideLoading();saveData();renderSidebar();renderMainTable();
+  toast(fail?`Imported ${ok} tables, ${fail} failed`:`✓ All ${ok} tables imported from Sheets`,'s');
 }
 
 function openSyncModal(){
@@ -1134,143 +1456,23 @@ function openSyncModal(){
   const inp=document.getElementById('gs-url-input');
   if(inp){inp.value=gsUrl;inp.className=gsUrl?'has-url':'';}
   const el=document.getElementById('gs-conn-res');
-  if(el&&!el.textContent)el.textContent='Not connected — paste URL above and click Test';
+  if(el&&(!el.textContent||el.textContent==='Not connected — paste URL above and click Test'))
+    el.textContent='Not connected — paste URL above and click Test';
   const mdot=document.getElementById('sync-dot-modal');
   if(mdot)mdot.className='sync-dot'+(gsUrl?' on':'');
   OM('modal-sync');
 }
 
-// ── GS_CODE embedded for download ────────────────────────────
-// UPDATED: added 'import' action handler so importActive() works
-const GS_CODE = `// InventoryPro Apps Script Backend v3.2 (Fixed)
-// CHANGES FROM v3.0/v3.1:
-//   - Added action:'import' handler in doPost so the frontend
-//     can read sheet data via POST (avoids CORS GET redirect issue)
-//   - All other functions unchanged
-
-var SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
-var MAX_HISTORY_CHARS = 45000;
-var HEADER_BG = '#1e1e2e', HEADER_FG = '#f59e0b';
-
-function makeResponse(data) {
-  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
-}
-
-function doGet(e) {
-  // Kept for ping only — import/read now goes through doPost
-  try {
-    var p = e.parameter || {};
-    if (p.action === 'ping') return makeResponse({ ok:true, message:'InventoryPro connected ✓', version:'3.2' });
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    if (!p.sheet) {
-      return makeResponse({ ok:true, sheets: ss.getSheets().map(function(s){return s.getName();}) });
-    }
-    // Still support direct GET reads for backwards compat
-    return readTab(ss, p.sheet);
-  } catch(err) { return makeResponse({ ok:false, error:'doGet: '+err.message }); }
-}
-
-function doPost(e) {
-  try {
-    var body;
-    try { body = JSON.parse(e.postData.contents); }
-    catch(pe) { return makeResponse({ ok:false, error:'Invalid JSON: '+pe.message }); }
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    if (body.action === 'ping') return makeResponse({ ok:true, message:'InventoryPro connected ✓', version:'3.2' });
-    if (body.action === 'sync') return handleSync(ss, body);
-    // NEW: import action — read a tab and return rows via POST response
-    if (body.action === 'import') return readTab(ss, body.tabName);
-    return makeResponse({ ok:false, error:'Unknown action: '+body.action });
-  } catch(err) { return makeResponse({ ok:false, error:'doPost: '+err.message }); }
-}
-
-// Shared read function used by both doGet and doPost import
-function readTab(ss, tabName) {
-  if (!tabName) return makeResponse({ ok:false, error:'tabName required' });
-  var tab = ss.getSheetByName(tabName);
-  if (!tab) return makeResponse({ ok:false, error:'Tab not found: '+tabName+'. Run setupAllTabs() first.' });
-  var lastRow = tab.getLastRow(), lastCol = tab.getLastColumn();
-  if (lastRow < 1 || lastCol < 1) return makeResponse({ ok:true, headers:[], rows:[] });
-  var all = tab.getRange(1,1,lastRow,lastCol).getValues();
-  if (all.length < 2) return makeResponse({ ok:true, headers:all[0]?all[0].map(String):[], rows:[] });
-  var headers = all[0].map(String);
-  var rows = all.slice(1).map(function(r){
-    var obj={};
-    headers.forEach(function(h,i){ obj[h]=(r[i]===null||r[i]===undefined)?'':String(r[i]); });
-    return obj;
-  });
-  return makeResponse({ ok:true, tabName:tabName, headers:headers, rows:rows, rowCount:rows.length });
-}
-
-function handleSync(ss, body) {
-  var tabName=body.tabName, headers=body.headers, rows=body.rows;
-  if (!tabName) return makeResponse({ ok:false, error:'tabName required' });
-  if (!Array.isArray(headers)||!headers.length) return makeResponse({ ok:false, error:'headers required' });
-  if (!Array.isArray(rows)) return makeResponse({ ok:false, error:'rows must be array' });
-  var tab = ss.getSheetByName(tabName);
-  if (!tab) { tab=ss.insertSheet(tabName); } else { tab.clearContents(); tab.clearFormats(); }
-  var histIdx=headers.length-1;
-  var safe=rows.map(function(r){return r.map(function(c,i){
-    var s=(c===null||c===undefined)?'':String(c);
-    if(i===histIdx&&s.length>MAX_HISTORY_CHARS)s='[{"_truncated":true}]';
-    return s;
-  });});
-  var data=[headers].concat(safe);
-  if(data.length>0)tab.getRange(1,1,data.length,headers.length).setValues(data);
-  var hdr=tab.getRange(1,1,1,headers.length);
-  hdr.setBackground(HEADER_BG).setFontColor(HEADER_FG).setFontWeight('bold').setFontSize(10).setHorizontalAlignment('left');
-  tab.setFrozenRows(1);
-  try{tab.autoResizeColumns(1,headers.length);}catch(x){}
-  SpreadsheetApp.flush();
-  return makeResponse({ ok:true, message:'Synced "'+tabName+'" — '+rows.length+' row(s)', tabName:tabName, rowCount:rows.length });
-}
-
-function setupAllTabs() {
-  var ss=SpreadsheetApp.openById(SPREADSHEET_ID);
-  var tabs=[
-    {name:'COTS_RegularlyUsed',     h:['Sl No','Maker','Product Description','Model / Part No','Serial No','Qty','Product Condition','Remark','Present in Office','Last Updated By','History (JSON)']},
-    {name:'COTS_Storage',           h:['SN','M.2 Make','Serial Number','Size','Type','Loaded OS / Content','Last Updated By','History (JSON)']},
-    {name:'COTS_Consumables',       h:['Sl No','Consumables','Total Qty','Part No','Size','Qty Available','Usage','Last Updated By','History (JSON)']},
-    {name:'COTS_Misc',              h:['Sl No','Description','SN','Qty','Present in Office','Last Updated By','History (JSON)']},
-    {name:'COTS_Pendrives',         h:['SN','Brand','Storage Capacity','USB Version','Serial Numbers','With Whom?','Last Updated By','History (JSON)']},
-    {name:'COTS_BootablePendrives', h:['SN','Serial Number','OS','Last Updated By','History (JSON)']},
-    {name:'SFF_MaterialsList',      h:['Product Details','Serial Number','Part / Model Number','Qty','Remarks','Present in Office','Last Updated By','History (JSON)']},
-    {name:'SFF_DemoUnit',           h:['S/N','Product Description','Serial Number','Part / Model Number','Cables / Accessories','Status','Availability','Remarks','Last Updated By','History (JSON)']}
-  ];
-  tabs.forEach(function(t){
-    var tab=ss.getSheetByName(t.name);
-    if(!tab){tab=ss.insertSheet(t.name);}else{tab.clearContents();tab.clearFormats();}
-    var h=tab.getRange(1,1,1,t.h.length);h.setValues([t.h]);
-    h.setBackground(HEADER_BG).setFontColor(HEADER_FG).setFontWeight('bold').setFontSize(10);
-    tab.setFrozenRows(1);try{tab.autoResizeColumns(1,t.h.length);}catch(x){}
-    console.log('Ready: '+t.name);
-  });
-  SpreadsheetApp.flush();
-  console.log('setupAllTabs complete.');
-}
-
-function testConnection(){
-  var ss=SpreadsheetApp.openById(SPREADSHEET_ID);
-  console.log('Connected: '+ss.getName()+' | Tabs: '+ss.getSheets().map(function(s){return s.getName();}).join(', '));
-}`;
-
-function downloadGS(){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([GS_CODE],{type:'text/plain'}));
-  a.download='inventorypro-apps-script-v3.2.gs';a.click();
-  toast('Apps Script downloaded ✓','s');
-}
-
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  CLEAR
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function openClearModal(){
   if(!A.activeTableId){toast('Select a table first','i');return;}
   document.querySelectorAll('input[name="clearScope"]')[0].checked=true;
   document.getElementById('clear-confirm-input').value='';
   document.getElementById('btn-do-clear').disabled=true;
   const tdef=getActiveTDef();
-  document.getElementById('clear-active-label').textContent=`Active table: "${tdef.name}"`;
+  document.getElementById('clear-active-label').textContent=`Active: "${tdef.name}"`;
   const ar=(DATA[tdef.id]||[]).length;
   document.getElementById('clear-active-sub').textContent=`${ar} row${ar===1?'':'s'} will be deleted`;
   document.getElementById('clear-product-label').textContent=`All ${A.product} tables`;
@@ -1279,8 +1481,8 @@ function openClearModal(){
 function updateClearPreview(){
   const scope=document.querySelector('input[name="clearScope"]:checked')?.value||'active';
   const tdef=getActiveTDef();let msg='';
-  if(scope==='active'){const c=(DATA[tdef.id]||[]).length;msg=`⚠ Will delete all <strong>${c} row(s)</strong> from "<strong>${tdef.name}</strong>".\nHistory entries will also be deleted.`;}
-  else if(scope==='product'){const t=TABLE_DEFS[A.product];const tot=t.reduce((s,x)=>s+(DATA[x.id]||[]).length,0);msg=`⚠ Will delete <strong>${tot} row(s)</strong> across <strong>${t.length} tables</strong> in ${A.product}.`;}
+  if(scope==='active'){const c=(DATA[tdef.id]||[]).length;msg=`⚠ Will delete <strong>${c} row(s)</strong> from "<strong>${tdef.name}</strong>".`;}
+  else if(scope==='product'){const t=TABLE_DEFS[A.product];const tot=t.reduce((s,x)=>s+(DATA[x.id]||[]).length,0);msg=`⚠ Will delete <strong>${tot} row(s)</strong> across <strong>${t.length} ${A.product} tables</strong>.`;}
   else{const all=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF];const tot=all.reduce((s,t)=>s+(DATA[t.id]||[]).length,0);msg=`⚠ Will delete <strong>ALL ${tot} row(s)</strong> across all 8 tables.`;}
   document.getElementById('clear-preview').innerHTML=msg;
 }
@@ -1294,9 +1496,9 @@ function doDataClear(){
   saveData();CM('modal-clear');renderSidebar();renderMainTable();toast(`🗑 Cleared ${cleared} row(s)`,'i');
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  EXPORT
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function toCSV(tdef,rows){
   const h=[...tdef.cols.map(c=>`"${c.name}"`),'"History Count"'].join(',');
   const r=rows.map(row=>[...tdef.cols.map(c=>`"${String(row[c.id]??'').replace(/"/g,'""')}"`),`"${(row._history||[]).length}"`].join(','));
@@ -1307,20 +1509,28 @@ function exportCSV(){const tdef=getActiveTDef();dlFile(toCSV(tdef,DATA[tdef.id]|
 function exportAllCSV(){const t=TABLE_DEFS[A.product];t.forEach((t,i)=>setTimeout(()=>dlFile(toCSV(t,DATA[t.id]||[]),A.product+'_'+t.name.replace(/[^a-z0-9]/gi,'_')+'.csv'),i*250));toast(`Downloading ${t.length} CSVs…`,'s');}
 function exportJSON(){const tdef=getActiveTDef();dlFile(JSON.stringify({product:A.product,table:tdef.name,rows:DATA[tdef.id]||[]},null,2),tdef.name.replace(/\s+/g,'_')+'.json','application/json');toast('Downloaded JSON','s');}
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  HELPERS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function getActiveTDef(){return TABLE_DEFS[A.product].find(t=>t.id===A.activeTableId);}
 function tdefForId(id){for(const p of['COTS','SFF']){const t=TABLE_DEFS[p].find(t=>t.id===id);if(t)return t;}}
 function show(pg){['pg-login','pg-product','pg-app'].forEach(id=>{const el=document.getElementById(id);el.style.display=id===pg?'flex':'none';});}
 const OM=id=>document.getElementById(id).classList.add('open');
 const CM=id=>document.getElementById(id).classList.remove('open');
 document.querySelectorAll('.mover').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
-function toast(msg,type='i'){const el=document.createElement('div');el.className=`toast t${type}`;el.innerHTML=`<span>${type==='s'?'✓':type==='e'?'✕':'ℹ'}</span><span>${msg}</span>`;document.getElementById('toasts').appendChild(el);setTimeout(()=>el.remove(),3200);}
+function toast(msg,type='i'){
+  const el=document.createElement('div');el.className=`toast t${type}`;
+  el.innerHTML=`<span>${type==='s'?'✓':type==='e'?'✕':'ℹ'}</span><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.remove(),3200);
+}
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')document.querySelectorAll('.mover.open').forEach(m=>m.classList.remove('open'));
+  if(e.key==='Escape'){document.querySelectorAll('.mover.open').forEach(m=>m.classList.remove('open'));closeMobSidebar();}
   if(e.key==='n'&&isAdmin()&&!document.querySelector('.mover.open')&&A.activeTableId)openAddRow();
 });
+
+// Init auto-sync badge on load
+updateAutoSyncBadge();
 </script>
 </body>
 </html>
