@@ -618,9 +618,9 @@ tbody td:first-child{text-align:center;}
 
     <!-- Auto-sync notice -->
     <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--t2);">
-      💡 <strong style="color:var(--blu)">Tip — Data on other devices:</strong>
-      Enable <strong>Auto-sync</strong> (topbar button) so every save automatically pushes to Google Sheets.
-      On another device, open the app, connect Sheets, then click <strong>⬇ Import from Sheet</strong> to load the data.
+      💡 <strong style="color:var(--blu)">New device / showing empty?</strong>
+      Paste your Apps Script URL above → click <strong>🔌 Test</strong> → then <strong>logout and log back in</strong>.
+      The app will automatically load all data from Google Sheets on login.
     </div>
 
     <div style="margin-bottom:9px;">
@@ -647,9 +647,9 @@ tbody td:first-child{text-align:center;}
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="btn bg bsm" onclick="syncAll()">⬆ Sync All Tables</button>
         <button class="btn bo bsm" onclick="syncActive()">⬆ Sync Active Table</button>
-        <button class="btn bo bsm" onclick="importActive()">⬇ Import from Sheet</button>
-        <button class="btn bo bsm" onclick="importAll()">⬇ Import All Tables</button>
+        <button class="btn bo bsm" onclick="forceRefresh()">🔄 Force Refresh from Sheet</button>
       </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--t3);" id="cache-age-display"></div>
       <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr);">
         <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:7px;">⬇ Local Export</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -746,7 +746,7 @@ const ADMINS = [
   { id:'ADM003', name:'Vikram Singh', pass:'Admin3@2024' },
   { id:'Anil4',  name:'Anil Vase',    pass:'10698'       },
 ];
-const VIEWER = { id:'VIEW01', pass:'View@123' };
+const VIEWER = { id:'VIEW01', pass:'Viewer@2024' };
 
 // ═══════════════════════════════════════════════════════════════
 //  TABLE DEFINITIONS
@@ -951,13 +951,44 @@ function doLogout(){
 const isAdmin=()=>A.user?.role==='admin';
 
 // ═══════════════════════════════════════════════════════════════
-//  PRODUCT SELECT
-//  FIX 1: On entering product, if GS URL is set AND autoSync is on,
-//  silently import fresh data from Sheets in the background.
+//  SMART CACHE REFRESH
+//  Strategy:
+//  • Always show localStorage data INSTANTLY (zero wait)
+//  • Only fetch from Sheets if cache is STALE (> CACHE_TTL minutes)
+//    OR if local data is completely empty (first time on this device)
+//  • Background fetch — NO blocking overlay, NO spinner on screen
+//  • A small unobtrusive indicator in the topbar shows refresh status
+//  • Manual "Force Refresh" always available in the Sync modal
+//
+//  Result: App opens instantly every time. Sheets data quietly
+//  updates in the background when stale, without blocking the user.
 // ═══════════════════════════════════════════════════════════════
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes — change if needed
+
+function getCacheAge(){
+  const ts = parseInt(localStorage.getItem('ip_cache_ts') || '0');
+  return ts ? (Date.now() - ts) : Infinity;
+}
+function markCacheFresh(){
+  localStorage.setItem('ip_cache_ts', String(Date.now()));
+}
+function isCacheStale(){
+  return getCacheAge() > CACHE_TTL_MS;
+}
+function localDataIsEmpty(){
+  // True if all tables have zero rows
+  return [...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].every(t=>(DATA[t.id]||[]).length===0);
+}
+
 function enterProduct(prod){
   A.product=prod;A.activeTableId=TABLE_DEFS[prod][0].id;
   A.nioFilter=false;A.searchMode=false;A.searchQuery='';
+
+  if(CONFIG_DEFAULT_GS_URL && !localStorage.getItem('ip_gsurl')){
+    localStorage.setItem('ip_gsurl', CONFIG_DEFAULT_GS_URL);
+  }
+  const gsUrl=getGsUrl();
+
   show('pg-app');
   document.getElementById('tb-uname').textContent=A.user.name;
   const b=document.getElementById('tb-badge');b.textContent=A.user.role.toUpperCase();b.className='puser-badge '+(isAdmin()?'ba':'bv');
@@ -966,31 +997,49 @@ function enterProduct(prod){
   document.getElementById('btn-add-row').style.display=isAdmin()?'flex':'none';
   if(isAdmin())document.getElementById('btn-add-row').className='btn bp bsm'+(prod==='SFF'?' sff-btn':'');
   updateAutoSyncBadge();
-
-  // Initialise GS URL (default or saved)
-  if(CONFIG_DEFAULT_GS_URL && !localStorage.getItem('ip_gsurl')){
-    localStorage.setItem('ip_gsurl', CONFIG_DEFAULT_GS_URL);
-  }
-  const gsUrl=getGsUrl();
   updateSyncDot(!!gsUrl);
 
+  // ① Show local data immediately — instant, no wait
   renderSidebar();selectTable(A.activeTableId);
 
-  // FIX 1 — Background import if autoSync enabled and GS connected
-  if(gsUrl && autoSyncEnabled){
-    silentImportAll();
+  // ② Background refresh from Sheets — only when needed
+  if(gsUrl){
+    const empty = localDataIsEmpty();
+    const stale = isCacheStale();
+    if(empty){
+      // First time on this device — must load, show a gentle inline notice
+      backgroundRefreshAll(true);
+    } else if(stale){
+      // Data exists but is old — refresh quietly in background, no UI block
+      backgroundRefreshAll(false);
+    }
+    // Cache is fresh → do nothing, local data is good
   }
 }
 function goProductSelect(){A.product=null;show('pg-product');}
 
-// Silent background import — no loading overlay, just a toast
-async function silentImportAll(){
-  try {
-    const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
-    let imported=0;
-    for(const id of allIds){
-      const tabName=TAB_NAMES[id];
-      const tdef=tdefForId(id);
+// Background import — never blocks the UI
+// showNotice=true: shows a small loading bar for first-time empty state
+// showNotice=false: completely silent, user sees nothing until done
+async function backgroundRefreshAll(showNotice){
+  const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
+
+  // For first-time empty state, show a slim non-blocking bar at top
+  let bar = null;
+  if(showNotice){
+    bar = document.createElement('div');
+    bar.id = 'refresh-bar';
+    bar.style.cssText = 'position:fixed;top:var(--topbar);left:0;right:0;z-index:500;background:rgba(245,158,11,.12);border-bottom:1px solid rgba(245,158,11,.3);padding:6px 16px;font-size:11px;color:var(--acc);font-family:var(--mono);display:flex;align-items:center;gap:8px;';
+    bar.innerHTML = '<span style="width:10px;height:10px;border:2px solid var(--acc);border-top-color:transparent;border-radius:50%;display:inline-block;animation:spin .7s linear infinite;flex-shrink:0"></span><span id="refresh-bar-msg">Loading from Google Sheets…</span>';
+    document.body.appendChild(bar);
+  }
+
+  let imported=0;
+  for(const id of allIds){
+    const tabName=TAB_NAMES[id];
+    const tdef=tdefForId(id);
+    if(bar) document.getElementById('refresh-bar-msg').textContent='Loading '+tabName+'…';
+    try{
       const data=await gsPost({action:'import',tabName});
       if(data.rows&&data.rows.length){
         DATA[id]=data.rows.map(obj=>{
@@ -1001,14 +1050,20 @@ async function silentImportAll(){
         });
         imported++;
       }
+    }catch(e){
+      console.warn('Background refresh failed for '+tabName+':',e.message);
     }
-    if(imported>0){
-      saveData();renderSidebar();renderMainTable();
-      toast(`✓ Data refreshed from Sheets (${imported} tables)`,'s');
-    }
-  } catch(e){
-    // Silent failure — don't alarm the user, just skip
-    console.warn('Background import failed:',e.message);
+  }
+
+  if(bar){ bar.remove(); }
+
+  if(imported>0){
+    markCacheFresh();
+    saveData();
+    renderSidebar();
+    renderMainTable();
+    if(showNotice) toast('✓ Data loaded from Google Sheets','s');
+    else toast('✓ Data refreshed in background','s');
   }
 }
 
@@ -1230,9 +1285,10 @@ function saveRow(){
   if(A.editRowId){const idx=DATA[tdef.id].findIndex(r=>r._id===A.editRowId);if(idx>-1)DATA[tdef.id][idx]=data;toast('Row updated ✓','s');}
   else{DATA[tdef.id].push(data);toast('Row added ✓','s');}
   saveData();CM('modal-row');renderSidebar();renderMainTable();
-  // FIX 2: Auto-sync after save
+  // Auto-sync after save (if enabled) — also marks cache stale for other devices
   if(autoSyncEnabled && getGsUrl()){
-    syncTableById(A.activeTableId).catch(e=>console.warn('Auto-sync:',e.message));
+    localStorage.removeItem('ip_cache_ts'); // stale for other devices
+    syncTableById(A.activeTableId).then(()=>markCacheFresh()).catch(e=>console.warn('Auto-sync:',e.message));
   }
 }
 function deleteRow(rowId){
@@ -1399,6 +1455,7 @@ async function syncAll(){
     try{await syncTableById(id);ok++;}catch(e){fail++;console.warn('Sync fail '+id,e.message);}
   }
   hideLoading();
+  markCacheFresh();
   toast(fail?`${ok} synced, ${fail} failed`:`✓ All ${ok} tables synced`,'s');
 }
 
@@ -1425,10 +1482,9 @@ async function importActive(){
   }catch(e){hideLoading();toast('Import failed: '+e.message,'e');}
 }
 
-// ── FIX 1: Import ALL tables (for cross-device setup) ───────
+// ── Import ALL tables (manual button in sync modal) ──────────
 async function importAll(){
   if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
-  if(!confirm(`Import ALL 8 tables from Google Sheets?\nThis will REPLACE all local data. Continue?`))return;
   const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
   showLoading('Importing all tables…');
   let ok=0,fail=0;
@@ -1447,8 +1503,46 @@ async function importAll(){
       }
     }catch(e){fail++;console.warn('Import fail '+id,e.message);}
   }
-  hideLoading();saveData();renderSidebar();renderMainTable();
+  hideLoading();saveData();markCacheFresh();renderSidebar();renderMainTable();
   toast(fail?`Imported ${ok} tables, ${fail} failed`:`✓ All ${ok} tables imported from Sheets`,'s');
+}
+
+// Force refresh — bypasses cache, always fetches fresh from Sheets
+async function forceRefresh(){
+  if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
+  localStorage.removeItem('ip_cache_ts'); // bust cache
+  showLoading('Force refreshing from Google Sheets…');
+  const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
+  let imported=0,fail=0;
+  for(const id of allIds){
+    const tabName=TAB_NAMES[id];const tdef=tdefForId(id);
+    document.getElementById('loading-msg').textContent='Importing '+tabName+'…';
+    try{
+      const data=await gsPost({action:'import',tabName});
+      if(data.rows&&data.rows.length){
+        DATA[id]=data.rows.map(obj=>{
+          const row={_id:uid(),_history:[]};
+          tdef.cols.forEach(c=>{row[c.id]=obj[c.name]??'';});
+          try{row._history=JSON.parse(obj['History (JSON)']||'[]');}catch(x){row._history=[];}
+          return row;
+        });imported++;
+      }
+    }catch(e){fail++;console.warn('Force refresh fail '+id,e.message);}
+  }
+  hideLoading();
+  if(imported>0){markCacheFresh();saveData();renderSidebar();renderMainTable();}
+  toast(fail?`Refreshed ${imported}, failed ${fail}`:`✓ All tables refreshed from Sheets`,'s');
+  updateCacheDisplay();
+}
+
+function updateCacheDisplay(){
+  const el=document.getElementById('cache-age-display');if(!el)return;
+  const age=getCacheAge();
+  if(age===Infinity){el.textContent='Cache: never synced';return;}
+  const mins=Math.floor(age/60000);
+  const secs=Math.floor((age%60000)/1000);
+  const fresh=age<CACHE_TTL_MS;
+  el.innerHTML=`Cache: <span style="color:${fresh?'var(--grn)':'var(--acc)'}">${mins>0?mins+'m ':''} ${secs}s ago</span> · Next auto-refresh after ${Math.floor(CACHE_TTL_MS/60000)} min`;
 }
 
 function openSyncModal(){
@@ -1460,6 +1554,7 @@ function openSyncModal(){
     el.textContent='Not connected — paste URL above and click Test';
   const mdot=document.getElementById('sync-dot-modal');
   if(mdot)mdot.className='sync-dot'+(gsUrl?' on':'');
+  updateCacheDisplay();
   OM('modal-sync');
 }
 
