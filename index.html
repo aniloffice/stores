@@ -7,25 +7,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════
-   CONFIGURATION NOTICE (for developers)
-   ═══════════════════════════════════════════════
-   Two things to configure before deploying:
-   1. SPREADSHEET_ID  — search for "CONFIG_SPREADSHEET_ID" in <script>
-   2. GS_URL          — entered by admin in the Sync modal (saved to localStorage)
-                        OR hardcoded at "CONFIG_DEFAULT_GS_URL" in <script>
+   CONFIG: Search for CONFIG_ in <script> to edit
+   ① CONFIG_SPREADSHEET_ID — your Google Sheet ID
+   ② CONFIG_DEFAULT_GS_URL — your Apps Script URL
+   ③ ADMINS / VIEWER       — credentials
    ═══════════════════════════════════════════════ */
-
-:root {
-  --bg:#0a0a0f; --s1:#111118; --s2:#18181f; --s3:#1f1f28;
-  --bdr:#2d2d40; --bdr2:#3a3a50;
-  --acc:#f59e0b; --acc2:#fbbf24;
-  --grn:#10b981; --red:#ef4444; --blu:#3b82f6; --pur:#8b5cf6; --orn:#f97316;
-  --cots:#f59e0b; --sff:#3b82f6;
-  --txt:#e4e4f0; --t2:#8a8aa8; --t3:#4a4a68;
-  --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif;
-  --r:8px; --tr:.15s ease;
-  --sidebar:260px;
-  --topbar:52px;
+:root{
+  --bg:#0a0a0f;--s1:#111118;--s2:#18181f;--s3:#1f1f28;
+  --bdr:#2d2d40;--bdr2:#3a3a50;
+  --acc:#f59e0b;--acc2:#fbbf24;
+  --grn:#10b981;--red:#ef4444;--blu:#3b82f6;--pur:#8b5cf6;--orn:#f97316;
+  --cots:#f59e0b;--sff:#3b82f6;
+  --txt:#e4e4f0;--t2:#8a8aa8;--t3:#4a4a68;
+  --mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
+  --r:8px;--tr:.15s ease;
+  --sidebar:260px;--topbar:52px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
@@ -34,10 +30,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--txt);font-size:14p
 ::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px;}
 input,select,textarea,button{font-family:var(--sans);}
 
-/* ── LOGIN ── */
+/* LOGIN */
 #pg-login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;
   background:radial-gradient(ellipse 600px 400px at 20% 50%,rgba(245,158,11,.07) 0%,transparent 70%),
-             radial-gradient(ellipse 500px 350px at 80% 20%,rgba(59,130,246,.06) 0%,transparent 60%),var(--bg);}
+  radial-gradient(ellipse 500px 350px at 80% 20%,rgba(59,130,246,.06) 0%,transparent 60%),var(--bg);}
 .login-wrap{width:100%;max-width:480px;}
 .login-brand{text-align:center;margin-bottom:24px;}
 .login-brand-logo{width:52px;height:52px;background:var(--acc);border-radius:14px;display:inline-grid;place-items:center;font-size:24px;margin-bottom:10px;}
@@ -60,10 +56,10 @@ input,select,textarea,button{font-family:var(--sans);}
 .viewer-hint{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:11px;margin-bottom:13px;font-size:12px;color:var(--t2);line-height:1.7;}
 .viewer-hint strong{color:var(--blu);}
 
-/* ── PRODUCT SELECT ── */
+/* PRODUCT SELECT */
 #pg-product{display:none;align-items:center;justify-content:center;min-height:100vh;
   background:radial-gradient(ellipse 700px 500px at 25% 50%,rgba(245,158,11,.06) 0%,transparent 65%),
-             radial-gradient(ellipse 600px 400px at 75% 50%,rgba(59,130,246,.06) 0%,transparent 65%),var(--bg);}
+  radial-gradient(ellipse 600px 400px at 75% 50%,rgba(59,130,246,.06) 0%,transparent 65%),var(--bg);}
 .product-wrap{width:100%;max-width:680px;padding:20px;}
 .product-header{text-align:center;margin-bottom:32px;}
 .product-header h2{font-size:20px;font-weight:700;}
@@ -89,7 +85,7 @@ input,select,textarea,button{font-family:var(--sans);}
 .ba{background:rgba(245,158,11,.15);color:var(--acc);border:1px solid rgba(245,158,11,.25);}
 .bv{background:rgba(59,130,246,.12);color:var(--blu);border:1px solid rgba(59,130,246,.2);}
 
-/* ── MAIN APP ── */
+/* MAIN APP */
 #pg-app{display:none;height:100vh;flex-direction:column;}
 .topbar{height:var(--topbar);background:var(--s1);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;z-index:200;}
 .tb-brand{font-family:var(--mono);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;}
@@ -101,18 +97,21 @@ input,select,textarea,button{font-family:var(--sans);}
 .tb-product-badge:hover{opacity:.8;}
 .tb-right{margin-left:auto;display:flex;align-items:center;gap:7px;}
 .tb-user{display:flex;align-items:center;gap:6px;font-size:11px;}
-.tb-uname{font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tb-uname{font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .tbtn{padding:5px 10px;background:var(--s2);border:1px solid var(--bdr);color:var(--t2);border-radius:6px;cursor:pointer;font-size:11px;transition:all var(--tr);}
 .tbtn:hover{border-color:var(--red);color:var(--red);}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);flex-shrink:0;}
 .sync-dot.on{background:var(--grn);box-shadow:0 0 6px var(--grn);}
+.sync-dot.busy{background:var(--acc);box-shadow:0 0 6px var(--acc);animation:pulse .8s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .sync-pill{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:4px 9px;background:var(--s2);border:1px solid var(--bdr);border-radius:5px;cursor:pointer;transition:all var(--tr);white-space:nowrap;}
 .sync-pill:hover{border-color:var(--grn);color:var(--grn);}
-/* Mobile menu toggle */
+.autosync-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--mono);padding:3px 8px;border-radius:5px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:var(--grn);cursor:pointer;transition:all var(--tr);}
+.autosync-badge.off{background:var(--s2);border-color:var(--bdr);color:var(--t3);}
 .mob-menu-btn{display:none;background:var(--s2);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:6px 9px;cursor:pointer;font-size:16px;}
 .app-body{display:flex;flex:1;overflow:hidden;position:relative;}
 
-/* ── SIDEBAR ── */
+/* SIDEBAR */
 .sidebar{width:var(--sidebar);background:var(--s1);border-right:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:transform .25s ease;}
 .sb-search{padding:10px 9px 7px;}
 .sb-sbox{display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;padding:7px 10px;}
@@ -142,14 +141,14 @@ input,select,textarea,button{font-family:var(--sans);}
 .t-item-cnt{font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);padding:2px 5px;border-radius:7px;}
 .sb-bottom{padding:7px;border-top:1px solid var(--bdr);}
 
-/* ── MAIN CONTENT ── */
+/* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .main-head{padding:11px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--s1);}
 .mh-left h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;}
 .mh-left .mh-sub{font-size:11px;color:var(--t2);margin-top:2px;font-family:var(--mono);}
 .mh-right{display:flex;align-items:center;gap:5px;margin-left:auto;flex-wrap:wrap;}
-.stat-bar{padding:6px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:14px;align-items:center;background:var(--bg);flex-shrink:0;}
-.stat{display:flex;align-items:center;gap:4px;}
+.stat-bar{padding:6px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:14px;align-items:center;background:var(--bg);flex-shrink:0;overflow-x:auto;}
+.stat{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 .stat-d{width:6px;height:6px;border-radius:50%;}
 .stat-n{font-family:var(--mono);font-size:12px;font-weight:600;}
 .stat-l{font-size:11px;color:var(--t3);}
@@ -163,7 +162,7 @@ input,select,textarea,button{font-family:var(--sans);}
 .sr-row-meta{font-size:11px;color:var(--t2);margin-top:3px;}
 .sr-match{background:rgba(245,158,11,.2);color:var(--acc2);border-radius:2px;padding:0 2px;}
 
-/* ── TABLE ── */
+/* TABLE */
 .table-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .twrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
@@ -184,10 +183,10 @@ tbody td:first-child{text-align:center;}
 .nin-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .nin-yes{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .nin-no{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.cond-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
-.cg{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
-.cf{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
-.cp{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.cond-badge,.status-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
+.cg,.sg{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
+.cf,.sw{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
+.cp,.sr2{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
 .av-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .av-avail{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .av-notav{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
@@ -203,7 +202,7 @@ tbody td:first-child{text-align:center;}
 .empty-state h3{font-size:14px;color:var(--t2);}
 .empty-state p{font-size:12px;text-align:center;max-width:220px;line-height:1.6;}
 
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn{padding:6px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;transition:all var(--tr);}
 .bp{background:var(--acc);color:#000;border-color:var(--acc);}
 .bp:hover{background:var(--acc2);}
@@ -218,7 +217,7 @@ tbody td:first-child{text-align:center;}
 .bg:hover{opacity:.85;}
 .bsm{padding:4px 8px;font-size:11px;}
 
-/* ── MODALS ── */
+/* MODALS */
 .mover{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-start;justify-content:center;z-index:1000;backdrop-filter:blur(4px);overflow-y:auto;padding:16px;}
 .mover.open{display:flex;}
 .modal{background:var(--s1);border:1px solid var(--bdr);border-radius:14px;padding:22px;width:560px;max-width:98vw;margin:auto;animation:mIn .16s ease;}
@@ -241,8 +240,6 @@ tbody td:first-child{text-align:center;}
 .mft{display:flex;gap:6px;justify-content:flex-end;margin-top:16px;}
 .fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .fhint{font-size:11px;color:var(--t3);margin-top:3px;}
-
-/* History modal */
 .hist-list{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;max-height:340px;overflow-y:auto;}
 .hist-entry{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:11px 12px;}
 .hist-entry-head{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
@@ -259,10 +256,8 @@ tbody td:first-child{text-align:center;}
 .hist-form{background:var(--s2);border:1px solid var(--pur);border-radius:8px;padding:12px;margin-top:7px;display:none;}
 .hist-form.open{display:block;}
 .hist-form-title{font-size:11px;font-weight:700;color:var(--pur);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px;}
-
-/* Sync modal */
 .sync-quickbar{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:9px;padding:13px 15px;margin-bottom:13px;}
-.sync-quickbar-title{font-size:11px;font-weight:700;color:var(--grn);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px;display:flex;align-items:center;gap:5px;}
+.sync-quickbar-title{font-size:11px;font-weight:700;color:var(--grn);text-transform:uppercase;letter-spacing:.07em;margin-bottom:9px;}
 .sync-url-row{display:flex;gap:6px;align-items:center;}
 .sync-url-row input{flex:1;padding:8px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:12px;outline:none;transition:border-color var(--tr);font-family:var(--mono);}
 .sync-url-row input:focus{border-color:var(--grn);}
@@ -282,12 +277,11 @@ tbody td:first-child{text-align:center;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-msg{font-size:13px;color:var(--t2);font-family:var(--mono);}
 
-/* Auto-sync badge */
-.autosync-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);padding:3px 8px;border-radius:5px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:var(--grn);cursor:pointer;transition:all var(--tr);}
-.autosync-badge.off{background:var(--s2);border-color:var(--bdr);color:var(--t3);}
-.autosync-badge:hover{opacity:.8;}
+/* Refresh bar (slim top indicator — non-blocking) */
+#refresh-bar{position:fixed;top:52px;left:0;right:0;z-index:500;background:rgba(245,158,11,.1);border-bottom:1px solid rgba(245,158,11,.25);padding:5px 16px;font-size:11px;color:var(--acc);font-family:var(--mono);display:flex;align-items:center;gap:8px;}
+#refresh-bar .rb-spin{width:10px;height:10px;border:2px solid var(--acc);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
 
-/* Toast */
+/* TOASTS */
 #toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:5px;}
 .toast{padding:10px 14px;border-radius:8px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;min-width:190px;max-width:300px;animation:tIn .16s ease;border:1px solid;box-shadow:0 4px 16px rgba(0,0,0,.4);}
 @keyframes tIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
@@ -295,68 +289,36 @@ tbody td:first-child{text-align:center;}
 .te{background:#2b0d0d;border-color:rgba(239,68,68,.3);color:var(--red);}
 .ti{background:#0d1a2b;border-color:rgba(59,130,246,.3);color:var(--blu);}
 
-/* ── MOBILE RESPONSIVE ── */
+/* MOBILE */
 @media(max-width:768px){
-  :root{--sidebar:260px;}
   html,body{overflow:auto;}
   body{overflow:auto;}
   #pg-app{height:100%;min-height:100dvh;}
   .app-body{overflow:visible;}
-
-  /* Sidebar becomes a slide-in drawer */
-  .sidebar{
-    position:fixed;left:0;top:var(--topbar);bottom:0;
-    transform:translateX(-100%);z-index:300;
-    box-shadow:4px 0 24px rgba(0,0,0,.6);
-  }
+  .sidebar{position:fixed;left:0;top:52px;bottom:0;transform:translateX(-100%);z-index:300;box-shadow:4px 0 24px rgba(0,0,0,.6);}
   .sidebar.mob-open{transform:translateX(0);}
-
-  /* Overlay behind open sidebar */
-  .mob-overlay{position:fixed;inset:0;top:var(--topbar);background:rgba(0,0,0,.6);z-index:299;display:none;}
+  .mob-overlay{position:fixed;inset:0;top:52px;background:rgba(0,0,0,.6);z-index:299;display:none;}
   .mob-overlay.open{display:block;}
-
   .mob-menu-btn{display:flex;}
   .tb-brand span{display:none;}
   .tb-uname{display:none;}
-  .tb-product-badge span:first-child{display:none;}
   .tb-sep{display:none;}
-
-  /* Main fills full width */
   .main{width:100%;}
-
-  /* Table scrolls horizontally */
   .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
   table{min-width:600px;}
-
-  /* Buttons smaller on mobile */
   .mh-right .btn{padding:4px 7px;font-size:10px;}
   .mh-right{gap:3px;}
-
-  /* Product grid stacks */
   .product-grid{grid-template-columns:1fr;}
   .product-card{padding:22px 18px;}
-
-  /* Modals full-width on mobile */
   .modal,.modal-xl,.modal-sm,.modal-hist{width:98vw;padding:16px;}
   .mover{padding:8px;}
-
-  /* Form grids collapse */
-  .fg2{grid-template-columns:1fr;}
-  .hist-grid{grid-template-columns:1fr;}
-
-  /* Stat bar scrolls */
-  .stat-bar{overflow-x:auto;gap:12px;}
-  .stat{flex-shrink:0;}
-
-  /* Sync URL row stacks */
+  .fg2,.hist-grid{grid-template-columns:1fr;}
   .sync-url-row{flex-wrap:wrap;}
   .sync-url-row input{width:100%;flex:none;}
-
-  /* Toast at bottom-center on mobile */
   #toasts{right:10px;left:10px;bottom:10px;align-items:center;}
   .toast{min-width:unset;width:100%;justify-content:center;}
+  .autosync-badge{display:none;}
 }
-
 @media(max-width:480px){
   .topbar{padding:0 10px;gap:7px;}
   .tb-icon{display:none;}
@@ -367,16 +329,13 @@ tbody td:first-child{text-align:center;}
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
 <div class="loading-overlay" id="loading-overlay">
   <div class="loading-spinner"></div>
-  <div class="loading-msg" id="loading-msg">Syncing…</div>
+  <div class="loading-msg" id="loading-msg">Loading…</div>
 </div>
-
-<!-- MOBILE SIDEBAR OVERLAY -->
 <div class="mob-overlay" id="mob-overlay" onclick="closeMobSidebar()"></div>
 
-<!-- PAGE 1: LOGIN -->
+<!-- LOGIN -->
 <div id="pg-login">
   <div class="login-wrap">
     <div class="login-brand">
@@ -385,23 +344,13 @@ tbody td:first-child{text-align:center;}
       <p>COTS & SFF Inventory Management System</p>
     </div>
     <div class="role-switch">
-      <button class="rs-btn active" id="rtab-admin" onclick="switchRole('admin')">
-        <span class="rs-icon">🔐</span>Admin Login
-      </button>
-      <button class="rs-btn" id="rtab-viewer" onclick="switchRole('viewer')">
-        <span class="rs-icon">👁</span>Viewer Login
-      </button>
+      <button class="rs-btn active" id="rtab-admin" onclick="switchRole('admin')"><span class="rs-icon">🔐</span>Admin Login</button>
+      <button class="rs-btn" id="rtab-viewer" onclick="switchRole('viewer')"><span class="rs-icon">👁</span>Viewer Login</button>
     </div>
     <div id="panel-admin">
       <div class="lcard">
-        <div class="lf"><label>Admin ID</label>
-          <input type="text" id="adminId" placeholder="e.g. ADM001" autocomplete="off"
-            onkeydown="if(event.key==='Enter')document.getElementById('adminPass').focus()">
-        </div>
-        <div class="lf"><label>Password</label>
-          <input type="password" id="adminPass" placeholder="Enter your password"
-            onkeydown="if(event.key==='Enter')doLogin()">
-        </div>
+        <div class="lf"><label>Admin ID</label><input type="text" id="adminId" placeholder="e.g. ADM001" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('adminPass').focus()"></div>
+        <div class="lf"><label>Password</label><input type="password" id="adminPass" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
         <button class="btn-login" onclick="doLogin()">Sign In →</button>
         <div class="lerr" id="lerr-admin">❌ Incorrect ID or password.</div>
       </div>
@@ -414,10 +363,7 @@ tbody td:first-child{text-align:center;}
           <span style="font-family:var(--mono);font-size:13px;color:var(--blu);font-weight:600;">VIEW01</span>
           <span style="margin-left:auto;font-size:10px;color:var(--t3);">fixed · read-only</span>
         </div>
-        <div class="lf"><label>Password</label>
-          <input type="password" id="viewerPass" placeholder="Enter viewer password"
-            onkeydown="if(event.key==='Enter')doLogin()">
-        </div>
+        <div class="lf"><label>Password</label><input type="password" id="viewerPass" placeholder="Enter viewer password" onkeydown="if(event.key==='Enter')doLogin()"></div>
         <button class="btn-login" onclick="doLogin()">Sign In →</button>
         <div class="lerr" id="lerr-viewer">❌ Incorrect password.</div>
       </div>
@@ -425,73 +371,55 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
-<!-- PAGE 2: PRODUCT SELECT -->
+<!-- PRODUCT SELECT -->
 <div id="pg-product">
   <div class="product-wrap">
     <div class="product-user">
-      <div class="puser-info">
-        <span id="pu-name" style="font-weight:600"></span>
-        <span class="puser-badge" id="pu-badge"></span>
-      </div>
+      <div class="puser-info"><span id="pu-name" style="font-weight:600"></span><span class="puser-badge" id="pu-badge"></span></div>
       <button class="tbtn" onclick="doLogout()">Logout</button>
     </div>
-    <div class="product-header">
-      <h2>Select Product Category</h2>
-      <p>Choose a product line to view and manage inventory</p>
-    </div>
+    <div class="product-header"><h2>Select Product Category</h2><p>Choose a product line to view and manage inventory</p></div>
     <div class="product-grid">
       <div class="product-card cots" onclick="enterProduct('COTS')">
-        <div class="pc-icon">🖥️</div>
-        <div class="pc-title">COTS</div>
+        <div class="pc-icon">🖥️</div><div class="pc-title">COTS</div>
         <div class="pc-sub">Commercial Off-The-Shelf<br>equipment and components</div>
         <div class="pc-tables">
-          <span class="pc-tag">Regularly Used Items</span>
-          <span class="pc-tag">Storage Devices</span>
-          <span class="pc-tag">Consumables</span>
-          <span class="pc-tag">Miscellaneous</span>
-          <span class="pc-tag">Pendrives</span>
-          <span class="pc-tag">Bootable Pendrives</span>
+          <span class="pc-tag">Regularly Used Items</span><span class="pc-tag">Storage Devices</span>
+          <span class="pc-tag">Consumables</span><span class="pc-tag">Miscellaneous</span>
+          <span class="pc-tag">Pendrives</span><span class="pc-tag">Bootable Pendrives</span>
         </div>
       </div>
       <div class="product-card sff" onclick="enterProduct('SFF')">
-        <div class="pc-icon">💻</div>
-        <div class="pc-title">SFF</div>
+        <div class="pc-icon">💻</div><div class="pc-title">SFF</div>
         <div class="pc-sub">Small Form Factor<br>systems and demo units</div>
-        <div class="pc-tables">
-          <span class="pc-tag">Materials List</span>
-          <span class="pc-tag">SFF Demo Unit Details</span>
-        </div>
+        <div class="pc-tables"><span class="pc-tag">Materials List</span><span class="pc-tag">SFF Demo Unit Details</span></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- PAGE 3: MAIN APP -->
+<!-- MAIN APP -->
 <div id="pg-app">
   <div class="topbar">
     <button class="mob-menu-btn" onclick="toggleMobSidebar()">☰</button>
-    <div class="tb-brand">
-      <div class="tb-icon">📦</div>
-      <span>Inventory<span style="color:var(--acc)">Pro</span></span>
-    </div>
+    <div class="tb-brand"><div class="tb-icon">📦</div><span>Inventory<span style="color:var(--acc)">Pro</span></span></div>
     <div class="tb-sep"></div>
     <div class="tb-product-badge" id="tb-prod-badge" onclick="goProductSelect()">← Switch</div>
     <div class="tb-right">
-      <div class="sync-pill" onclick="openSyncModal()" title="Google Sheets Sync">
+      <div class="sync-pill" id="sync-pill" onclick="openSyncModal()" title="Google Sheets Sync">
         <span class="sync-dot" id="sync-dot"></span>
         <span id="sync-txt">Not connected</span>
       </div>
-      <div class="autosync-badge off" id="autosync-badge" onclick="toggleAutoSync()" title="Auto-sync: saves data to Sheets after every change">
-        <span id="autosync-icon">○</span><span id="autosync-label">Auto</span>
+      <div class="autosync-badge off" id="autosync-badge" onclick="toggleAutoSync()" title="Auto-sync on save">
+        <span id="autosync-icon">○</span><span>Auto</span>
       </div>
-      <div class="tb-user">
+      <div class="tb-user" id="tb-user-area">
         <span class="tb-uname" id="tb-uname"></span>
         <span class="puser-badge" id="tb-badge"></span>
       </div>
       <button class="tbtn" onclick="doLogout()">Logout</button>
     </div>
   </div>
-
   <div class="app-body">
     <div class="sidebar" id="sidebar">
       <div class="sb-search">
@@ -507,54 +435,33 @@ tbody td:first-child{text-align:center;}
           <span class="nio-count" id="nio-count" style="display:none">0</span>
         </div>
       </div>
-      <div class="sb-section">
-        <div class="sb-section-label" id="sb-prod-label">Tables</div>
-      </div>
+      <div class="sb-section"><div class="sb-section-label" id="sb-prod-label">Tables</div></div>
       <div class="sb-tables" id="sb-tables"></div>
       <div class="sb-bottom">
         <button class="btn bp bsm" id="btn-add-row" onclick="openAddRow()" style="width:100%;justify-content:center;display:none;">+ Add Row</button>
       </div>
     </div>
-
     <div class="main" id="main-content">
       <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--t3);">
-        <div style="text-align:center">
-          <div style="font-size:36px;margin-bottom:12px;opacity:.3">📋</div>
-          <div style="font-size:14px;">Select a table from the sidebar</div>
-        </div>
+        <div style="text-align:center"><div style="font-size:36px;margin-bottom:12px;opacity:.3">📋</div><div style="font-size:14px;">Select a table from the sidebar</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Add / Edit Row -->
+<!-- MODAL: Row -->
 <div class="mover" id="modal-row">
   <div class="modal modal-xl">
-    <div class="mhd">
-      <div>
-        <div class="mhd-title" id="row-modal-title">Add Row</div>
-        <div class="mhd-sub" id="row-modal-sub"></div>
-      </div>
-      <button class="mcl" onclick="CM('modal-row')">✕</button>
-    </div>
+    <div class="mhd"><div><div class="mhd-title" id="row-modal-title">Add Row</div><div class="mhd-sub" id="row-modal-sub"></div></div><button class="mcl" onclick="CM('modal-row')">✕</button></div>
     <div id="row-form-fields"></div>
-    <div class="mft">
-      <button class="btn bo" onclick="CM('modal-row')">Cancel</button>
-      <button class="btn bp" id="row-save-btn" onclick="saveRow()">Save Row</button>
-    </div>
+    <div class="mft"><button class="btn bo" onclick="CM('modal-row')">Cancel</button><button class="btn bp" id="row-save-btn" onclick="saveRow()">Save Row</button></div>
   </div>
 </div>
 
 <!-- MODAL: History -->
 <div class="mover" id="modal-hist">
   <div class="modal modal-hist">
-    <div class="mhd">
-      <div>
-        <div class="mhd-title">📜 Product History</div>
-        <div class="mhd-sub" id="hist-modal-sub">Tracking allocation & return records</div>
-      </div>
-      <button class="mcl" onclick="CM('modal-hist')">✕</button>
-    </div>
+    <div class="mhd"><div><div class="mhd-title">📜 Product History</div><div class="mhd-sub" id="hist-modal-sub"></div></div><button class="mcl" onclick="CM('modal-hist')">✕</button></div>
     <div id="hist-product-info" style="background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:11px;margin-bottom:13px;font-size:12px;color:var(--t2);"></div>
     <div id="hist-entries-list"></div>
     <button class="hist-add-btn" id="hist-add-btn" onclick="toggleHistForm()" style="display:none;">+ Add History Entry</button>
@@ -567,10 +474,7 @@ tbody td:first-child{text-align:center;}
         <div class="ff" style="margin-bottom:9px"><label>Customer / Person</label><input type="text" id="hf-cust" placeholder="Name or org"></div>
       </div>
       <div class="ff" style="margin-bottom:9px"><label>Remarks</label><textarea id="hf-rem" style="min-height:55px" placeholder="Notes…"></textarea></div>
-      <div style="display:flex;gap:6px;">
-        <button class="btn bp bsm" onclick="saveHistEntry()">Save Entry</button>
-        <button class="btn bo bsm" onclick="toggleHistForm()">Cancel</button>
-      </div>
+      <div style="display:flex;gap:6px;"><button class="btn bp bsm" onclick="saveHistEntry()">Save Entry</button><button class="btn bo bsm" onclick="toggleHistForm()">Cancel</button></div>
     </div>
     <div class="mft"><button class="btn bo" onclick="CM('modal-hist')">Close</button></div>
   </div>
@@ -579,79 +483,51 @@ tbody td:first-child{text-align:center;}
 <!-- MODAL: Sync -->
 <div class="mover" id="modal-sync">
   <div class="modal modal-xl">
-    <div class="mhd">
-      <div class="mhd-title">☁ Google Sheets Sync</div>
-      <button class="mcl" onclick="CM('modal-sync')">✕</button>
-    </div>
-
-    <!-- ══════════════════════════════════════════════
-         STEP 1: PASTE YOUR APPS SCRIPT URL HERE
-         This URL comes from your deployed Apps Script
-         Web App (Deploy → New Deployment → Web App)
-         ══════════════════════════════════════════════ -->
+    <div class="mhd"><div class="mhd-title">☁ Google Sheets Sync</div><button class="mcl" onclick="CM('modal-sync')">✕</button></div>
     <div class="sync-quickbar">
-      <div class="sync-quickbar-title">⚡ Paste Your Apps Script Web App URL</div>
+      <div class="sync-quickbar-title">⚡ Apps Script Web App URL</div>
       <div class="sync-url-row">
-        <input type="text" id="gs-url-input"
-          placeholder="https://script.google.com/macros/s/…/exec"
-          oninput="saveGsUrl(this.value)">
+        <input type="text" id="gs-url-input" placeholder="https://script.google.com/macros/s/…/exec" oninput="saveGsUrl(this.value)">
         <button class="btn bg bsm" onclick="testGsConn()">🔌 Test</button>
         <button class="btn bo bsm" onclick="clearGsUrl()">✕</button>
       </div>
       <div class="sync-status-row">
         <span class="sync-dot" id="sync-dot-modal" style="width:8px;height:8px;"></span>
-        <span id="gs-conn-res" style="font-size:11px;color:var(--t3)">Not connected — paste URL above and click Test</span>
+        <span id="gs-conn-res" style="font-size:11px;color:var(--t3)">Not connected</span>
       </div>
     </div>
-
-    <!-- Sheet link -->
-    <!-- ══════════════════════════════════════════════
-         YOUR GOOGLE SHEET LINK — Update this URL
-         to point to your own spreadsheet if needed.
-         Currently set to SPREADSHEET_ID in the script.
-         ══════════════════════════════════════════════ -->
-    <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--t2);line-height:1.7;">
+    <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:var(--t2);">
       📊 <strong style="color:var(--acc)">Google Sheet:</strong>
       <a id="sheet-link" href="#" target="_blank" style="color:var(--acc2);text-decoration:none;">Open Sheet ↗</a>
-      &nbsp;·&nbsp; <span style="color:var(--t3)">8 tabs (COTS_* and SFF_*)</span>
+      &nbsp;·&nbsp;<span style="color:var(--t3)">8 tabs (COTS_* and SFF_*)</span>
     </div>
-
-    <!-- Auto-sync notice -->
-    <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--t2);">
-      💡 <strong style="color:var(--blu)">New device / showing empty?</strong>
-      Paste your Apps Script URL above → click <strong>🔌 Test</strong> → then <strong>logout and log back in</strong>.
-      The app will automatically load all data from Google Sheets on login.
+    <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:var(--t2);">
+      💡 <strong style="color:var(--blu)">How real-time sync works:</strong>
+      When any admin saves data, it's pushed to Sheets immediately (Auto-sync ON).
+      Other devices check for changes every 30 seconds automatically and update if needed.
+      The app shows local data instantly and refreshes in the background — no waiting.
     </div>
-
     <div style="margin-bottom:9px;">
       <button class="btn bo bsm" onclick="toggleSetupSteps()" id="toggle-steps-btn" style="width:100%;justify-content:center;">▼ Show Setup Instructions</button>
     </div>
     <div id="setup-steps" style="display:none;">
-      <div class="step-card">
-        <div class="step-hd"><div class="step-n">1</div><div class="step-t">Open Apps Script</div></div>
-        <div class="step-d">Open your Google Sheet → <strong>Extensions → Apps Script</strong> → delete existing code → paste the <strong>apps-script.gs</strong> code (see separate file) → 💾 Save</div>
-      </div>
-      <div class="step-card">
-        <div class="step-hd"><div class="step-n">2</div><div class="step-t">Deploy as Web App</div></div>
-        <div class="step-d"><strong>Deploy → New Deployment → Web App</strong><br>Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong> → Deploy → Authorize → <strong>Copy URL</strong></div>
-      </div>
-      <div class="step-card">
-        <div class="step-hd"><div class="step-n">3</div><div class="step-t">Connect & Sync</div></div>
-        <div class="step-d">Paste URL in the green box above → click <strong>🔌 Test</strong>. Then click <strong>⬆ Sync All</strong>.</div>
-      </div>
+      <div class="step-card"><div class="step-hd"><div class="step-n">1</div><div class="step-t">Add Apps Script</div></div>
+        <div class="step-d">Google Sheet → <strong>Extensions → Apps Script</strong> → paste <strong>inventorypro-apps-script.gs</strong> → Save</div></div>
+      <div class="step-card"><div class="step-hd"><div class="step-n">2</div><div class="step-t">Deploy as Web App</div></div>
+        <div class="step-d"><strong>Deploy → New Deployment → Web App</strong><br>Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong> → Copy URL</div></div>
+      <div class="step-card"><div class="step-hd"><div class="step-n">3</div><div class="step-t">Paste URL above → Test → Sync All</div></div>
+        <div class="step-d">Paste URL → click <strong>🔌 Test</strong> → click <strong>⬆ Sync All</strong> to push all local data to Sheets.</div></div>
     </div>
-
-    <!-- Sync actions -->
     <div class="step-card">
       <div class="step-hd"><div class="step-n" style="background:var(--grn);">↑</div><div class="step-t">Sync Actions</div></div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
         <button class="btn bg bsm" onclick="syncAll()">⬆ Sync All Tables</button>
         <button class="btn bo bsm" onclick="syncActive()">⬆ Sync Active Table</button>
         <button class="btn bo bsm" onclick="forceRefresh()">🔄 Force Refresh from Sheet</button>
       </div>
-      <div style="margin-top:8px;font-size:11px;color:var(--t3);" id="cache-age-display"></div>
+      <div style="font-size:11px;color:var(--t3);" id="cache-age-display"></div>
       <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr);">
-        <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:7px;">⬇ Local Export</div>
+        <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:7px;">⬇ Local Export (no internet needed)</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="btn bo bsm" onclick="exportCSV()">📄 CSV</button>
           <button class="btn bo bsm" onclick="exportAllCSV()">📦 All CSVs</button>
@@ -666,43 +542,30 @@ tbody td:first-child{text-align:center;}
 <!-- MODAL: Clear -->
 <div class="mover" id="modal-clear">
   <div class="modal modal-sm">
-    <div class="mhd">
-      <div>
-        <div class="mhd-title" style="color:var(--red)">🗑 Clear Table Data</div>
-        <div class="mhd-sub">Permanently deletes rows — cannot be undone</div>
-      </div>
-      <button class="mcl" onclick="CM('modal-clear')">✕</button>
-    </div>
+    <div class="mhd"><div><div class="mhd-title" style="color:var(--red)">🗑 Clear Table Data</div><div class="mhd-sub">Permanently deletes rows</div></div><button class="mcl" onclick="CM('modal-clear')">✕</button></div>
     <div style="margin-bottom:13px;">
       <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">What to clear?</div>
       <div style="display:flex;flex-direction:column;gap:5px;">
         <label style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;">
           <input type="radio" name="clearScope" value="active" checked onchange="updateClearPreview()" style="accent-color:var(--red);">
-          <div><div style="font-size:12px;font-weight:600;" id="clear-active-label">Active table</div>
-          <div style="font-size:11px;color:var(--t3);" id="clear-active-sub">Currently selected table</div></div>
+          <div><div style="font-size:12px;font-weight:600;" id="clear-active-label">Active table</div><div style="font-size:11px;color:var(--t3);" id="clear-active-sub">Currently selected</div></div>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;">
           <input type="radio" name="clearScope" value="product" onchange="updateClearPreview()" style="accent-color:var(--red);">
-          <div><div style="font-size:12px;font-weight:600;" id="clear-product-label">All product tables</div>
-          <div style="font-size:11px;color:var(--t3);" id="clear-product-sub">All tables in current product</div></div>
+          <div><div style="font-size:12px;font-weight:600;" id="clear-product-label">All product tables</div><div style="font-size:11px;color:var(--t3);" id="clear-product-sub">All in current product</div></div>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--s2);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;">
           <input type="radio" name="clearScope" value="all" onchange="updateClearPreview()" style="accent-color:var(--red);">
-          <div><div style="font-size:12px;font-weight:600;">All tables (COTS + SFF)</div>
-          <div style="font-size:11px;color:var(--t3);">Complete reset</div></div>
+          <div><div style="font-size:12px;font-weight:600;">All tables (COTS + SFF)</div><div style="font-size:11px;color:var(--t3);">Complete reset</div></div>
         </label>
       </div>
     </div>
     <div id="clear-preview" style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:9px 11px;font-size:11px;color:var(--red);margin-bottom:13px;line-height:1.7;"></div>
     <div class="ff" style="margin-bottom:4px;">
       <label>Type <strong style="color:var(--red);font-family:var(--mono)">DELETE</strong> to confirm</label>
-      <input type="text" id="clear-confirm-input" placeholder="Type DELETE here" autocomplete="off"
-        oninput="document.getElementById('btn-do-clear').disabled=this.value!=='DELETE'">
+      <input type="text" id="clear-confirm-input" placeholder="Type DELETE here" autocomplete="off" oninput="document.getElementById('btn-do-clear').disabled=this.value!=='DELETE'">
     </div>
-    <div class="mft">
-      <button class="btn bo" onclick="CM('modal-clear')">Cancel</button>
-      <button class="btn br" id="btn-do-clear" onclick="doDataClear()" disabled style="background:rgba(239,68,68,.1);">🗑 Clear</button>
-    </div>
+    <div class="mft"><button class="btn bo" onclick="CM('modal-clear')">Cancel</button><button class="btn br" id="btn-do-clear" onclick="doDataClear()" disabled style="background:rgba(239,68,68,.1);">🗑 Clear</button></div>
   </div>
 </div>
 
@@ -710,36 +573,22 @@ tbody td:first-child{text-align:center;}
 
 <script>
 // ╔══════════════════════════════════════════════════════════════╗
-// ║  InventoryPro v4 — Configuration                             ║
-// ║                                                              ║
-// ║  ① SPREADSHEET_ID — change to your Google Sheet ID          ║
-// ║    Find it in the sheet URL:                                 ║
-// ║    docs.google.com/spreadsheets/d/[ID HERE]/edit             ║
-// ║                                                              ║
-// ║  ② CONFIG_DEFAULT_GS_URL — optionally hardcode your         ║
-// ║    Apps Script Web App URL here so all users are             ║
-// ║    connected automatically without pasting the URL.          ║
-// ║    Leave as '' to require manual entry.                      ║
-// ║                                                              ║
-// ║  ③ ADMINS — edit IDs, names, and passwords below            ║
+// ║  InventoryPro — Configuration                                ║
+// ║  ① CONFIG_SPREADSHEET_ID  — your Google Sheet ID            ║
+// ║  ② CONFIG_DEFAULT_GS_URL  — your Apps Script Web App URL    ║
+// ║  ③ ADMINS / VIEWER        — credentials                     ║
 // ╚══════════════════════════════════════════════════════════════╝
 
-// ── ① YOUR SPREADSHEET ID ───────────────────────────────────────
+// ── ① SPREADSHEET ID ────────────────────────────────────────────
 const CONFIG_SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
-// ────────────────────────────────────────────────────────────────
 
-// ── ② DEFAULT APPS SCRIPT URL (optional — leave '' if not used) ─
-const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbwSi92YB88y46lKJKqRvNhYtep3Zx6998BvxCGuKH7kNW5LLtc_kR6QNaW43SOcbyzf/exec';
-// ── If you hardcode a URL above, all users share it automatically.
-// ────────────────────────────────────────────────────────────────
+// ── ② APPS SCRIPT WEB APP URL ───────────────────────────────────
+const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbx4PImGlFKWjL3YSvCzymcH8Ous8PO5vRwnVdN6boGFWj3OmYbz4eCIaXKBCWJMndXG/exec';
+// Leave '' to require manual URL entry in the Sync modal.
+// Or hardcode your URL here so every user is auto-connected:
+// const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/YOUR_ID/exec';
 
-// Set the sheet link in sync modal
-document.getElementById('sheet-link').href =
-  'https://docs.google.com/spreadsheets/d/' + CONFIG_SPREADSHEET_ID + '/edit';
-
-// ═══════════════════════════════════════════════════════════════
-//  ③ ADMIN CREDENTIALS — Edit below
-// ═══════════════════════════════════════════════════════════════
+// ── ③ ADMIN CREDENTIALS ─────────────────────────────────────────
 const ADMINS = [
   { id:'ADM001', name:'Raj Kumar',    pass:'Admin1@2024' },
   { id:'ADM002', name:'Priya Sharma', pass:'Admin2@2024' },
@@ -747,6 +596,10 @@ const ADMINS = [
   { id:'Anil4',  name:'Anil Vase',    pass:'10698'       },
 ];
 const VIEWER = { id:'VIEW01', pass:'Viewer@2024' };
+
+// ── Sheet link ───────────────────────────────────────────────────
+document.getElementById('sheet-link').href =
+  'https://docs.google.com/spreadsheets/d/' + CONFIG_SPREADSHEET_ID + '/edit';
 
 // ═══════════════════════════════════════════════════════════════
 //  TABLE DEFINITIONS
@@ -832,14 +685,6 @@ const TABLE_DEFS = {
   ]
 };
 
-// ═══════════════════════════════════════════════════════════════
-//  APP STATE
-// ═══════════════════════════════════════════════════════════════
-let A = {user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null};
-
-// Auto-sync state (persisted)
-let autoSyncEnabled = localStorage.getItem('ip_autosync') === '1';
-
 const TAB_NAMES={
   cots_t1:'COTS_RegularlyUsed',cots_t2:'COTS_Storage',
   cots_t3:'COTS_Consumables',cots_t4:'COTS_Misc',
@@ -848,67 +693,69 @@ const TAB_NAMES={
 };
 
 // ═══════════════════════════════════════════════════════════════
-//  DATA STORE
-//  FIX 1: localStorage is device-local — use Google Sheets as the
-//  source of truth. On login, if GS URL exists and autoSync is on,
-//  we import fresh data from Sheets so all devices see same data.
+//  STATE
 // ═══════════════════════════════════════════════════════════════
-function saveData() {
-  localStorage.setItem('ip_data', JSON.stringify(DATA));
-}
-function loadData() {
-  try {
-    const d = JSON.parse(localStorage.getItem('ip_data') || 'null');
-    if (d) {
-      Object.keys(TABLE_DEFS).forEach(p=>TABLE_DEFS[p].forEach(t=>{if(!d[t.id])d[t.id]=[];}));
-      return d;
-    }
-  } catch(e){}
-  const f={};
-  Object.keys(TABLE_DEFS).forEach(p=>TABLE_DEFS[p].forEach(t=>{f[t.id]=[];}));
-  return f;
-}
-let DATA = loadData();
+let A={user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null};
+let autoSyncEnabled=localStorage.getItem('ip_autosync')==='1';
+let _pollTimer=null;       // setInterval handle for 30s polling
+let _refreshing=false;     // guard: prevent concurrent refreshes
+let _lastKnownVersion='';  // server-side version string last seen
 
 // ═══════════════════════════════════════════════════════════════
-//  LOADING OVERLAY
+//  DATA STORE
 // ═══════════════════════════════════════════════════════════════
-function showLoading(msg='Syncing…'){
-  document.getElementById('loading-msg').textContent=msg;
-  document.getElementById('loading-overlay').classList.add('open');
+function saveData(){localStorage.setItem('ip_data',JSON.stringify(DATA));}
+function loadData(){
+  try{
+    const d=JSON.parse(localStorage.getItem('ip_data')||'null');
+    if(d){Object.keys(TABLE_DEFS).forEach(p=>TABLE_DEFS[p].forEach(t=>{if(!d[t.id])d[t.id]=[];}));return d;}
+  }catch(e){}
+  const f={};Object.keys(TABLE_DEFS).forEach(p=>TABLE_DEFS[p].forEach(t=>{f[t.id]=[];}));return f;
 }
-function hideLoading(){
-  document.getElementById('loading-overlay').classList.remove('open');
+let DATA=loadData();
+
+function localDataIsEmpty(){return [...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].every(t=>(DATA[t.id]||[]).length===0);}
+
+// ═══════════════════════════════════════════════════════════════
+//  LOADING / UI HELPERS
+// ═══════════════════════════════════════════════════════════════
+function showLoading(msg='Loading…'){document.getElementById('loading-msg').textContent=msg;document.getElementById('loading-overlay').classList.add('open');}
+function hideLoading(){document.getElementById('loading-overlay').classList.remove('open');}
+function setLoadingMsg(m){const el=document.getElementById('loading-msg');if(el)el.textContent=m;}
+
+function showRefreshBar(msg){
+  let bar=document.getElementById('refresh-bar');
+  if(!bar){
+    bar=document.createElement('div');bar.id='refresh-bar';
+    bar.innerHTML='<span class="rb-spin"></span><span id="refresh-bar-msg"></span>';
+    document.body.appendChild(bar);
+  }
+  document.getElementById('refresh-bar-msg').textContent=msg||'Refreshing…';
 }
+function hideRefreshBar(){const b=document.getElementById('refresh-bar');if(b)b.remove();}
+function updateRefreshBar(msg){const el=document.getElementById('refresh-bar-msg');if(el)el.textContent=msg;}
 
 // ═══════════════════════════════════════════════════════════════
 //  MOBILE SIDEBAR
 // ═══════════════════════════════════════════════════════════════
-function toggleMobSidebar(){
-  const sb=document.getElementById('sidebar');const ov=document.getElementById('mob-overlay');
-  const open=sb.classList.toggle('mob-open');
-  ov.classList.toggle('open',open);
-}
-function closeMobSidebar(){
-  document.getElementById('sidebar').classList.remove('mob-open');
-  document.getElementById('mob-overlay').classList.remove('open');
-}
+function toggleMobSidebar(){const sb=document.getElementById('sidebar'),ov=document.getElementById('mob-overlay');const open=sb.classList.toggle('mob-open');ov.classList.toggle('open',open);}
+function closeMobSidebar(){document.getElementById('sidebar').classList.remove('mob-open');document.getElementById('mob-overlay').classList.remove('open');}
 
 // ═══════════════════════════════════════════════════════════════
-//  AUTO-SYNC TOGGLE
+//  AUTO-SYNC
 // ═══════════════════════════════════════════════════════════════
 function toggleAutoSync(){
   autoSyncEnabled=!autoSyncEnabled;
   localStorage.setItem('ip_autosync',autoSyncEnabled?'1':'0');
   updateAutoSyncBadge();
-  toast(autoSyncEnabled?'Auto-sync ON — saves push to Sheets after each change':'Auto-sync OFF', autoSyncEnabled?'s':'i');
+  toast(autoSyncEnabled?'Auto-sync ON — every save pushes to Sheets':'Auto-sync OFF','i');
 }
 function updateAutoSyncBadge(){
   const b=document.getElementById('autosync-badge');
-  const icon=document.getElementById('autosync-icon');
-  const lbl=document.getElementById('autosync-label');
-  if(autoSyncEnabled){b.className='autosync-badge';icon.textContent='●';lbl.textContent='Auto';}
-  else{b.className='autosync-badge off';icon.textContent='○';lbl.textContent='Auto';}
+  const ic=document.getElementById('autosync-icon');
+  if(!b)return;
+  if(autoSyncEnabled){b.className='autosync-badge';ic.textContent='●';}
+  else{b.className='autosync-badge off';ic.textContent='○';}
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -921,8 +768,7 @@ function switchRole(role){
   document.getElementById('rtab-viewer').className='rs-btn'+(role==='viewer'?' active':'');
   document.getElementById('panel-admin').style.display=role==='admin'?'block':'none';
   document.getElementById('panel-viewer').style.display=role==='viewer'?'block':'none';
-  document.getElementById('lerr-admin').style.display='none';
-  document.getElementById('lerr-viewer').style.display='none';
+  ['lerr-admin','lerr-viewer'].forEach(id=>document.getElementById(id).style.display='none');
   setTimeout(()=>{const f=role==='admin'?document.getElementById('adminId'):document.getElementById('viewerPass');if(f)f.focus();},80);
 }
 function doLogin(){
@@ -933,7 +779,7 @@ function doLogin(){
     if(!adm){document.getElementById('lerr-admin').style.display='block';return;}
     document.getElementById('lerr-admin').style.display='none';
     A.user={name:adm.name+' ('+adm.id.toUpperCase()+')',id:adm.id.toUpperCase(),role:'admin'};
-  } else {
+  }else{
     if(document.getElementById('viewerPass').value!==VIEWER.pass){document.getElementById('lerr-viewer').style.display='block';return;}
     document.getElementById('lerr-viewer').style.display='none';
     A.user={name:'Viewer',id:VIEWER.id,role:'viewer'};
@@ -944,48 +790,27 @@ function doLogin(){
   pb.textContent=A.user.role.toUpperCase();pb.className='puser-badge '+(isAdmin()?'ba':'bv');
 }
 function doLogout(){
-  A.user=null;A.product=null;
+  stopPolling();
+  A.user=null;A.product=null;_lastKnownVersion='';
   ['adminId','adminPass','viewerPass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   switchRole('admin');show('pg-login');
 }
 const isAdmin=()=>A.user?.role==='admin';
 
 // ═══════════════════════════════════════════════════════════════
-//  SMART CACHE REFRESH
+//  PRODUCT SELECT
 //  Strategy:
-//  • Always show localStorage data INSTANTLY (zero wait)
-//  • Only fetch from Sheets if cache is STALE (> CACHE_TTL minutes)
-//    OR if local data is completely empty (first time on this device)
-//  • Background fetch — NO blocking overlay, NO spinner on screen
-//  • A small unobtrusive indicator in the topbar shows refresh status
-//  • Manual "Force Refresh" always available in the Sync modal
-//
-//  Result: App opens instantly every time. Sheets data quietly
-//  updates in the background when stale, without blocking the user.
+//  1. Show local data IMMEDIATELY (zero wait, always instant)
+//  2. Check server version (one lightweight call, ~1s)
+//  3. If version changed OR local is empty → pull data in background
+//  4. Start 30s polling to keep all devices in sync automatically
 // ═══════════════════════════════════════════════════════════════
-const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes — change if needed
-
-function getCacheAge(){
-  const ts = parseInt(localStorage.getItem('ip_cache_ts') || '0');
-  return ts ? (Date.now() - ts) : Infinity;
-}
-function markCacheFresh(){
-  localStorage.setItem('ip_cache_ts', String(Date.now()));
-}
-function isCacheStale(){
-  return getCacheAge() > CACHE_TTL_MS;
-}
-function localDataIsEmpty(){
-  // True if all tables have zero rows
-  return [...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].every(t=>(DATA[t.id]||[]).length===0);
-}
-
 function enterProduct(prod){
   A.product=prod;A.activeTableId=TABLE_DEFS[prod][0].id;
   A.nioFilter=false;A.searchMode=false;A.searchQuery='';
 
-  if(CONFIG_DEFAULT_GS_URL && !localStorage.getItem('ip_gsurl')){
-    localStorage.setItem('ip_gsurl', CONFIG_DEFAULT_GS_URL);
+  if(CONFIG_DEFAULT_GS_URL&&!localStorage.getItem('ip_gsurl')){
+    localStorage.setItem('ip_gsurl',CONFIG_DEFAULT_GS_URL);
   }
   const gsUrl=getGsUrl();
 
@@ -996,53 +821,89 @@ function enterProduct(prod){
   document.getElementById('sb-prod-label').textContent=prod+' TABLES';
   document.getElementById('btn-add-row').style.display=isAdmin()?'flex':'none';
   if(isAdmin())document.getElementById('btn-add-row').className='btn bp bsm'+(prod==='SFF'?' sff-btn':'');
+
+  // Hide sync controls from viewers
+  const syncPill=document.getElementById('sync-pill');
+  const autoSyncBadge=document.getElementById('autosync-badge');
+  if(syncPill)syncPill.style.display=isAdmin()?'':'none';
+  if(autoSyncBadge)autoSyncBadge.style.display=isAdmin()?'':'none';
+
   updateAutoSyncBadge();
   updateSyncDot(!!gsUrl);
 
-  // ① Show local data immediately — instant, no wait
+  // ① Instant: show local data right now
   renderSidebar();selectTable(A.activeTableId);
 
-  // ② Background refresh from Sheets — only when needed
+  // ② Check for updates from Sheets (version-based, non-blocking)
   if(gsUrl){
-    const empty = localDataIsEmpty();
-    const stale = isCacheStale();
-    if(empty){
-      // First time on this device — must load, show a gentle inline notice
-      backgroundRefreshAll(true);
-    } else if(stale){
-      // Data exists but is old — refresh quietly in background, no UI block
-      backgroundRefreshAll(false);
-    }
-    // Cache is fresh → do nothing, local data is good
+    checkAndRefreshIfNeeded(localDataIsEmpty());
+    startPolling(); // ③ 30s auto-poll while app is open
   }
 }
-function goProductSelect(){A.product=null;show('pg-product');}
+function goProductSelect(){
+  stopPolling();
+  A.product=null;
+  show('pg-product');
+}
 
-// Background import — never blocks the UI
-// showNotice=true: shows a small loading bar for first-time empty state
-// showNotice=false: completely silent, user sees nothing until done
-async function backgroundRefreshAll(showNotice){
+// ═══════════════════════════════════════════════════════════════
+//  VERSION-BASED SYNC CHECK
+//  The Apps Script backend stores a tiny "version" timestamp in
+//  a special cell. We fetch ONLY that first (fast, ~1s).
+//  If it changed since our last fetch, we pull all data.
+//  This is the ONLY reliable way to sync across devices without
+//  constantly importing all 8 tables on every login.
+// ═══════════════════════════════════════════════════════════════
+async function checkAndRefreshIfNeeded(forceRefreshFlag=false){
+  if(_refreshing)return; // prevent concurrent refreshes
+  const url=getGsUrl();if(!url)return;
+
+  try{
+    // Fast version check — single lightweight POST
+    const vRes=await gsPost({action:'getVersion'});
+    const serverVersion=vRes.version||'';
+
+    if(forceRefreshFlag||serverVersion!==_lastKnownVersion){
+      // Data changed on server (or first load) — pull everything
+      _lastKnownVersion=serverVersion;
+      await pullAllTablesBackground(forceRefreshFlag);
+    }
+    // Version matches → local data is already current, do nothing
+  }catch(e){
+    // Version check failed (no internet / script error) — skip silently
+    if(forceRefreshFlag){
+      // First time and no connection — try pulling anyway (best effort)
+      await pullAllTablesBackground(true);
+    }
+    console.warn('Version check failed:',e.message);
+  }
+}
+
+// Pull all 8 tables in PARALLEL (Issue 8 fix — much faster than sequential)
+async function pullAllTablesBackground(showBar){
+  if(_refreshing)return;
+  _refreshing=true;
+  if(showBar)showRefreshBar('Loading data from Google Sheets…');
+
   const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
 
-  // For first-time empty state, show a slim non-blocking bar at top
-  let bar = null;
-  if(showNotice){
-    bar = document.createElement('div');
-    bar.id = 'refresh-bar';
-    bar.style.cssText = 'position:fixed;top:var(--topbar);left:0;right:0;z-index:500;background:rgba(245,158,11,.12);border-bottom:1px solid rgba(245,158,11,.3);padding:6px 16px;font-size:11px;color:var(--acc);font-family:var(--mono);display:flex;align-items:center;gap:8px;';
-    bar.innerHTML = '<span style="width:10px;height:10px;border:2px solid var(--acc);border-top-color:transparent;border-radius:50%;display:inline-block;animation:spin .7s linear infinite;flex-shrink:0"></span><span id="refresh-bar-msg">Loading from Google Sheets…</span>';
-    document.body.appendChild(bar);
-  }
+  try{
+    // Fetch ALL tables simultaneously instead of one-by-one
+    const results=await Promise.all(allIds.map(async id=>{
+      const tabName=TAB_NAMES[id];const tdef=tdefForId(id);
+      try{
+        const res=await gsPost({action:'import',tabName});
+        return{id,tdef,res};
+      }catch(e){
+        console.warn('Pull failed for '+tabName+':',e.message);
+        return{id,tdef,res:null};
+      }
+    }));
 
-  let imported=0;
-  for(const id of allIds){
-    const tabName=TAB_NAMES[id];
-    const tdef=tdefForId(id);
-    if(bar) document.getElementById('refresh-bar-msg').textContent='Loading '+tabName+'…';
-    try{
-      const data=await gsPost({action:'import',tabName});
-      if(data.rows&&data.rows.length){
-        DATA[id]=data.rows.map(obj=>{
+    let imported=0;
+    results.forEach(({id,tdef,res})=>{
+      if(res&&res.rows&&res.rows.length>0){
+        DATA[id]=res.rows.map(obj=>{
           const row={_id:uid(),_history:[]};
           tdef.cols.forEach(c=>{row[c.id]=obj[c.name]??'';});
           try{row._history=JSON.parse(obj['History (JSON)']||'[]');}catch(x){row._history=[];}
@@ -1050,22 +911,45 @@ async function backgroundRefreshAll(showNotice){
         });
         imported++;
       }
-    }catch(e){
-      console.warn('Background refresh failed for '+tabName+':',e.message);
+    });
+
+    if(imported>0){
+      saveData();
+      renderSidebar();
+      renderMainTable();
+      if(showBar)toast('✓ Data loaded from Google Sheets','s');
+      else toast('✓ Updated from Sheets','s');
     }
-  }
-
-  if(bar){ bar.remove(); }
-
-  if(imported>0){
-    markCacheFresh();
-    saveData();
-    renderSidebar();
-    renderMainTable();
-    if(showNotice) toast('✓ Data loaded from Google Sheets','s');
-    else toast('✓ Data refreshed in background','s');
+  }finally{
+    _refreshing=false;
+    hideRefreshBar();
   }
 }
+
+// ═══════════════════════════════════════════════════════════════
+//  30-SECOND POLLING
+//  Runs while the app is open. Every 30s, does a version check.
+//  If version changed (another admin saved data), pulls new data.
+//  This is what makes all devices stay in sync automatically.
+// ═══════════════════════════════════════════════════════════════
+function startPolling(){
+  stopPolling();
+  _pollTimer=setInterval(()=>{
+    if(getGsUrl()&&!_refreshing&&document.visibilityState!=='hidden'){
+      checkAndRefreshIfNeeded(false);
+    }
+  },30000); // 30 seconds
+}
+function stopPolling(){
+  if(_pollTimer){clearInterval(_pollTimer);_pollTimer=null;}
+}
+// Pause polling when tab is hidden, resume when visible (saves resources)
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&A.product&&getGsUrl()){
+    // Tab became visible — check for updates immediately
+    checkAndRefreshIfNeeded(false);
+  }
+});
 
 // ═══════════════════════════════════════════════════════════════
 //  SIDEBAR
@@ -1081,29 +965,18 @@ function renderSidebar(){
       <span class="t-item-cnt">${rows.length}</span>
     </div>`;
   }).join('');
-  let totalNIO=0;
-  tables.forEach(t=>{(DATA[t.id]||[]).forEach(r=>{if((r.inoffice||'')==='No')totalNIO++;});});
+  let totalNIO=0;tables.forEach(t=>{(DATA[t.id]||[]).forEach(r=>{if((r.inoffice||'')==='No')totalNIO++;});});
   const nc=document.getElementById('nio-count');
   if(totalNIO>0){nc.textContent=totalNIO;nc.style.display='inline';}else nc.style.display='none';
 }
-function selectTable(id){
-  A.activeTableId=id;A.searchMode=false;A.searchQuery='';
-  document.getElementById('sb-search-input').value='';
-  renderSidebar();renderMainTable();
-}
-function toggleNIO(){
-  A.nioFilter=!A.nioFilter;A.searchMode=false;A.searchQuery='';
-  document.getElementById('sb-search-input').value='';
-  document.getElementById('nio-toggle').className='nio-toggle'+(A.nioFilter?' active':'');
-  renderMainTable();
-}
+function selectTable(id){A.activeTableId=id;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';renderSidebar();renderMainTable();}
+function toggleNIO(){A.nioFilter=!A.nioFilter;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';document.getElementById('nio-toggle').className='nio-toggle'+(A.nioFilter?' active':'');renderMainTable();}
 
 // ═══════════════════════════════════════════════════════════════
 //  SEARCH
 // ═══════════════════════════════════════════════════════════════
 function handleSearch(q){
-  A.searchQuery=q.trim().replace(/\s+/g,' ').toLowerCase();
-  A.searchMode=A.searchQuery.length>0;A.nioFilter=false;
+  A.searchQuery=q.trim().replace(/\s+/g,' ').toLowerCase();A.searchMode=A.searchQuery.length>0;A.nioFilter=false;
   document.getElementById('nio-toggle').className='nio-toggle';
   if(A.searchMode)renderSearchResults();else renderMainTable();
 }
@@ -1117,9 +990,7 @@ function renderSearchResults(){
   const q=A.searchQuery;const tables=TABLE_DEFS[A.product];let results=[];
   tables.forEach(t=>{const rows=(DATA[t.id]||[]).filter(row=>rowMatchesSearch(row,t,q));if(rows.length)results.push({table:t,rows});});
   const main=document.getElementById('main-content');
-  if(!results.length){
-    main.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div class="empty-state"><div class="empty-state-icon">🔍</div><h3>No results</h3><p>No match for "<strong style="color:var(--txt)">${escH(q)}</strong>"</p></div></div>`;return;
-  }
+  if(!results.length){main.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;"><div class="empty-state"><div class="empty-state-icon">🔍</div><h3>No results</h3><p>No match for "<strong style="color:var(--txt)">${escH(q)}</strong>"</p></div></div>`;return;}
   let html=`<div class="search-results"><div class="sr-header">Found in ${results.length} table(s) for "<strong style="color:var(--txt)">${escH(q)}</strong>"</div>`;
   results.forEach(({table:t,rows})=>{
     html+=`<div class="sr-group"><div class="sr-group-title">${t.icon} ${t.name} <span style="color:var(--acc);font-family:var(--mono)">${rows.length}</span></div>`;
@@ -1143,21 +1014,25 @@ function jumpToRow(tableId,rowId){
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  RENDER MAIN TABLE
+//  RENDER TABLE
+//  Fixes: status badge rendering, all column types handled
 // ═══════════════════════════════════════════════════════════════
 function renderMainTable(){
   const tdef=TABLE_DEFS[A.product].find(t=>t.id===A.activeTableId);if(!tdef)return;
   let rows=DATA[tdef.id]||[];if(A.nioFilter)rows=rows.filter(r=>(r.inoffice||'')==='No');
-  const allRows=DATA[tdef.id]||[];const nioCount=allRows.filter(r=>(r.inoffice||'')==='No').length;const inCount=allRows.filter(r=>(r.inoffice||'')==='Yes').length;
+  const allRows=DATA[tdef.id]||[];
+  const nioCount=allRows.filter(r=>(r.inoffice||'')==='No').length;
+  const inCount=allRows.filter(r=>(r.inoffice||'')==='Yes').length;
   const isSFF=A.product==='SFF';const accentCls=isSFF?'bp sff-btn':'bp';
+
   let html=`<div class="table-area"><div class="main-head"><div class="mh-left">
     <h2>${tdef.icon} ${escH(tdef.name)}</h2>
-    <div class="mh-sub">${allRows.length} rows${tdef.hasHistory?' · 📜 history':''}${A.nioFilter?' · <span style="color:var(--red)">Not in Office</span>':''}</div>
+    <div class="mh-sub">${allRows.length} rows${tdef.hasHistory?' · 📜 history':''}${A.nioFilter?' · <span style="color:var(--red)">Not in Office filter</span>':''}</div>
   </div><div class="mh-right">
-    ${isAdmin()?`<button class="btn bo bsm" onclick="openSyncModal()">☁</button>
-    <button class="btn bo bsm" onclick="exportCSV()">⬇CSV</button>
-    <button class="btn bo bsm" onclick="openClearModal()" style="color:var(--red);border-color:rgba(239,68,68,.3);">🗑</button>
-    <button class="btn ${accentCls} bsm" onclick="openAddRow()">+ Add</button>`
+    ${isAdmin()?`<button class="btn bo bsm" onclick="openSyncModal()" title="Sync">☁ Sync</button>
+    <button class="btn bo bsm" onclick="exportCSV()" title="Export CSV">⬇ CSV</button>
+    <button class="btn bo bsm" onclick="openClearModal()" style="color:var(--red);border-color:rgba(239,68,68,.3);" title="Clear rows">🗑</button>
+    <button class="btn ${accentCls} bsm" onclick="openAddRow()">+ Add Row</button>`
     :'<span style="font-size:11px;color:var(--t2)">👁 View only</span>'}
   </div></div>
   <div class="stat-bar">
@@ -1165,13 +1040,15 @@ function renderMainTable(){
     <div class="stat"><div class="stat-d" style="background:var(--grn)"></div><span class="stat-n">${inCount}</span><span class="stat-l">In Office</span></div>
     <div class="stat"><div class="stat-d" style="background:var(--red)"></div><span class="stat-n">${nioCount}</span><span class="stat-l">Not In</span></div>
   </div><div class="twrap">`;
+
   if(!rows.length){
-    html+=`<div class="empty-state"><div class="empty-state-icon">${tdef.icon}</div><h3>${A.nioFilter?'No items out of office':'No rows yet'}</h3><p>${isAdmin()&&!A.nioFilter?'Click "+ Add" to add entries.':'No data.'}</p></div>`;
-  } else {
+    html+=`<div class="empty-state"><div class="empty-state-icon">${tdef.icon}</div>
+      <h3>${A.nioFilter?'No items out of office':'No rows yet'}</h3>
+      <p>${isAdmin()&&!A.nioFilter?'Click "+ Add Row" to add entries.':'No data to display.'}</p></div>`;
+  }else{
     const histTh=tdef.hasHistory?`<th>History</th>`:'';
     const actTh=isAdmin()?`<th style="text-align:right;padding-right:10px">Actions</th>`:'';
-    const hdrs=tdef.cols.map(c=>`<th>${escH(c.name)}</th>`).join('');
-    html+=`<table><thead><tr><th>#</th>${hdrs}${histTh}${actTh}</tr></thead><tbody>`;
+    html+=`<table><thead><tr><th>#</th>${tdef.cols.map(c=>`<th>${escH(c.name)}</th>`).join('')}${histTh}${actTh}</tr></thead><tbody>`;
     rows.forEach((row,i)=>{
       const isNIO=(row.inoffice||'')==='No';
       html+=`<tr id="row-${row._id}" class="${isNIO?'nio-row':''}"><td class="rn">${i+1}</td>`;
@@ -1183,10 +1060,17 @@ function renderMainTable(){
           const cls=v==='Yes'?'nin-yes':v==='No'?'nin-no':'';
           html+=`<td>${v?`<span class="nin-badge ${cls}">${v==='Yes'?'✓ Yes':'✗ No'}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
         }else if(col.type==='condition'){
-          const vl=String(v).toLowerCase();const cls=vl.includes('good')||vl.includes('new')||vl.includes('work')?'cg':vl.includes('fair')||vl.includes('avg')?'cf':vl.includes('poor')||vl.includes('bad')||vl.includes('dam')?'cp':'';
+          const vl=String(v).toLowerCase();
+          const cls=vl.includes('good')||vl.includes('new')||vl.includes('work')?'cg':vl.includes('fair')||vl.includes('avg')?'cf':vl.includes('poor')||vl.includes('bad')||vl.includes('dam')?'cp':'';
           html+=`<td>${v?`<span class="cond-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
+        }else if(col.type==='status'){
+          // FIX: Status column now renders with proper badge
+          const vl=String(v).toLowerCase();
+          const cls=vl.includes('good')||vl.includes('work')||vl.includes('ok')||vl.includes('pass')?'sg':vl.includes('warn')||vl.includes('fair')||vl.includes('check')?'sw':vl.includes('fail')||vl.includes('bad')||vl.includes('broken')||vl.includes('dam')?'sr2':'sw';
+          html+=`<td>${v?`<span class="status-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
         }else if(col.type==='availability'){
-          const cls=String(v).toLowerCase().includes('not')?'av-notav':String(v).toLowerCase().includes('avail')?'av-avail':'av-res';
+          const vl=String(v).toLowerCase();
+          const cls=vl.includes('not')?'av-notav':vl.includes('avail')?'av-avail':'av-res';
           html+=`<td>${v?`<span class="av-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
         }else if(col.type==='autonumber'||(col.type==='number'&&v!=='')){
           html+=`<td style="font-family:var(--mono);font-size:11px">${v!==''?Number(v).toLocaleString('en-IN'):'<span style="color:var(--t3)">—</span>'}</td>`;
@@ -1197,9 +1081,9 @@ function renderMainTable(){
       if(tdef.hasHistory){
         const hl=(row._history||[]).length;
         if(hl>0)html+=`<td><span class="hist-count" onclick="openHistory('${tdef.id}','${row._id}')">📜 ${hl}</span></td>`;
-        else html+=isAdmin()?`<td><span class="hist-count-zero" onclick="openHistory('${tdef.id}','${row._id}')">📜 0</span></td>`:`<td>—</td>`;
+        else html+=isAdmin()?`<td><span class="hist-count-zero" onclick="openHistory('${tdef.id}','${row._id}')">📜 0</span></td>`:`<td><span style="color:var(--t3);font-size:11px">—</span></td>`;
       }
-      if(isAdmin())html+=`<td><div class="acts"><button class="abt e" onclick="openEditRow('${row._id}')">✏</button><button class="abt d" onclick="deleteRow('${row._id}')">🗑</button></div></td>`;
+      if(isAdmin())html+=`<td><div class="acts"><button class="abt e" onclick="openEditRow('${row._id}')">✏ Edit</button><button class="abt d" onclick="deleteRow('${row._id}')">🗑</button></div></td>`;
       html+='</tr>';
     });
     html+='</tbody></table>';
@@ -1210,8 +1094,6 @@ function renderMainTable(){
 
 // ═══════════════════════════════════════════════════════════════
 //  ROW CRUD
-//  FIX 2 (auto-sync): after every save/delete, if autoSync is
-//  enabled, silently push the active table to Sheets.
 // ═══════════════════════════════════════════════════════════════
 const uid=()=>'r'+Date.now()+Math.random().toString(36).slice(2,6);
 const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1235,6 +1117,8 @@ function buildRowForm(tdef,row=null){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Yes'?'selected':''}>Yes</option><option ${v==='No'?'selected':''}>No</option></select>`;
     }else if(col.type==='condition'){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Good / Working'?'selected':''}>Good / Working</option><option ${v==='Fair'?'selected':''}>Fair</option><option ${v==='Poor'?'selected':''}>Poor</option><option ${v==='Damaged'?'selected':''}>Damaged</option><option ${v==='New'?'selected':''}>New</option></select>`;
+    }else if(col.type==='status'){
+      inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Working'?'selected':''}>Working</option><option ${v==='Faulty'?'selected':''}>Faulty</option><option ${v==='Under Repair'?'selected':''}>Under Repair</option><option ${v==='Decommissioned'?'selected':''}>Decommissioned</option></select>`;
     }else if(col.type==='availability'){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Available'?'selected':''}>Available</option><option ${v==='Not Available'?'selected':''}>Not Available</option><option ${v==='Reserved'?'selected':''}>Reserved</option></select>`;
     }else if(col.type==='number'){
@@ -1285,18 +1169,27 @@ function saveRow(){
   if(A.editRowId){const idx=DATA[tdef.id].findIndex(r=>r._id===A.editRowId);if(idx>-1)DATA[tdef.id][idx]=data;toast('Row updated ✓','s');}
   else{DATA[tdef.id].push(data);toast('Row added ✓','s');}
   saveData();CM('modal-row');renderSidebar();renderMainTable();
-  // Auto-sync after save (if enabled) — also marks cache stale for other devices
-  if(autoSyncEnabled && getGsUrl()){
-    localStorage.removeItem('ip_cache_ts'); // stale for other devices
-    syncTableById(A.activeTableId).then(()=>markCacheFresh()).catch(e=>console.warn('Auto-sync:',e.message));
-  }
+  // Push to Sheets immediately — auto-sync or always-on
+  pushToSheets(A.activeTableId);
 }
 function deleteRow(rowId){
-  if(!confirm('Delete this row?'))return;
+  if(!confirm('Delete this row and all its history?'))return;
   const tdef=getActiveTDef();DATA[tdef.id]=(DATA[tdef.id]||[]).filter(r=>r._id!==rowId);
   saveData();renderSidebar();renderMainTable();toast('Row deleted','i');
-  if(autoSyncEnabled && getGsUrl()){
-    syncTableById(A.activeTableId).catch(e=>console.warn('Auto-sync:',e.message));
+  pushToSheets(A.activeTableId);
+}
+
+// Push a single table to Sheets and update the server version
+async function pushToSheets(tableId){
+  if(!getGsUrl())return;
+  try{
+    await syncTableById(tableId);
+    // After any change, update server version so other devices pick it up immediately
+    await gsPost({action:'bumpVersion'});
+    _lastKnownVersion=''; // reset so next poll knows version changed
+  }catch(e){
+    console.warn('pushToSheets failed:',e.message);
+    if(autoSyncEnabled)toast('Auto-sync failed: '+e.message,'e');
   }
 }
 
@@ -1317,7 +1210,7 @@ function openHistory(tableId,rowId){
 }
 function renderHistEntries(entries){
   const el=document.getElementById('hist-entries-list');
-  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--t3);font-size:13px;">No history yet.${isAdmin()?' Click "+ Add" to track.':''}</div>`;return;}
+  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--t3);font-size:13px;">No history yet.${isAdmin()?' Click "+ Add History Entry" to track.':''}</div>`;return;}
   el.innerHTML=`<div class="hist-list">${entries.map((e,i)=>`
     <div class="hist-entry">
       <div class="hist-entry-head">
@@ -1326,9 +1219,9 @@ function renderHistEntries(entries){
         ${isAdmin()?`<button class="hist-entry-del" onclick="deleteHistEntry('${e._id}')">🗑</button>`:''}
       </div>
       <div class="hist-grid">
-        <div class="hist-field"><label>Location</label><span>${escH(e.location||'—')}</span></div>
-        <div class="hist-field"><label>Customer</label><span>${escH(e.customer||'—')}</span></div>
-        <div class="hist-field"><label>Went</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.wentDate)||'—'}</span></div>
+        <div class="hist-field"><label>Location / Site</label><span>${escH(e.location||'—')}</span></div>
+        <div class="hist-field"><label>Customer / Person</label><span>${escH(e.customer||'—')}</span></div>
+        <div class="hist-field"><label>Went Date</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.wentDate)||'—'}</span></div>
         <div class="hist-field"><label>Came Back</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.cameDate)||'—'}</span></div>
         ${e.remarks?`<div class="hist-field" style="grid-column:1/-1"><label>Remarks</label><span>${escH(e.remarks)}</span></div>`:''}
       </div>
@@ -1340,37 +1233,27 @@ function saveHistEntry(){
   const went=document.getElementById('hf-went').value,came=document.getElementById('hf-came').value,
         loc=document.getElementById('hf-loc').value.trim(),cust=document.getElementById('hf-cust').value.trim(),
         rem=document.getElementById('hf-rem').value.trim();
-  if(!went&&!loc){toast('Enter a date or location','e');return;}
+  if(!went&&!loc){toast('Enter at least a date or location','e');return;}
   const entry={_id:uid(),wentDate:went,cameDate:came,location:loc,customer:cust,remarks:rem};
   const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
   if(!row._history)row._history=[];row._history.push(entry);
   saveData();renderHistEntries(row._history);toggleHistForm();
   ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id=>document.getElementById(id).value='');
   renderMainTable();toast('History entry added ✓','s');
-  if(autoSyncEnabled&&getGsUrl()){
-    syncTableById(A.histTableId).catch(e=>console.warn('Auto-sync:',e.message));
-  }
+  pushToSheets(A.histTableId);
 }
 function deleteHistEntry(entryId){
-  if(!confirm('Delete entry?'))return;
+  if(!confirm('Delete this history entry?'))return;
   const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
   row._history=(row._history||[]).filter(e=>e._id!==entryId);
-  saveData();renderHistEntries(row._history);renderMainTable();toast('Deleted','i');
+  saveData();renderHistEntries(row._history);renderMainTable();toast('Entry deleted','i');
+  pushToSheets(A.histTableId);
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  GOOGLE SHEETS SYNC
-//  FIX 2: Show loading overlay during manual sync/import
-//  FIX 1: importAll available for cross-device data loading
-//
-//  NOTE: The Apps Script (.gs) code is NOT embedded here.
-//  See the separate apps-script.gs file. The GS_CODE variable
-//  has been removed — deploy the .gs file separately.
 // ═══════════════════════════════════════════════════════════════
-function getGsUrl(){
-  // Use hardcoded default if set, otherwise use saved URL
-  return (CONFIG_DEFAULT_GS_URL||localStorage.getItem('ip_gsurl')||'').trim();
-}
+function getGsUrl(){return(CONFIG_DEFAULT_GS_URL||localStorage.getItem('ip_gsurl')||'').trim();}
 function saveGsUrl(val){
   const u=(val||'').trim();localStorage.setItem('ip_gsurl',u);updateSyncDot(!!u);
   const inp=document.getElementById('gs-url-input');if(inp)inp.className=u?'has-url':'';
@@ -1389,21 +1272,19 @@ function toggleSetupSteps(){
 }
 function updateSyncDot(on){
   const dot=document.getElementById('sync-dot');if(dot)dot.className='sync-dot'+(on?' on':'');
-  const txt=document.getElementById('sync-txt');if(txt)txt.textContent=on?'Connected':'Not connected';
+  const txt=document.getElementById('sync-txt');if(txt)txt.textContent=on?'Sheets connected':'Not connected';
   const mdot=document.getElementById('sync-dot-modal');if(mdot)mdot.className='sync-dot'+(on?' on':'');
 }
 
-// ── Core POST helper ────────────────────────────────────────
 async function gsPost(payload){
   const url=getGsUrl();
-  if(!url)throw new Error('No Apps Script URL — paste it in the Sync modal.');
+  if(!url)throw new Error('No Apps Script URL configured.');
   const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
   const d=await r.json();
   if(!d.ok)throw new Error(d.error||'Apps Script error');
   return d;
 }
 
-// ── Test connection ─────────────────────────────────────────
 async function testGsConn(){
   const el=document.getElementById('gs-conn-res');const mdot=document.getElementById('sync-dot-modal');
   const url=getGsUrl();
@@ -1416,12 +1297,11 @@ async function testGsConn(){
     updateSyncDot(true);toast('Connected to Google Sheets ✓','s');
   }catch(e){
     el.style.color='var(--red)';el.textContent='✗ '+e.message;
-    if(mdot)mdot.className='sync-dot';
-    updateSyncDot(false);toast('Connection failed: '+e.message,'e');
+    if(mdot)mdot.className='sync-dot';updateSyncDot(false);
+    toast('Connection failed: '+e.message,'e');
   }
 }
 
-// ── Sync one table ──────────────────────────────────────────
 async function syncTableById(tableId){
   const tdef=tdefForId(tableId);if(!tdef)throw new Error('Table not found: '+tableId);
   const tabName=TAB_NAMES[tableId];if(!tabName)throw new Error('No tab mapped: '+tableId);
@@ -1435,123 +1315,52 @@ async function syncTableById(tableId){
   return gsPost({action:'sync',tabName,headers,rows});
 }
 
-// ── FIX 2: Sync with loading overlay ───────────────────────
 async function syncActive(){
   if(!A.activeTableId){toast('Select a table first','i');return;}
-  if(!getGsUrl()){openSyncModal();toast('Paste your Apps Script URL first','i');return;}
+  if(!getGsUrl()){openSyncModal();return;}
   showLoading('Syncing table…');
-  try{const d=await syncTableById(A.activeTableId);toast('✓ '+d.message,'s');}
-  catch(e){toast('Sync failed: '+e.message,'e');}
+  try{
+    const d=await syncTableById(A.activeTableId);
+    await gsPost({action:'bumpVersion'});
+    _lastKnownVersion='';
+    toast('✓ '+d.message,'s');
+  }catch(e){toast('Sync failed: '+e.message,'e');}
   finally{hideLoading();}
 }
 
 async function syncAll(){
-  if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
+  if(!getGsUrl()){toast('Connect Google Sheets first','e');openSyncModal();return;}
   const ids=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
-  showLoading(`Syncing ${ids.length} tables…`);
+  showLoading('Syncing all tables…');
   let ok=0,fail=0;
   for(const id of ids){
-    document.getElementById('loading-msg').textContent=`Syncing ${TAB_NAMES[id]}…`;
-    try{await syncTableById(id);ok++;}catch(e){fail++;console.warn('Sync fail '+id,e.message);}
+    setLoadingMsg('Syncing '+TAB_NAMES[id]+'…');
+    try{await syncTableById(id);ok++;}catch(e){fail++;console.warn('Sync fail',id,e.message);}
   }
+  // Bump version so other devices know to refresh
+  try{await gsPost({action:'bumpVersion'});_lastKnownVersion='';}catch(e){}
   hideLoading();
-  markCacheFresh();
-  toast(fail?`${ok} synced, ${fail} failed`:`✓ All ${ok} tables synced`,'s');
+  toast(fail?`${ok} synced, ${fail} failed`:`✓ All ${ok} tables synced to Sheets`,'s');
 }
 
-// ── FIX 1 & 2: Import with loading overlay ─────────────────
-async function importActive(){
-  if(!A.activeTableId){toast('Select a table first','i');return;}
-  if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
-  const tdef=getActiveTDef();const tabName=TAB_NAMES[A.activeTableId];
-  showLoading(`Importing ${tabName}…`);
-  try{
-    const data=await gsPost({action:'import',tabName});
-    hideLoading();
-    if(!data.rows||!data.rows.length){toast('Sheet tab is empty — sync first','i');return;}
-    const lc=(DATA[A.activeTableId]||[]).length;
-    if(!confirm(`Replace ${lc} local rows with ${data.rows.length} from Sheets?\nThis cannot be undone.`))return;
-    DATA[A.activeTableId]=data.rows.map(obj=>{
-      const row={_id:uid(),_history:[]};
-      tdef.cols.forEach(c=>{row[c.id]=obj[c.name]??'';});
-      try{row._history=JSON.parse(obj['History (JSON)']||'[]');}catch(x){row._history=[];}
-      return row;
-    });
-    saveData();renderSidebar();renderMainTable();
-    toast(`✓ Imported ${DATA[A.activeTableId].length} rows`,'s');
-  }catch(e){hideLoading();toast('Import failed: '+e.message,'e');}
-}
-
-// ── Import ALL tables (manual button in sync modal) ──────────
-async function importAll(){
-  if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
-  const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
-  showLoading('Importing all tables…');
-  let ok=0,fail=0;
-  for(const id of allIds){
-    const tabName=TAB_NAMES[id];const tdef=tdefForId(id);
-    document.getElementById('loading-msg').textContent=`Importing ${tabName}…`;
-    try{
-      const data=await gsPost({action:'import',tabName});
-      if(data.rows&&data.rows.length){
-        DATA[id]=data.rows.map(obj=>{
-          const row={_id:uid(),_history:[]};
-          tdef.cols.forEach(c=>{row[c.id]=obj[c.name]??'';});
-          try{row._history=JSON.parse(obj['History (JSON)']||'[]');}catch(x){row._history=[];}
-          return row;
-        });ok++;
-      }
-    }catch(e){fail++;console.warn('Import fail '+id,e.message);}
-  }
-  hideLoading();saveData();markCacheFresh();renderSidebar();renderMainTable();
-  toast(fail?`Imported ${ok} tables, ${fail} failed`:`✓ All ${ok} tables imported from Sheets`,'s');
-}
-
-// Force refresh — bypasses cache, always fetches fresh from Sheets
 async function forceRefresh(){
-  if(!getGsUrl()){toast('Paste your Apps Script URL first','e');openSyncModal();return;}
-  localStorage.removeItem('ip_cache_ts'); // bust cache
-  showLoading('Force refreshing from Google Sheets…');
-  const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
-  let imported=0,fail=0;
-  for(const id of allIds){
-    const tabName=TAB_NAMES[id];const tdef=tdefForId(id);
-    document.getElementById('loading-msg').textContent='Importing '+tabName+'…';
-    try{
-      const data=await gsPost({action:'import',tabName});
-      if(data.rows&&data.rows.length){
-        DATA[id]=data.rows.map(obj=>{
-          const row={_id:uid(),_history:[]};
-          tdef.cols.forEach(c=>{row[c.id]=obj[c.name]??'';});
-          try{row._history=JSON.parse(obj['History (JSON)']||'[]');}catch(x){row._history=[];}
-          return row;
-        });imported++;
-      }
-    }catch(e){fail++;console.warn('Force refresh fail '+id,e.message);}
-  }
-  hideLoading();
-  if(imported>0){markCacheFresh();saveData();renderSidebar();renderMainTable();}
-  toast(fail?`Refreshed ${imported}, failed ${fail}`:`✓ All tables refreshed from Sheets`,'s');
-  updateCacheDisplay();
+  if(!getGsUrl()){toast('Connect Google Sheets first','e');openSyncModal();return;}
+  _lastKnownVersion='';
+  showLoading('Force refreshing from Sheets…');
+  try{await pullAllTablesBackground(false);}finally{hideLoading();updateCacheDisplay();}
+  toast('✓ Data refreshed from Sheets','s');
 }
 
 function updateCacheDisplay(){
   const el=document.getElementById('cache-age-display');if(!el)return;
-  const age=getCacheAge();
-  if(age===Infinity){el.textContent='Cache: never synced';return;}
-  const mins=Math.floor(age/60000);
-  const secs=Math.floor((age%60000)/1000);
-  const fresh=age<CACHE_TTL_MS;
-  el.innerHTML=`Cache: <span style="color:${fresh?'var(--grn)':'var(--acc)'}">${mins>0?mins+'m ':''} ${secs}s ago</span> · Next auto-refresh after ${Math.floor(CACHE_TTL_MS/60000)} min`;
+  el.innerHTML=`Last server version: <span style="color:var(--acc);font-family:var(--mono)">${_lastKnownVersion||'unknown'}</span> · Auto-polls every 30s`;
 }
-
 function openSyncModal(){
   const gsUrl=getGsUrl();
   const inp=document.getElementById('gs-url-input');
   if(inp){inp.value=gsUrl;inp.className=gsUrl?'has-url':'';}
   const el=document.getElementById('gs-conn-res');
-  if(el&&(!el.textContent||el.textContent==='Not connected — paste URL above and click Test'))
-    el.textContent='Not connected — paste URL above and click Test';
+  if(el&&!el.textContent)el.textContent='Not connected — paste URL above';
   const mdot=document.getElementById('sync-dot-modal');
   if(mdot)mdot.className='sync-dot'+(gsUrl?' on':'');
   updateCacheDisplay();
@@ -1568,8 +1377,7 @@ function openClearModal(){
   document.getElementById('btn-do-clear').disabled=true;
   const tdef=getActiveTDef();
   document.getElementById('clear-active-label').textContent=`Active: "${tdef.name}"`;
-  const ar=(DATA[tdef.id]||[]).length;
-  document.getElementById('clear-active-sub').textContent=`${ar} row${ar===1?'':'s'} will be deleted`;
+  document.getElementById('clear-active-sub').textContent=`${(DATA[tdef.id]||[]).length} row(s) will be deleted`;
   document.getElementById('clear-product-label').textContent=`All ${A.product} tables`;
   updateClearPreview();OM('modal-clear');
 }
@@ -1601,7 +1409,7 @@ function toCSV(tdef,rows){
 }
 function dlFile(content,fn,mime='text/csv'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:mime}));a.download=fn;a.click();}
 function exportCSV(){const tdef=getActiveTDef();dlFile(toCSV(tdef,DATA[tdef.id]||[]),tdef.name.replace(/\s+/g,'_')+'.csv');toast('Downloaded CSV','s');}
-function exportAllCSV(){const t=TABLE_DEFS[A.product];t.forEach((t,i)=>setTimeout(()=>dlFile(toCSV(t,DATA[t.id]||[]),A.product+'_'+t.name.replace(/[^a-z0-9]/gi,'_')+'.csv'),i*250));toast(`Downloading ${t.length} CSVs…`,'s');}
+function exportAllCSV(){const ts=TABLE_DEFS[A.product];ts.forEach((t,i)=>setTimeout(()=>dlFile(toCSV(t,DATA[t.id]||[]),A.product+'_'+t.name.replace(/[^a-z0-9]/gi,'_')+'.csv'),i*250));toast(`Downloading ${ts.length} CSVs…`,'s');}
 function exportJSON(){const tdef=getActiveTDef();dlFile(JSON.stringify({product:A.product,table:tdef.name,rows:DATA[tdef.id]||[]},null,2),tdef.name.replace(/\s+/g,'_')+'.json','application/json');toast('Downloaded JSON','s');}
 
 // ═══════════════════════════════════════════════════════════════
@@ -1623,8 +1431,6 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){document.querySelectorAll('.mover.open').forEach(m=>m.classList.remove('open'));closeMobSidebar();}
   if(e.key==='n'&&isAdmin()&&!document.querySelector('.mover.open')&&A.activeTableId)openAddRow();
 });
-
-// Init auto-sync badge on load
 updateAutoSyncBadge();
 </script>
 </body>
