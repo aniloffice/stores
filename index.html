@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>InventoryPro — COTS & SFF Manager</title>
+<title>DHW-Application Team Stores</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════
@@ -23,21 +23,27 @@
   --r:8px;--tr:.15s ease;
   --sidebar:260px;--topbar:52px;
 }
+/* Light mode theme */
+[data-theme="light"]{
+  --bg:#f5f5f7;--s1:#ffffff;--s2:#f9fafb;--s3:#f3f4f6;
+  --bdr:#d1d5db;--bdr2:#9ca3af;
+  --txt:#1f2937;--t2:#6b7280;--t3:#9ca3af;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
-body{font-family:var(--sans);background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5;}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5;transition:background .3s ease,color .3s ease;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px;}
 input,select,textarea,button{font-family:var(--sans);}
 
 /* LOGIN */
-#pg-login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;
+#pg-login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;
   background:radial-gradient(ellipse 600px 400px at 20% 50%,rgba(245,158,11,.07) 0%,transparent 70%),
   radial-gradient(ellipse 500px 350px at 80% 20%,rgba(59,130,246,.06) 0%,transparent 60%),var(--bg);}
 .login-wrap{width:100%;max-width:480px;}
 .login-brand{text-align:center;margin-bottom:24px;}
 .login-brand-logo{width:52px;height:52px;background:var(--acc);border-radius:14px;display:inline-grid;place-items:center;font-size:24px;margin-bottom:10px;}
-.login-brand h1{font-size:22px;font-weight:700;font-family:var(--mono);}
+.login-brand h1{font-size:20px;font-weight:700;font-family:var(--mono);line-height:1.3;}
 .login-brand h1 span{color:var(--acc);}
 .login-brand p{font-size:12px;color:var(--t2);margin-top:4px;}
 .role-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--s3);border-radius:10px;padding:3px;margin-bottom:18px;}
@@ -55,6 +61,7 @@ input,select,textarea,button{font-family:var(--sans);}
 .lerr{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:var(--r);padding:9px 12px;font-size:12px;margin-top:10px;display:none;}
 .viewer-hint{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:11px;margin-bottom:13px;font-size:12px;color:var(--t2);line-height:1.7;}
 .viewer-hint strong{color:var(--blu);}
+.dev-credit{position:absolute;bottom:16px;right:20px;font-size:10px;color:var(--t3);font-family:var(--mono);}
 
 /* PRODUCT SELECT */
 #pg-product{display:none;align-items:center;justify-content:center;min-height:100vh;
@@ -88,8 +95,12 @@ input,select,textarea,button{font-family:var(--sans);}
 /* MAIN APP */
 #pg-app{display:none;height:100vh;flex-direction:column;}
 .topbar{height:var(--topbar);background:var(--s1);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;z-index:200;}
-.tb-brand{font-family:var(--mono);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;}
+.tb-brand{font-family:var(--mono);font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;position:relative;}
 .tb-icon{width:26px;height:26px;border-radius:6px;background:var(--acc);display:grid;place-items:center;font-size:12px;}
+.tb-brand-info{cursor:help;color:var(--t3);font-size:11px;margin-left:2px;}
+.tb-brand-info:hover{color:var(--acc);}
+.tb-brand-tooltip{display:none;position:absolute;top:100%;left:0;margin-top:8px;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:8px 12px;font-size:10px;font-weight:400;color:var(--t2);white-space:nowrap;z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.tb-brand-info:hover + .tb-brand-tooltip{display:block;}
 .tb-sep{width:1px;height:18px;background:var(--bdr);}
 .tb-product-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--mono);cursor:pointer;transition:all var(--tr);}
 .tb-product-badge.cots{background:rgba(245,158,11,.12);color:var(--cots);border:1px solid rgba(245,158,11,.25);}
@@ -100,6 +111,8 @@ input,select,textarea,button{font-family:var(--sans);}
 .tb-uname{font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .tbtn{padding:5px 10px;background:var(--s2);border:1px solid var(--bdr);color:var(--t2);border-radius:6px;cursor:pointer;font-size:11px;transition:all var(--tr);}
 .tbtn:hover{border-color:var(--red);color:var(--red);}
+.theme-toggle{padding:5px 10px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;cursor:pointer;font-size:13px;transition:all var(--tr);display:flex;align-items:center;gap:4px;}
+.theme-toggle:hover{border-color:var(--acc);color:var(--acc);}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);flex-shrink:0;}
 .sync-dot.on{background:var(--grn);box-shadow:0 0 6px var(--grn);}
 .sync-dot.busy{background:var(--acc);box-shadow:0 0 6px var(--acc);animation:pulse .8s ease infinite;}
@@ -170,6 +183,7 @@ thead th{padding:8px 10px;text-align:left;font-family:var(--mono);font-size:10px
 thead th:first-child{width:36px;text-align:center;}
 tbody tr{border-bottom:1px solid var(--bdr);transition:background var(--tr);}
 tbody tr:hover{background:rgba(255,255,255,.02);}
+[data-theme="light"] tbody tr:hover{background:rgba(0,0,0,.02);}
 tbody tr.nio-row{background:rgba(239,68,68,.04);}
 tbody tr.nio-row:hover{background:rgba(239,68,68,.07);}
 tbody td{padding:7px 10px;vertical-align:middle;}
@@ -183,10 +197,11 @@ tbody td:first-child{text-align:center;}
 .nin-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .nin-yes{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .nin-no{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.cond-badge,.status-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
-.cg,.sg{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
-.cf,.sw{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
-.cp,.sr2{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.cond-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
+.cg{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
+.cf{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
+.cp{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.cn{background:rgba(156,163,175,.1);color:var(--t2);border:1px solid rgba(156,163,175,.2);}
 .av-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .av-avail{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
 .av-notav{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
@@ -288,6 +303,9 @@ tbody td:first-child{text-align:center;}
 .ts{background:#0d2b1f;border-color:rgba(16,185,129,.3);color:var(--grn);}
 .te{background:#2b0d0d;border-color:rgba(239,68,68,.3);color:var(--red);}
 .ti{background:#0d1a2b;border-color:rgba(59,130,246,.3);color:var(--blu);}
+[data-theme="light"] .ts{background:#d1fae5;color:#065f46;}
+[data-theme="light"] .te{background:#fee2e2;color:#991b1b;}
+[data-theme="light"] .ti{background:#dbeafe;color:#1e40af;}
 
 /* MOBILE */
 @media(max-width:768px){
@@ -340,7 +358,7 @@ tbody td:first-child{text-align:center;}
   <div class="login-wrap">
     <div class="login-brand">
       <div class="login-brand-logo">📦</div>
-      <h1>Inventory<span>Pro</span></h1>
+      <h1>DHW-Application<br><span>Team Stores</span></h1>
       <p>COTS & SFF Inventory Management System</p>
     </div>
     <div class="role-switch">
@@ -369,6 +387,7 @@ tbody td:first-child{text-align:center;}
       </div>
     </div>
   </div>
+  <div class="dev-credit">Developed and maintained by application team</div>
 </div>
 
 <!-- PRODUCT SELECT -->
@@ -402,10 +421,18 @@ tbody td:first-child{text-align:center;}
 <div id="pg-app">
   <div class="topbar">
     <button class="mob-menu-btn" onclick="toggleMobSidebar()">☰</button>
-    <div class="tb-brand"><div class="tb-icon">📦</div><span>Inventory<span style="color:var(--acc)">Pro</span></span></div>
+    <div class="tb-brand">
+      <div class="tb-icon">📦</div>
+      <span>DHW-Application <span style="color:var(--acc)">Team Stores</span></span>
+      <span class="tb-brand-info">ℹ️</span>
+      <div class="tb-brand-tooltip">Developed and maintained by application team</div>
+    </div>
     <div class="tb-sep"></div>
     <div class="tb-product-badge" id="tb-prod-badge" onclick="goProductSelect()">← Switch</div>
     <div class="tb-right">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+        <span id="theme-icon">🌙</span>
+      </button>
       <div class="sync-pill" id="sync-pill" onclick="openSyncModal()" title="Google Sheets Sync">
         <span class="sync-dot" id="sync-dot"></span>
         <span id="sync-txt">Not connected</span>
@@ -469,7 +496,7 @@ tbody td:first-child{text-align:center;}
       <div class="hist-form-title">New History Entry</div>
       <div class="fg2">
         <div class="ff" style="margin-bottom:9px"><label>Went Date</label><input type="date" id="hf-went"></div>
-        <div class="ff" style="margin-bottom:9px"><label>Came Back Date</label><input type="date" id="hf-came"></div>
+        <div class="ff" style="margin-bottom:9px"><label>Caming Back Date</label><input type="date" id="hf-came"></div>
         <div class="ff" style="margin-bottom:9px"><label>Location / Site</label><input type="text" id="hf-loc" placeholder="e.g. Client Site…"></div>
         <div class="ff" style="margin-bottom:9px"><label>Customer / Person</label><input type="text" id="hf-cust" placeholder="Name or org"></div>
       </div>
@@ -573,7 +600,7 @@ tbody td:first-child{text-align:center;}
 
 <script>
 // ╔══════════════════════════════════════════════════════════════╗
-// ║  InventoryPro — Configuration                                ║
+// ║  DHW-Application Team Stores — Configuration                 ║
 // ║  ① CONFIG_SPREADSHEET_ID  — your Google Sheet ID            ║
 // ║  ② CONFIG_DEFAULT_GS_URL  — your Apps Script Web App URL    ║
 // ║  ③ ADMINS / VIEWER        — credentials                     ║
@@ -583,10 +610,7 @@ tbody td:first-child{text-align:center;}
 const CONFIG_SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
 
 // ── ② APPS SCRIPT WEB APP URL ───────────────────────────────────
-const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbx4PImGlFKWjL3YSvCzymcH8Ous8PO5vRwnVdN6boGFWj3OmYbz4eCIaXKBCWJMndXG/exec';
-// Leave '' to require manual URL entry in the Sync modal.
-// Or hardcode your URL here so every user is auto-connected:
-// const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/YOUR_ID/exec';
+const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycby3iSnGKFjItsqsI2urGf5uRQTcZiWxUv_Ey7H9hx8gm397RRWuYSRg1zSTd0C5-6zd/exec';
 
 // ── ③ ADMIN CREDENTIALS ─────────────────────────────────────────
 const ADMINS = [
@@ -602,7 +626,7 @@ document.getElementById('sheet-link').href =
   'https://docs.google.com/spreadsheets/d/' + CONFIG_SPREADSHEET_ID + '/edit';
 
 // ═══════════════════════════════════════════════════════════════
-//  TABLE DEFINITIONS
+//  TABLE DEFINITIONS — UPDATED WITH ALL NEW COLUMNS
 // ═══════════════════════════════════════════════════════════════
 const TABLE_DEFS = {
   COTS:[
@@ -616,18 +640,21 @@ const TABLE_DEFS = {
       {id:'cond',name:'Product Condition',type:'condition'},
       {id:'remark',name:'Remark',type:'text'},
       {id:'inoffice',name:'Present in Office',type:'inoffice'},
+      {id:'prodspec',name:'Product Specification',type:'text'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
-    {id:'cots_t2',name:'Storage Devices Details',icon:'💾',cols:[
+    {id:'cots_t2',name:'Storage Devices Details',icon:'💾',hasHistory:true,cols:[
       {id:'sn',name:'SN',type:'autonumber',req:true},
       {id:'make',name:'M.2 Make',type:'text'},
       {id:'serial',name:'Serial Number',type:'text'},
       {id:'size',name:'Size',type:'text'},
       {id:'type',name:'Type',type:'text'},
       {id:'os',name:'Loaded OS / Content',type:'text'},
+      {id:'cond',name:'Product Condition',type:'condition'},
+      {id:'inoffice',name:'Present in Office',type:'inoffice'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
-    {id:'cots_t3',name:'Consumables / Deliverables',icon:'📦',cols:[
+    {id:'cots_t3',name:'Consumables / Deliverables',icon:'📦',hasHistory:true,cols:[
       {id:'slno',name:'Sl No',type:'autonumber',req:true},
       {id:'cons',name:'Consumables',type:'text'},
       {id:'totqty',name:'Total Qty',type:'number'},
@@ -635,51 +662,63 @@ const TABLE_DEFS = {
       {id:'size',name:'Size',type:'text'},
       {id:'avail',name:'Qty Available',type:'number'},
       {id:'usage',name:'Usage',type:'text'},
+      {id:'cond',name:'Product Condition',type:'condition'},
+      {id:'inoffice',name:'Present in Office',type:'inoffice'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
-    {id:'cots_t4',name:'Miscellaneous',icon:'🗂️',cols:[
+    {id:'cots_t4',name:'Miscellaneous',icon:'🗂️',hasHistory:true,cols:[
       {id:'slno',name:'Sl No',type:'autonumber',req:true},
       {id:'desc',name:'Description',type:'text'},
       {id:'sn',name:'SN',type:'text'},
       {id:'qty',name:'Qty',type:'number'},
+      {id:'cond',name:'Product Condition',type:'condition'},
       {id:'inoffice',name:'Present in Office',type:'inoffice'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
-    {id:'cots_t5',name:'Pendrive Details',icon:'🔌',cols:[
+    {id:'cots_t5',name:'Pendrive Details',icon:'🔌',hasHistory:true,cols:[
       {id:'sn',name:'SN',type:'autonumber',req:true},
       {id:'brand',name:'Brand',type:'text'},
       {id:'cap',name:'Storage Capacity',type:'text'},
       {id:'usbver',name:'USB Version',type:'text'},
       {id:'serial',name:'Serial Numbers',type:'text'},
       {id:'withwhom',name:'With Whom?',type:'text'},
+      {id:'cond',name:'Product Condition',type:'condition'},
+      {id:'inoffice',name:'Present in Office',type:'inoffice'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
-    {id:'cots_t6',name:'Bootable Pendrive Details',icon:'💿',cols:[
+    {id:'cots_t6',name:'Bootable Pendrive Details',icon:'💿',hasHistory:true,cols:[
       {id:'sn',name:'SN',type:'autonumber',req:true},
       {id:'serial',name:'Serial Number',type:'text'},
       {id:'os',name:'OS',type:'text'},
+      {id:'cond',name:'Product Condition',type:'condition'},
+      {id:'inoffice',name:'Present in Office',type:'inoffice'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
   ],
   SFF:[
     {id:'sff_t1',name:'Materials List',icon:'📋',hasHistory:true,cols:[
-      {id:'pdetails',name:'Product Details',type:'text',req:true},
+      {id:'slno',name:'Sl No',type:'autonumber',req:true},
+      {id:'pdetails',name:'Product Details',type:'text'},
       {id:'serial',name:'Serial Number',type:'text'},
       {id:'partno',name:'Part / Model Number',type:'text'},
       {id:'qty',name:'Qty',type:'number'},
       {id:'remarks',name:'Remarks',type:'text'},
+      {id:'cond',name:'Product Condition',type:'condition'},
       {id:'inoffice',name:'Present in Office',type:'inoffice'},
+      {id:'prodspec',name:'Product Specification',type:'text'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
-    {id:'sff_t2',name:'SFF Demo Unit Details',icon:'💻',cols:[
+    {id:'sff_t2',name:'SFF Demo Unit Details',icon:'💻',hasHistory:true,cols:[
       {id:'sn',name:'S/N',type:'autonumber',req:true},
       {id:'pdesc',name:'Product Description',type:'text'},
       {id:'serial',name:'Serial Number',type:'text'},
       {id:'partno',name:'Part / Model Number',type:'text'},
       {id:'cables',name:'Cables / Accessories',type:'text'},
-      {id:'status',name:'Status',type:'status'},
+      {id:'cond',name:'Product Condition',type:'condition'},
       {id:'avail',name:'Availability',type:'availability'},
+      {id:'inoffice',name:'Present in Office',type:'inoffice'},
       {id:'remarks',name:'Remarks',type:'text'},
+      {id:'prodspec',name:'Product Specification',type:'text'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
   ]
@@ -697,9 +736,30 @@ const TAB_NAMES={
 // ═══════════════════════════════════════════════════════════════
 let A={user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null};
 let autoSyncEnabled=localStorage.getItem('ip_autosync')==='1';
-let _pollTimer=null;       // setInterval handle for 30s polling
-let _refreshing=false;     // guard: prevent concurrent refreshes
-let _lastKnownVersion='';  // server-side version string last seen
+let _pollTimer=null;
+let _refreshing=false;
+let _lastKnownVersion='';
+
+// ═══════════════════════════════════════════════════════════════
+//  THEME TOGGLE
+// ═══════════════════════════════════════════════════════════════
+function initTheme(){
+  const saved=localStorage.getItem('ip_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+  updateThemeIcon(saved);
+}
+function toggleTheme(){
+  const current=document.documentElement.getAttribute('data-theme')||'dark';
+  const newTheme=current==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',newTheme);
+  localStorage.setItem('ip_theme',newTheme);
+  updateThemeIcon(newTheme);
+}
+function updateThemeIcon(theme){
+  const icon=document.getElementById('theme-icon');
+  if(icon)icon.textContent=theme==='dark'?'🌙':'☀️';
+}
+initTheme();
 
 // ═══════════════════════════════════════════════════════════════
 //  DATA STORE
@@ -799,11 +859,6 @@ const isAdmin=()=>A.user?.role==='admin';
 
 // ═══════════════════════════════════════════════════════════════
 //  PRODUCT SELECT
-//  Strategy:
-//  1. Show local data IMMEDIATELY (zero wait, always instant)
-//  2. Check server version (one lightweight call, ~1s)
-//  3. If version changed OR local is empty → pull data in background
-//  4. Start 30s polling to keep all devices in sync automatically
 // ═══════════════════════════════════════════════════════════════
 function enterProduct(prod){
   A.product=prod;A.activeTableId=TABLE_DEFS[prod][0].id;
@@ -822,7 +877,6 @@ function enterProduct(prod){
   document.getElementById('btn-add-row').style.display=isAdmin()?'flex':'none';
   if(isAdmin())document.getElementById('btn-add-row').className='btn bp bsm'+(prod==='SFF'?' sff-btn':'');
 
-  // Hide sync controls from viewers
   const syncPill=document.getElementById('sync-pill');
   const autoSyncBadge=document.getElementById('autosync-badge');
   if(syncPill)syncPill.style.display=isAdmin()?'':'none';
@@ -831,13 +885,11 @@ function enterProduct(prod){
   updateAutoSyncBadge();
   updateSyncDot(!!gsUrl);
 
-  // ① Instant: show local data right now
   renderSidebar();selectTable(A.activeTableId);
 
-  // ② Check for updates from Sheets (version-based, non-blocking)
   if(gsUrl){
     checkAndRefreshIfNeeded(localDataIsEmpty());
-    startPolling(); // ③ 30s auto-poll while app is open
+    startPolling();
   }
 }
 function goProductSelect(){
@@ -848,38 +900,27 @@ function goProductSelect(){
 
 // ═══════════════════════════════════════════════════════════════
 //  VERSION-BASED SYNC CHECK
-//  The Apps Script backend stores a tiny "version" timestamp in
-//  a special cell. We fetch ONLY that first (fast, ~1s).
-//  If it changed since our last fetch, we pull all data.
-//  This is the ONLY reliable way to sync across devices without
-//  constantly importing all 8 tables on every login.
 // ═══════════════════════════════════════════════════════════════
 async function checkAndRefreshIfNeeded(forceRefreshFlag=false){
-  if(_refreshing)return; // prevent concurrent refreshes
+  if(_refreshing)return;
   const url=getGsUrl();if(!url)return;
 
   try{
-    // Fast version check — single lightweight POST
     const vRes=await gsPost({action:'getVersion'});
     const serverVersion=vRes.version||'';
 
     if(forceRefreshFlag||serverVersion!==_lastKnownVersion){
-      // Data changed on server (or first load) — pull everything
       _lastKnownVersion=serverVersion;
       await pullAllTablesBackground(forceRefreshFlag);
     }
-    // Version matches → local data is already current, do nothing
   }catch(e){
-    // Version check failed (no internet / script error) — skip silently
     if(forceRefreshFlag){
-      // First time and no connection — try pulling anyway (best effort)
       await pullAllTablesBackground(true);
     }
     console.warn('Version check failed:',e.message);
   }
 }
 
-// Pull all 8 tables in PARALLEL (Issue 8 fix — much faster than sequential)
 async function pullAllTablesBackground(showBar){
   if(_refreshing)return;
   _refreshing=true;
@@ -888,7 +929,6 @@ async function pullAllTablesBackground(showBar){
   const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
 
   try{
-    // Fetch ALL tables simultaneously instead of one-by-one
     const results=await Promise.all(allIds.map(async id=>{
       const tabName=TAB_NAMES[id];const tdef=tdefForId(id);
       try{
@@ -928,9 +968,6 @@ async function pullAllTablesBackground(showBar){
 
 // ═══════════════════════════════════════════════════════════════
 //  30-SECOND POLLING
-//  Runs while the app is open. Every 30s, does a version check.
-//  If version changed (another admin saved data), pulls new data.
-//  This is what makes all devices stay in sync automatically.
 // ═══════════════════════════════════════════════════════════════
 function startPolling(){
   stopPolling();
@@ -938,15 +975,13 @@ function startPolling(){
     if(getGsUrl()&&!_refreshing&&document.visibilityState!=='hidden'){
       checkAndRefreshIfNeeded(false);
     }
-  },30000); // 30 seconds
+  },30000);
 }
 function stopPolling(){
   if(_pollTimer){clearInterval(_pollTimer);_pollTimer=null;}
 }
-// Pause polling when tab is hidden, resume when visible (saves resources)
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&A.product&&getGsUrl()){
-    // Tab became visible — check for updates immediately
     checkAndRefreshIfNeeded(false);
   }
 });
@@ -973,14 +1008,20 @@ function selectTable(id){A.activeTableId=id;A.searchMode=false;A.searchQuery='';
 function toggleNIO(){A.nioFilter=!A.nioFilter;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';document.getElementById('nio-toggle').className='nio-toggle'+(A.nioFilter?' active':'');renderMainTable();}
 
 // ═══════════════════════════════════════════════════════════════
-//  SEARCH
+//  SEARCH — FIXED TO INCLUDE ALL FIELDS
 // ═══════════════════════════════════════════════════════════════
 function handleSearch(q){
   A.searchQuery=q.trim().replace(/\s+/g,' ').toLowerCase();A.searchMode=A.searchQuery.length>0;A.nioFilter=false;
   document.getElementById('nio-toggle').className='nio-toggle';
   if(A.searchMode)renderSearchResults();else renderMainTable();
 }
-function rowMatchesSearch(row,tdef,q){for(const col of tdef.cols){if(String(row[col.id]??'').toLowerCase().includes(q))return true;}return false;}
+function rowMatchesSearch(row,tdef,q){
+  for(const col of tdef.cols){
+    const val=String(row[col.id]??'').toLowerCase();
+    if(val.includes(q))return true;
+  }
+  return false;
+}
 function highlightMatch(text,q){
   if(!q||!text)return escH(String(text||''));
   const escaped=escH(String(text));const escapedQ=escH(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
@@ -1015,7 +1056,6 @@ function jumpToRow(tableId,rowId){
 
 // ═══════════════════════════════════════════════════════════════
 //  RENDER TABLE
-//  Fixes: status badge rendering, all column types handled
 // ═══════════════════════════════════════════════════════════════
 function renderMainTable(){
   const tdef=TABLE_DEFS[A.product].find(t=>t.id===A.activeTableId);if(!tdef)return;
@@ -1061,13 +1101,8 @@ function renderMainTable(){
           html+=`<td>${v?`<span class="nin-badge ${cls}">${v==='Yes'?'✓ Yes':'✗ No'}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
         }else if(col.type==='condition'){
           const vl=String(v).toLowerCase();
-          const cls=vl.includes('good')||vl.includes('new')||vl.includes('work')?'cg':vl.includes('fair')||vl.includes('avg')?'cf':vl.includes('poor')||vl.includes('bad')||vl.includes('dam')?'cp':'';
+          const cls=vl.includes('work')?'cg':vl.includes('damage')?'cp':vl.includes('fault')||vl.includes('poor')||vl.includes('not work')?'cp':vl.includes('no idea')?'cn':'cf';
           html+=`<td>${v?`<span class="cond-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
-        }else if(col.type==='status'){
-          // FIX: Status column now renders with proper badge
-          const vl=String(v).toLowerCase();
-          const cls=vl.includes('good')||vl.includes('work')||vl.includes('ok')||vl.includes('pass')?'sg':vl.includes('warn')||vl.includes('fair')||vl.includes('check')?'sw':vl.includes('fail')||vl.includes('bad')||vl.includes('broken')||vl.includes('dam')?'sr2':'sw';
-          html+=`<td>${v?`<span class="status-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
         }else if(col.type==='availability'){
           const vl=String(v).toLowerCase();
           const cls=vl.includes('not')?'av-notav':vl.includes('avail')?'av-avail':'av-res';
@@ -1093,7 +1128,7 @@ function renderMainTable(){
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  ROW CRUD
+//  ROW CRUD — WITH AUTO-RENUMBERING
 // ═══════════════════════════════════════════════════════════════
 const uid=()=>'r'+Date.now()+Math.random().toString(36).slice(2,6);
 const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1103,6 +1138,18 @@ function getNextAutoNumber(tableId){
   rows.forEach(row=>{['slno','sn'].forEach(k=>{const v=parseInt(row[k]);if(!isNaN(v)&&v>mx)mx=v;});});
   return mx+1;
 }
+
+function renumberRows(tableId){
+  const tdef=tdefForId(tableId);if(!tdef)return;
+  const autoCol=tdef.cols.find(c=>c.type==='autonumber');
+  if(!autoCol)return;
+  const rows=DATA[tableId]||[];
+  rows.forEach((row,idx)=>{
+    row[autoCol.id]=String(idx+1);
+  });
+  saveData();
+}
+
 function buildRowForm(tdef,row=null){
   const nextNum=row?null:getNextAutoNumber(tdef.id);const adminId=A.user?.id||'—';
   return tdef.cols.map(col=>{
@@ -1116,9 +1163,7 @@ function buildRowForm(tdef,row=null){
     }else if(col.type==='inoffice'){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Yes'?'selected':''}>Yes</option><option ${v==='No'?'selected':''}>No</option></select>`;
     }else if(col.type==='condition'){
-      inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Good / Working'?'selected':''}>Good / Working</option><option ${v==='Fair'?'selected':''}>Fair</option><option ${v==='Poor'?'selected':''}>Poor</option><option ${v==='Damaged'?'selected':''}>Damaged</option><option ${v==='New'?'selected':''}>New</option></select>`;
-    }else if(col.type==='status'){
-      inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Working'?'selected':''}>Working</option><option ${v==='Faulty'?'selected':''}>Faulty</option><option ${v==='Under Repair'?'selected':''}>Under Repair</option><option ${v==='Decommissioned'?'selected':''}>Decommissioned</option></select>`;
+      inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Working'?'selected':''}>Working</option><option ${v==='Not Working'?'selected':''}>Not Working</option><option ${v==='Damaged'?'selected':''}>Damaged</option><option ${v==='No idea'?'selected':''}>No idea</option><option ${v==='Fault'?'selected':''}>Fault</option><option ${v==='Poor'?'selected':''}>Poor</option></select>`;
     }else if(col.type==='availability'){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Available'?'selected':''}>Available</option><option ${v==='Not Available'?'selected':''}>Not Available</option><option ${v==='Reserved'?'selected':''}>Reserved</option></select>`;
     }else if(col.type==='number'){
@@ -1169,24 +1214,23 @@ function saveRow(){
   if(A.editRowId){const idx=DATA[tdef.id].findIndex(r=>r._id===A.editRowId);if(idx>-1)DATA[tdef.id][idx]=data;toast('Row updated ✓','s');}
   else{DATA[tdef.id].push(data);toast('Row added ✓','s');}
   saveData();CM('modal-row');renderSidebar();renderMainTable();
-  // Push to Sheets immediately — auto-sync or always-on
   pushToSheets(A.activeTableId);
 }
 function deleteRow(rowId){
   if(!confirm('Delete this row and all its history?'))return;
-  const tdef=getActiveTDef();DATA[tdef.id]=(DATA[tdef.id]||[]).filter(r=>r._id!==rowId);
-  saveData();renderSidebar();renderMainTable();toast('Row deleted','i');
+  const tdef=getActiveTDef();
+  DATA[tdef.id]=(DATA[tdef.id]||[]).filter(r=>r._id!==rowId);
+  renumberRows(tdef.id);
+  saveData();renderSidebar();renderMainTable();toast('Row deleted & renumbered','i');
   pushToSheets(A.activeTableId);
 }
 
-// Push a single table to Sheets and update the server version
 async function pushToSheets(tableId){
   if(!getGsUrl())return;
   try{
     await syncTableById(tableId);
-    // After any change, update server version so other devices pick it up immediately
     await gsPost({action:'bumpVersion'});
-    _lastKnownVersion=''; // reset so next poll knows version changed
+    _lastKnownVersion='';
   }catch(e){
     console.warn('pushToSheets failed:',e.message);
     if(autoSyncEnabled)toast('Auto-sync failed: '+e.message,'e');
@@ -1222,7 +1266,7 @@ function renderHistEntries(entries){
         <div class="hist-field"><label>Location / Site</label><span>${escH(e.location||'—')}</span></div>
         <div class="hist-field"><label>Customer / Person</label><span>${escH(e.customer||'—')}</span></div>
         <div class="hist-field"><label>Went Date</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.wentDate)||'—'}</span></div>
-        <div class="hist-field"><label>Came Back</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.cameDate)||'—'}</span></div>
+        <div class="hist-field"><label>Caming Back</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.cameDate)||'—'}</span></div>
         ${e.remarks?`<div class="hist-field" style="grid-column:1/-1"><label>Remarks</label><span>${escH(e.remarks)}</span></div>`:''}
       </div>
     </div>`).join('')}</div>`;
@@ -1337,7 +1381,6 @@ async function syncAll(){
     setLoadingMsg('Syncing '+TAB_NAMES[id]+'…');
     try{await syncTableById(id);ok++;}catch(e){fail++;console.warn('Sync fail',id,e.message);}
   }
-  // Bump version so other devices know to refresh
   try{await gsPost({action:'bumpVersion'});_lastKnownVersion='';}catch(e){}
   hideLoading();
   toast(fail?`${ok} synced, ${fail} failed`:`✓ All ${ok} tables synced to Sheets`,'s');
