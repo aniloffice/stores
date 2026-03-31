@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DHW-Application Team Stores</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+<link rel="manifest" href="#" id="manifest-placeholder">
+<meta name="theme-color" content="#f59e0b">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════
@@ -202,10 +205,6 @@ tbody td:first-child{text-align:center;}
 .cf{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
 .cp{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
 .cn{background:rgba(156,163,175,.1);color:var(--t2);border:1px solid rgba(156,163,175,.2);}
-.av-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--mono);}
-.av-avail{background:rgba(16,185,129,.1);color:var(--grn);border:1px solid rgba(16,185,129,.2);}
-.av-notav{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.av-res{background:rgba(245,158,11,.1);color:var(--acc);border:1px solid rgba(245,158,11,.2);}
 .hist-count{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:10px;color:var(--pur);background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);padding:2px 6px;border-radius:9px;cursor:pointer;transition:all var(--tr);}
 .hist-count:hover{background:rgba(139,92,246,.2);}
 .hist-count-zero{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:10px;color:var(--t3);background:var(--s3);border:1px solid var(--bdr);padding:2px 6px;border-radius:9px;cursor:pointer;transition:all var(--tr);}
@@ -466,6 +465,7 @@ tbody td:first-child{text-align:center;}
       <div class="sb-tables" id="sb-tables"></div>
       <div class="sb-bottom">
         <button class="btn bp bsm" id="btn-add-row" onclick="openAddRow()" style="width:100%;justify-content:center;display:none;">+ Add Row</button>
+        <button class="btn bo bsm" id="btn-clear-bottom" onclick="openClearModal()" style="width:100%;justify-content:center;margin-top:5px;display:none;color:var(--red);border-color:rgba(239,68,68,.3);">🗑 Clear Rows</button>
       </div>
     </div>
     <div class="main" id="main-content">
@@ -496,7 +496,7 @@ tbody td:first-child{text-align:center;}
       <div class="hist-form-title">New History Entry</div>
       <div class="fg2">
         <div class="ff" style="margin-bottom:9px"><label>Went Date</label><input type="date" id="hf-went"></div>
-        <div class="ff" style="margin-bottom:9px"><label>Caming Back Date</label><input type="date" id="hf-came"></div>
+        <div class="ff" style="margin-bottom:9px"><label>Came Back Date</label><input type="date" id="hf-came"></div>
         <div class="ff" style="margin-bottom:9px"><label>Location / Site</label><input type="text" id="hf-loc" placeholder="e.g. Client Site…"></div>
         <div class="ff" style="margin-bottom:9px"><label>Customer / Person</label><input type="text" id="hf-cust" placeholder="Name or org"></div>
       </div>
@@ -539,7 +539,7 @@ tbody td:first-child{text-align:center;}
     </div>
     <div id="setup-steps" style="display:none;">
       <div class="step-card"><div class="step-hd"><div class="step-n">1</div><div class="step-t">Add Apps Script</div></div>
-        <div class="step-d">Google Sheet → <strong>Extensions → Apps Script</strong> → paste <strong>inventorypro-apps-script.gs</strong> → Save</div></div>
+        <div class="step-d">Google Sheet → <strong>Extensions → Apps Script</strong> → paste <strong>dhw-apps-script.gs</strong> → Save</div></div>
       <div class="step-card"><div class="step-hd"><div class="step-n">2</div><div class="step-t">Deploy as Web App</div></div>
         <div class="step-d"><strong>Deploy → New Deployment → Web App</strong><br>Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong> → Copy URL</div></div>
       <div class="step-card"><div class="step-hd"><div class="step-n">3</div><div class="step-t">Paste URL above → Test → Sync All</div></div>
@@ -610,7 +610,7 @@ tbody td:first-child{text-align:center;}
 const CONFIG_SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
 
 // ── ② APPS SCRIPT WEB APP URL ───────────────────────────────────
-const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycby3iSnGKFjItsqsI2urGf5uRQTcZiWxUv_Ey7H9hx8gm397RRWuYSRg1zSTd0C5-6zd/exec';
+const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbw0x5KcSehJw_ClHWFf_kpJ7mnlNQMwfo2-xniA9mGSlWLG-HLcmAm1XYGBrttWt8Xs/exec';
 
 // ── ③ ADMIN CREDENTIALS ─────────────────────────────────────────
 const ADMINS = [
@@ -626,7 +626,30 @@ document.getElementById('sheet-link').href =
   'https://docs.google.com/spreadsheets/d/' + CONFIG_SPREADSHEET_ID + '/edit';
 
 // ═══════════════════════════════════════════════════════════════
-//  TABLE DEFINITIONS — UPDATED WITH ALL NEW COLUMNS
+//  PWA MANIFEST - Makes app installable with icon
+// ═══════════════════════════════════════════════════════════════
+const manifest = {
+  name: "DHW-Application Team Stores",
+  short_name: "DHW Stores",
+  description: "COTS & SFF Inventory Management System",
+  start_url: window.location.pathname,
+  display: "standalone",
+  background_color: "#0a0a0f",
+  theme_color: "#f59e0b",
+  icons: [
+    {
+      src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>",
+      sizes: "any",
+      type: "image/svg+xml"
+    }
+  ]
+};
+const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+const manifestURL = URL.createObjectURL(manifestBlob);
+document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+
+// ═══════════════════════════════════════════════════════════════
+//  TABLE DEFINITIONS — UPDATED (Removed Availability from SFF Demo Unit)
 // ═══════════════════════════════════════════════════════════════
 const TABLE_DEFS = {
   COTS:[
@@ -715,7 +738,6 @@ const TABLE_DEFS = {
       {id:'partno',name:'Part / Model Number',type:'text'},
       {id:'cables',name:'Cables / Accessories',type:'text'},
       {id:'cond',name:'Product Condition',type:'condition'},
-      {id:'avail',name:'Availability',type:'availability'},
       {id:'inoffice',name:'Present in Office',type:'inoffice'},
       {id:'remarks',name:'Remarks',type:'text'},
       {id:'prodspec',name:'Product Specification',type:'text'},
@@ -739,6 +761,44 @@ let autoSyncEnabled=localStorage.getItem('ip_autosync')==='1';
 let _pollTimer=null;
 let _refreshing=false;
 let _lastKnownVersion='';
+
+// ═══════════════════════════════════════════════════════════════
+//  SESSION PERSISTENCE - FIX #1
+// ═══════════════════════════════════════════════════════════════
+function saveSession(){
+  if(A.user){
+    localStorage.setItem('dhw_session',JSON.stringify({user:A.user,product:A.product,activeTableId:A.activeTableId}));
+  }
+}
+function loadSession(){
+  try{
+    const s=JSON.parse(localStorage.getItem('dhw_session')||'null');
+    if(s&&s.user){
+      A.user=s.user;
+      if(s.product){
+        A.product=s.product;
+        A.activeTableId=s.activeTableId||TABLE_DEFS[s.product][0].id;
+        enterProduct(A.product,true);
+      }else{
+        show('pg-product');
+        document.getElementById('pu-name').textContent=A.user.name;
+        const pb=document.getElementById('pu-badge');
+        pb.textContent=A.user.role.toUpperCase();pb.className='puser-badge '+(isAdmin()?'ba':'bv');
+      }
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+function clearSession(){
+  localStorage.removeItem('dhw_session');
+}
+// Restore session on page load
+window.addEventListener('DOMContentLoaded',()=>{
+  if(!loadSession()){
+    show('pg-login');
+  }
+});
 
 // ═══════════════════════════════════════════════════════════════
 //  THEME TOGGLE
@@ -844,6 +904,7 @@ function doLogin(){
     document.getElementById('lerr-viewer').style.display='none';
     A.user={name:'Viewer',id:VIEWER.id,role:'viewer'};
   }
+  saveSession();
   show('pg-product');
   document.getElementById('pu-name').textContent=A.user.name;
   const pb=document.getElementById('pu-badge');
@@ -852,6 +913,7 @@ function doLogin(){
 function doLogout(){
   stopPolling();
   A.user=null;A.product=null;_lastKnownVersion='';
+  clearSession();
   ['adminId','adminPass','viewerPass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   switchRole('admin');show('pg-login');
 }
@@ -860,9 +922,11 @@ const isAdmin=()=>A.user?.role==='admin';
 // ═══════════════════════════════════════════════════════════════
 //  PRODUCT SELECT
 // ═══════════════════════════════════════════════════════════════
-function enterProduct(prod){
+function enterProduct(prod,skipSession){
   A.product=prod;A.activeTableId=TABLE_DEFS[prod][0].id;
   A.nioFilter=false;A.searchMode=false;A.searchQuery='';
+
+  if(!skipSession)saveSession();
 
   if(CONFIG_DEFAULT_GS_URL&&!localStorage.getItem('ip_gsurl')){
     localStorage.setItem('ip_gsurl',CONFIG_DEFAULT_GS_URL);
@@ -875,6 +939,7 @@ function enterProduct(prod){
   const pb=document.getElementById('tb-prod-badge');pb.textContent=(prod==='COTS'?'🖥️':'💻')+' '+prod;pb.className='tb-product-badge '+prod.toLowerCase();
   document.getElementById('sb-prod-label').textContent=prod+' TABLES';
   document.getElementById('btn-add-row').style.display=isAdmin()?'flex':'none';
+  document.getElementById('btn-clear-bottom').style.display=isAdmin()?'flex':'none';
   if(isAdmin())document.getElementById('btn-add-row').className='btn bp bsm'+(prod==='SFF'?' sff-btn':'');
 
   const syncPill=document.getElementById('sync-pill');
@@ -895,6 +960,7 @@ function enterProduct(prod){
 function goProductSelect(){
   stopPolling();
   A.product=null;
+  saveSession();
   show('pg-product');
 }
 
@@ -1004,11 +1070,11 @@ function renderSidebar(){
   const nc=document.getElementById('nio-count');
   if(totalNIO>0){nc.textContent=totalNIO;nc.style.display='inline';}else nc.style.display='none';
 }
-function selectTable(id){A.activeTableId=id;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';renderSidebar();renderMainTable();}
+function selectTable(id){A.activeTableId=id;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';saveSession();renderSidebar();renderMainTable();}
 function toggleNIO(){A.nioFilter=!A.nioFilter;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';document.getElementById('nio-toggle').className='nio-toggle'+(A.nioFilter?' active':'');renderMainTable();}
 
 // ═══════════════════════════════════════════════════════════════
-//  SEARCH — FIXED TO INCLUDE ALL FIELDS
+//  SEARCH
 // ═══════════════════════════════════════════════════════════════
 function handleSearch(q){
   A.searchQuery=q.trim().replace(/\s+/g,' ').toLowerCase();A.searchMode=A.searchQuery.length>0;A.nioFilter=false;
@@ -1071,7 +1137,6 @@ function renderMainTable(){
   </div><div class="mh-right">
     ${isAdmin()?`<button class="btn bo bsm" onclick="openSyncModal()" title="Sync">☁ Sync</button>
     <button class="btn bo bsm" onclick="exportCSV()" title="Export CSV">⬇ CSV</button>
-    <button class="btn bo bsm" onclick="openClearModal()" style="color:var(--red);border-color:rgba(239,68,68,.3);" title="Clear rows">🗑</button>
     <button class="btn ${accentCls} bsm" onclick="openAddRow()">+ Add Row</button>`
     :'<span style="font-size:11px;color:var(--t2)">👁 View only</span>'}
   </div></div>
@@ -1101,12 +1166,8 @@ function renderMainTable(){
           html+=`<td>${v?`<span class="nin-badge ${cls}">${v==='Yes'?'✓ Yes':'✗ No'}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
         }else if(col.type==='condition'){
           const vl=String(v).toLowerCase();
-          const cls=vl.includes('work')?'cg':vl.includes('damage')?'cp':vl.includes('fault')||vl.includes('poor')||vl.includes('not work')?'cp':vl.includes('no idea')?'cn':'cf';
+          const cls=vl.includes('work')&&!vl.includes('not')?'cg':vl.includes('damage')||vl.includes('not work')||vl.includes('fault')||vl.includes('poor')?'cp':vl.includes('no idea')?'cn':'cf';
           html+=`<td>${v?`<span class="cond-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
-        }else if(col.type==='availability'){
-          const vl=String(v).toLowerCase();
-          const cls=vl.includes('not')?'av-notav':vl.includes('avail')?'av-avail':'av-res';
-          html+=`<td>${v?`<span class="av-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
         }else if(col.type==='autonumber'||(col.type==='number'&&v!=='')){
           html+=`<td style="font-family:var(--mono);font-size:11px">${v!==''?Number(v).toLocaleString('en-IN'):'<span style="color:var(--t3)">—</span>'}</td>`;
         }else{
@@ -1128,7 +1189,7 @@ function renderMainTable(){
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  ROW CRUD — WITH AUTO-RENUMBERING
+//  ROW CRUD
 // ═══════════════════════════════════════════════════════════════
 const uid=()=>'r'+Date.now()+Math.random().toString(36).slice(2,6);
 const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1163,9 +1224,10 @@ function buildRowForm(tdef,row=null){
     }else if(col.type==='inoffice'){
       inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Yes'?'selected':''}>Yes</option><option ${v==='No'?'selected':''}>No</option></select>`;
     }else if(col.type==='condition'){
-      inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Working'?'selected':''}>Working</option><option ${v==='Not Working'?'selected':''}>Not Working</option><option ${v==='Damaged'?'selected':''}>Damaged</option><option ${v==='No idea'?'selected':''}>No idea</option><option ${v==='Fault'?'selected':''}>Fault</option><option ${v==='Poor'?'selected':''}>Poor</option></select>`;
-    }else if(col.type==='availability'){
-      inp=`<select id="rf_${col.id}"><option value="">— Select —</option><option ${v==='Available'?'selected':''}>Available</option><option ${v==='Not Available'?'selected':''}>Not Available</option><option ${v==='Reserved'?'selected':''}>Reserved</option></select>`;
+      const opts=['Working','Not Working','Damaged','No idea','Fault','Poor'];
+      inp=`<input type="text" id="rf_${col.id}" value="${String(v).replace(/"/g,'&quot;')}" list="cond-list" placeholder="Type or select…">
+      <datalist id="cond-list">${opts.map(o=>`<option value="${o}">`).join('')}</datalist>
+      <div class="fhint">💡 Type custom value or select from: ${opts.join(', ')}</div>`;
     }else if(col.type==='number'){
       inp=`<input type="number" id="rf_${col.id}" value="${v}" placeholder="0" step="any">`;
     }else if(col.type==='date'){
@@ -1266,7 +1328,7 @@ function renderHistEntries(entries){
         <div class="hist-field"><label>Location / Site</label><span>${escH(e.location||'—')}</span></div>
         <div class="hist-field"><label>Customer / Person</label><span>${escH(e.customer||'—')}</span></div>
         <div class="hist-field"><label>Went Date</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.wentDate)||'—'}</span></div>
-        <div class="hist-field"><label>Caming Back</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.cameDate)||'—'}</span></div>
+        <div class="hist-field"><label>Came Back</label><span style="font-family:var(--mono);font-size:11px">${fmtDate(e.cameDate)||'—'}</span></div>
         ${e.remarks?`<div class="hist-field" style="grid-column:1/-1"><label>Remarks</label><span>${escH(e.remarks)}</span></div>`:''}
       </div>
     </div>`).join('')}</div>`;
