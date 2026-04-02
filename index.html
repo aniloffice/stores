@@ -259,8 +259,11 @@ tbody td:first-child{text-align:center;}
 .hist-entry-head{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
 .hist-entry-num{width:20px;height:20px;border-radius:50%;background:var(--s3);font-family:var(--mono);font-size:10px;font-weight:600;display:grid;place-items:center;color:var(--t2);flex-shrink:0;}
 .hist-entry-date{font-size:12px;font-weight:600;}
-.hist-entry-del{margin-left:auto;border:none;background:none;cursor:pointer;color:var(--t3);font-size:12px;padding:3px;border-radius:4px;transition:all var(--tr);}
-.hist-entry-del:hover{color:var(--red);background:rgba(239,68,68,.1);}
+.hist-entry-actions{margin-left:auto;display:flex;gap:3px;}
+.hist-entry-btn{border:none;background:none;cursor:pointer;color:var(--t3);font-size:11px;padding:3px 6px;border-radius:4px;transition:all var(--tr);display:inline-flex;align-items:center;gap:3px;}
+.hist-entry-btn:hover{background:rgba(255,255,255,.05);}
+.hist-entry-btn.edit:hover{color:var(--acc);background:rgba(245,158,11,.1);}
+.hist-entry-btn.del:hover{color:var(--red);background:rgba(239,68,68,.1);}
 .hist-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .hist-field{font-size:12px;}
 .hist-field label{display:block;font-size:10px;color:var(--t3);margin-bottom:2px;}
@@ -493,7 +496,7 @@ tbody td:first-child{text-align:center;}
     <div id="hist-entries-list"></div>
     <button class="hist-add-btn" id="hist-add-btn" onclick="toggleHistForm()" style="display:none;">+ Add History Entry</button>
     <div class="hist-form" id="hist-form">
-      <div class="hist-form-title">New History Entry</div>
+      <div class="hist-form-title" id="hist-form-title">New History Entry</div>
       <div class="fg2">
         <div class="ff" style="margin-bottom:9px"><label>Went Date</label><input type="date" id="hf-went"></div>
         <div class="ff" style="margin-bottom:9px"><label>Came Back Date</label><input type="date" id="hf-came"></div>
@@ -501,7 +504,7 @@ tbody td:first-child{text-align:center;}
         <div class="ff" style="margin-bottom:9px"><label>Customer / Person</label><input type="text" id="hf-cust" placeholder="Name or org"></div>
       </div>
       <div class="ff" style="margin-bottom:9px"><label>Remarks</label><textarea id="hf-rem" style="min-height:55px" placeholder="Notes…"></textarea></div>
-      <div style="display:flex;gap:6px;"><button class="btn bp bsm" onclick="saveHistEntry()">Save Entry</button><button class="btn bo bsm" onclick="toggleHistForm()">Cancel</button></div>
+      <div style="display:flex;gap:6px;"><button class="btn bp bsm" id="hist-save-btn" onclick="saveHistEntry()">Save Entry</button><button class="btn bo bsm" onclick="cancelHistEdit()">Cancel</button></div>
     </div>
     <div class="mft"><button class="btn bo" onclick="CM('modal-hist')">Close</button></div>
   </div>
@@ -539,7 +542,7 @@ tbody td:first-child{text-align:center;}
     </div>
     <div id="setup-steps" style="display:none;">
       <div class="step-card"><div class="step-hd"><div class="step-n">1</div><div class="step-t">Add Apps Script</div></div>
-        <div class="step-d">Google Sheet → <strong>Extensions → Apps Script</strong> → paste <strong>dhw-apps-script.gs</strong> → Save</div></div>
+        <div class="step-d">Google Sheet → <strong>Extensions → Apps Script</strong> → paste <strong>dhw-apps-script-v2.gs</strong> → Save</div></div>
       <div class="step-card"><div class="step-hd"><div class="step-n">2</div><div class="step-t">Deploy as Web App</div></div>
         <div class="step-d"><strong>Deploy → New Deployment → Web App</strong><br>Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong> → Copy URL</div></div>
       <div class="step-card"><div class="step-hd"><div class="step-n">3</div><div class="step-t">Paste URL above → Test → Sync All</div></div>
@@ -610,11 +613,11 @@ tbody td:first-child{text-align:center;}
 const CONFIG_SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
 
 // ── ② APPS SCRIPT WEB APP URL ───────────────────────────────────
-const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbw0x5KcSehJw_ClHWFf_kpJ7mnlNQMwfo2-xniA9mGSlWLG-HLcmAm1XYGBrttWt8Xs/exec';
+const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbx4PImGlFKWjL3YSvCzymcH8Ous8PO5vRwnVdN6boGFWj3OmYbz4eCIaXKBCWJMndXG/exec';
 
 // ── ③ ADMIN CREDENTIALS ─────────────────────────────────────────
 const ADMINS = [
-  { id:'Chiranth1', name:'Chiranth Ramesh',    pass:'42325' },
+ { id:'Chiranth1', name:'Chiranth Ramesh',    pass:'42325' },
   { id:'Madhushri2', name:'Madhushri Kakanaki', pass:'19405' },
   { id:'Surendra3', name:'Peetlasurendra', pass:'Admin3@2024' },
   { id:'Anil4',  name:'Anil Vase',    pass:'10698'       },
@@ -649,7 +652,7 @@ const manifestURL = URL.createObjectURL(manifestBlob);
 document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
 
 // ═══════════════════════════════════════════════════════════════
-//  TABLE DEFINITIONS — UPDATED (Removed Availability from SFF Demo Unit)
+//  TABLE DEFINITIONS
 // ═══════════════════════════════════════════════════════════════
 const TABLE_DEFS = {
   COTS:[
@@ -756,14 +759,14 @@ const TAB_NAMES={
 // ═══════════════════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════════════════
-let A={user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null};
+let A={user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null,editingHistId:null};
 let autoSyncEnabled=localStorage.getItem('ip_autosync')==='1';
 let _pollTimer=null;
 let _refreshing=false;
 let _lastKnownVersion='';
 
 // ═══════════════════════════════════════════════════════════════
-//  SESSION PERSISTENCE - FIX #1
+//  SESSION PERSISTENCE
 // ═══════════════════════════════════════════════════════════════
 function saveSession(){
   if(A.user){
@@ -793,7 +796,6 @@ function loadSession(){
 function clearSession(){
   localStorage.removeItem('dhw_session');
 }
-// Restore session on page load
 window.addEventListener('DOMContentLoaded',()=>{
   if(!loadSession()){
     show('pg-login');
@@ -1275,7 +1277,15 @@ function saveRow(){
   if(!DATA[tdef.id])DATA[tdef.id]=[];
   if(A.editRowId){const idx=DATA[tdef.id].findIndex(r=>r._id===A.editRowId);if(idx>-1)DATA[tdef.id][idx]=data;toast('Row updated ✓','s');}
   else{DATA[tdef.id].push(data);toast('Row added ✓','s');}
-  saveData();CM('modal-row');renderSidebar();renderMainTable();
+  saveData();
+  CM('modal-row');
+  
+  // FIX #2: Force immediate UI update
+  setTimeout(()=>{
+    renderSidebar();
+    renderMainTable();
+  },50);
+  
   pushToSheets(A.activeTableId);
 }
 function deleteRow(rowId){
@@ -1283,7 +1293,15 @@ function deleteRow(rowId){
   const tdef=getActiveTDef();
   DATA[tdef.id]=(DATA[tdef.id]||[]).filter(r=>r._id!==rowId);
   renumberRows(tdef.id);
-  saveData();renderSidebar();renderMainTable();toast('Row deleted & renumbered','i');
+  saveData();
+  
+  // FIX #2: Force immediate UI update
+  setTimeout(()=>{
+    renderSidebar();
+    renderMainTable();
+  },50);
+  
+  toast('Row deleted & renumbered','i');
   pushToSheets(A.activeTableId);
 }
 
@@ -1300,10 +1318,11 @@ async function pushToSheets(tableId){
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  HISTORY
+//  HISTORY — WITH EDIT FEATURE (FIX #1)
 // ═══════════════════════════════════════════════════════════════
 function openHistory(tableId,rowId){
-  A.histTableId=tableId;A.histRowId=rowId;let tdef=null;
+  A.histTableId=tableId;A.histRowId=rowId;A.editingHistId=null;
+  let tdef=null;
   for(const p of['COTS','SFF']){const f=TABLE_DEFS[p].find(t=>t.id===tableId);if(f){tdef=f;break;}}
   const row=(DATA[tableId]||[]).find(r=>r._id===rowId);if(!row||!tdef)return;
   const info=tdef.cols.slice(0,5).map(c=>`<span><b style="color:var(--t2)">${c.name}:</b> ${escH(String(row[c.id]||'—'))}</span>`).join(' · ');
@@ -1311,18 +1330,25 @@ function openHistory(tableId,rowId){
   document.getElementById('hist-modal-sub').textContent=`${tdef.icon} ${tdef.name} — Allocation History`;
   document.getElementById('hist-add-btn').style.display=isAdmin()?'flex':'none';
   document.getElementById('hist-form').className='hist-form';
-  ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id=>document.getElementById(id).value='');
+  clearHistForm();
   renderHistEntries(row._history||[]);OM('modal-hist');
 }
+
 function renderHistEntries(entries){
   const el=document.getElementById('hist-entries-list');
-  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--t3);font-size:13px;">No history yet.${isAdmin()?' Click "+ Add History Entry" to track.':''}</div>`;return;}
+  if(!entries.length){
+    el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--t3);font-size:13px;">No history yet.${isAdmin()?' Click "+ Add History Entry" to track.':''}</div>`;
+    return;
+  }
   el.innerHTML=`<div class="hist-list">${entries.map((e,i)=>`
     <div class="hist-entry">
       <div class="hist-entry-head">
         <div class="hist-entry-num">${i+1}</div>
         <div class="hist-entry-date">${e.wentDate?'📤 '+fmtDate(e.wentDate):''}${e.cameDate?' → 📥 '+fmtDate(e.cameDate):''}${!e.wentDate&&!e.cameDate?'No dates':''}</div>
-        ${isAdmin()?`<button class="hist-entry-del" onclick="deleteHistEntry('${e._id}')">🗑</button>`:''}
+        ${isAdmin()?`<div class="hist-entry-actions">
+          <button class="hist-entry-btn edit" onclick="editHistEntry('${e._id}')">✏️ Edit</button>
+          <button class="hist-entry-btn del" onclick="deleteHistEntry('${e._id}')">🗑 Delete</button>
+        </div>`:''}
       </div>
       <div class="hist-grid">
         <div class="hist-field"><label>Location / Site</label><span>${escH(e.location||'—')}</span></div>
@@ -1333,26 +1359,112 @@ function renderHistEntries(entries){
       </div>
     </div>`).join('')}</div>`;
 }
+
 function fmtDate(d){if(!d)return'';try{return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
-function toggleHistForm(){const f=document.getElementById('hist-form');f.className=f.className.includes('open')?'hist-form':'hist-form open';}
-function saveHistEntry(){
-  const went=document.getElementById('hf-went').value,came=document.getElementById('hf-came').value,
-        loc=document.getElementById('hf-loc').value.trim(),cust=document.getElementById('hf-cust').value.trim(),
-        rem=document.getElementById('hf-rem').value.trim();
-  if(!went&&!loc){toast('Enter at least a date or location','e');return;}
-  const entry={_id:uid(),wentDate:went,cameDate:came,location:loc,customer:cust,remarks:rem};
-  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
-  if(!row._history)row._history=[];row._history.push(entry);
-  saveData();renderHistEntries(row._history);toggleHistForm();
+
+function toggleHistForm(){
+  const f=document.getElementById('hist-form');
+  f.className=f.className.includes('open')?'hist-form':'hist-form open';
+}
+
+function clearHistForm(){
   ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id=>document.getElementById(id).value='');
-  renderMainTable();toast('History entry added ✓','s');
+  A.editingHistId=null;
+  document.getElementById('hist-form-title').textContent='New History Entry';
+  document.getElementById('hist-save-btn').textContent='Save Entry';
+}
+
+function cancelHistEdit(){
+  toggleHistForm();
+  clearHistForm();
+}
+
+function editHistEntry(entryId){
+  A.editingHistId=entryId;
+  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);
+  if(!row)return;
+  const entry=row._history.find(e=>e._id===entryId);
+  if(!entry)return;
+  
+  document.getElementById('hf-went').value=entry.wentDate||'';
+  document.getElementById('hf-came').value=entry.cameDate||'';
+  document.getElementById('hf-loc').value=entry.location||'';
+  document.getElementById('hf-cust').value=entry.customer||'';
+  document.getElementById('hf-rem').value=entry.remarks||'';
+  
+  document.getElementById('hist-form-title').textContent='Edit History Entry';
+  document.getElementById('hist-save-btn').textContent='Update Entry';
+  
+  const form=document.getElementById('hist-form');
+  if(!form.classList.contains('open')){
+    form.classList.add('open');
+  }
+  
+  // Scroll to form
+  form.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function saveHistEntry(){
+  const went=document.getElementById('hf-went').value;
+  const came=document.getElementById('hf-came').value;
+  const loc=document.getElementById('hf-loc').value.trim();
+  const cust=document.getElementById('hf-cust').value.trim();
+  const rem=document.getElementById('hf-rem').value.trim();
+  
+  if(!went&&!loc){toast('Enter at least a date or location','e');return;}
+  
+  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);
+  if(!row)return;
+  if(!row._history)row._history=[];
+  
+  if(A.editingHistId){
+    // Update existing entry
+    const idx=row._history.findIndex(e=>e._id===A.editingHistId);
+    if(idx>-1){
+      row._history[idx]={
+        _id:A.editingHistId,
+        wentDate:went,
+        cameDate:came,
+        location:loc,
+        customer:cust,
+        remarks:rem
+      };
+      toast('History entry updated ✓','s');
+    }
+  }else{
+    // Add new entry
+    const entry={_id:uid(),wentDate:went,cameDate:came,location:loc,customer:cust,remarks:rem};
+    row._history.push(entry);
+    toast('History entry added ✓','s');
+  }
+  
+  saveData();
+  renderHistEntries(row._history);
+  toggleHistForm();
+  clearHistForm();
+  
+  // FIX #2: Force immediate table update
+  setTimeout(()=>{
+    renderMainTable();
+  },50);
+  
   pushToSheets(A.histTableId);
 }
+
 function deleteHistEntry(entryId){
   if(!confirm('Delete this history entry?'))return;
-  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
+  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);
+  if(!row)return;
   row._history=(row._history||[]).filter(e=>e._id!==entryId);
-  saveData();renderHistEntries(row._history);renderMainTable();toast('Entry deleted','i');
+  saveData();
+  renderHistEntries(row._history);
+  
+  // FIX #2: Force immediate table update
+  setTimeout(()=>{
+    renderMainTable();
+  },50);
+  
+  toast('Entry deleted','i');
   pushToSheets(A.histTableId);
 }
 
