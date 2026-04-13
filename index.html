@@ -9,12 +9,6 @@
 <meta name="theme-color" content="#f59e0b">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════
-   CONFIG: Search for CONFIG_ in <script> to edit
-   ① CONFIG_SPREADSHEET_ID — your Google Sheet ID
-   ② CONFIG_DEFAULT_GS_URL — your Apps Script URL
-   ③ ADMINS / VIEWER       — credentials
-   ═══════════════════════════════════════════════ */
 :root{
   --bg:#0a0a0f;--s1:#111118;--s2:#18181f;--s3:#1f1f28;
   --bdr:#2d2d40;--bdr2:#3a3a50;
@@ -26,7 +20,6 @@
   --r:8px;--tr:.15s ease;
   --sidebar:260px;--topbar:52px;
 }
-/* Light mode theme */
 [data-theme="light"]{
   --bg:#f5f5f7;--s1:#ffffff;--s2:#f9fafb;--s3:#f3f4f6;
   --bdr:#d1d5db;--bdr2:#9ca3af;
@@ -183,17 +176,36 @@ input,select,textarea,button{font-family:var(--sans);}
 .twrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead th{padding:8px 10px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;background:var(--s2);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:5;white-space:nowrap;}
-thead th:first-child{width:36px;text-align:center;}
+thead th:first-child{width:46px;text-align:center;}
 tbody tr{border-bottom:1px solid var(--bdr);transition:background var(--tr);}
 tbody tr:hover{background:rgba(255,255,255,.02);}
 [data-theme="light"] tbody tr:hover{background:rgba(0,0,0,.02);}
 tbody tr.nio-row{background:rgba(239,68,68,.04);}
 tbody tr.nio-row:hover{background:rgba(239,68,68,.07);}
 tbody td{padding:7px 10px;vertical-align:middle;}
-tbody td:first-child{text-align:center;}
+tbody td:first-child{text-align:center;padding:4px 6px;}
+
+/* Row number + view button */
+.row-num-cell{display:flex;flex-direction:column;align-items:center;gap:2px;}
 .rn{font-family:var(--mono);font-size:10px;color:var(--t3);}
+.row-view-btn{width:22px;height:18px;border:1px solid var(--bdr);background:var(--s3);border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:10px;transition:all var(--tr);color:var(--t3);padding:0;line-height:1;}
+.row-view-btn:hover{border-color:var(--acc);background:rgba(245,158,11,.1);color:var(--acc);transform:scale(1.1);}
+tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,130,246,.1);color:var(--blu);}
+
+/* Long text cell with view chip */
+.cell-text-wrap{display:flex;align-items:center;gap:5px;max-width:160px;}
+.cell-text-short{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;}
+.cell-view-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:9px;font-size:9px;font-weight:600;font-family:var(--mono);background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:var(--pur);cursor:pointer;transition:all var(--tr);white-space:nowrap;}
+.cell-view-chip:hover{background:rgba(139,92,246,.2);transform:scale(1.05);}
+
+/* Spec cell — special highlight */
+.spec-cell-wrap{display:flex;align-items:center;gap:5px;max-width:140px;}
+.spec-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:2px;padding:2px 6px;border-radius:9px;font-size:9px;font-weight:700;font-family:var(--mono);background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3);color:var(--orn);cursor:pointer;transition:all var(--tr);white-space:nowrap;}
+.spec-chip:hover{background:rgba(249,115,22,.18);transform:scale(1.05);}
+
 .acts{display:flex;gap:3px;justify-content:flex-end;}
 .abt{height:26px;padding:0 8px;border-radius:5px;border:1px solid var(--bdr);background:var(--s2);cursor:pointer;display:inline-flex;align-items:center;gap:3px;font-size:11px;transition:all var(--tr);color:var(--t2);white-space:nowrap;}
+.abt.v:hover{border-color:var(--pur);color:var(--pur);background:rgba(139,92,246,.07);}
 .abt.e:hover{border-color:var(--acc);color:var(--acc);background:rgba(245,158,11,.07);}
 .abt.d:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.07);}
 .ct{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -238,6 +250,7 @@ tbody td:first-child{text-align:center;}
 .modal-xl{width:740px;}
 .modal-sm{width:390px;}
 .modal-hist{width:800px;}
+.modal-detail{width:720px;}
 @keyframes mIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .mhd-title{font-size:15px;font-weight:700;}
@@ -254,6 +267,29 @@ tbody td:first-child{text-align:center;}
 .mft{display:flex;gap:6px;justify-content:flex-end;margin-top:16px;}
 .fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .fhint{font-size:11px;color:var(--t3);margin-top:3px;}
+
+/* ── DETAIL VIEW MODAL STYLES ── */
+.detail-nav{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bdr);}
+.detail-nav-btn{padding:5px 10px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;cursor:pointer;font-size:11px;color:var(--t2);transition:all var(--tr);display:flex;align-items:center;gap:4px;}
+.detail-nav-btn:hover:not(:disabled){border-color:var(--acc);color:var(--acc);}
+.detail-nav-btn:disabled{opacity:.35;cursor:not-allowed;}
+.detail-nav-info{margin:0 auto;font-size:11px;color:var(--t3);font-family:var(--mono);}
+.detail-fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.detail-field{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;}
+.detail-field.full-width{grid-column:1/-1;}
+.detail-field.spec-field{grid-column:1/-1;background:rgba(249,115,22,.04);border-color:rgba(249,115,22,.2);}
+.detail-field-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.spec-field .detail-field-label{color:var(--orn);}
+.detail-field-value{font-size:13px;color:var(--txt);line-height:1.6;word-break:break-word;white-space:pre-wrap;}
+.detail-field-value.empty{color:var(--t3);font-style:italic;}
+.detail-field-value.mono{font-family:var(--mono);font-size:12px;}
+.detail-hist-strip{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:8px;margin-bottom:14px;cursor:pointer;transition:all var(--tr);}
+.detail-hist-strip:hover{background:rgba(139,92,246,.12);}
+.detail-hist-strip-label{font-size:12px;font-weight:600;color:var(--pur);}
+.detail-hist-strip-sub{font-size:11px;color:var(--t3);margin-left:auto;}
+.detail-actions{display:flex;gap:6px;padding-top:12px;border-top:1px solid var(--bdr);}
+
+/* HISTORY MODAL */
 .hist-list{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;max-height:340px;overflow-y:auto;}
 .hist-entry{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:11px 12px;}
 .hist-entry-head{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
@@ -294,7 +330,6 @@ tbody td:first-child{text-align:center;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-msg{font-size:13px;color:var(--t2);font-family:var(--mono);}
 
-/* Refresh bar (slim top indicator — non-blocking) */
 #refresh-bar{position:fixed;top:52px;left:0;right:0;z-index:500;background:rgba(245,158,11,.1);border-bottom:1px solid rgba(245,158,11,.25);padding:5px 16px;font-size:11px;color:var(--acc);font-family:var(--mono);display:flex;align-items:center;gap:8px;}
 #refresh-bar .rb-spin{width:10px;height:10px;border:2px solid var(--acc);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
 
@@ -330,9 +365,10 @@ tbody td:first-child{text-align:center;}
   .mh-right{gap:3px;}
   .product-grid{grid-template-columns:1fr;}
   .product-card{padding:22px 18px;}
-  .modal,.modal-xl,.modal-sm,.modal-hist{width:98vw;padding:16px;}
+  .modal,.modal-xl,.modal-sm,.modal-hist,.modal-detail{width:98vw;padding:16px;}
   .mover{padding:8px;}
-  .fg2,.hist-grid{grid-template-columns:1fr;}
+  .fg2,.hist-grid,.detail-fields-grid{grid-template-columns:1fr;}
+  .detail-field.full-width,.detail-field.spec-field{grid-column:1;}
   .sync-url-row{flex-wrap:wrap;}
   .sync-url-row input{width:100%;flex:none;}
   #toasts{right:10px;left:10px;bottom:10px;align-items:center;}
@@ -479,12 +515,37 @@ tbody td:first-child{text-align:center;}
   </div>
 </div>
 
-<!-- MODAL: Row -->
+<!-- MODAL: Row Add/Edit -->
 <div class="mover" id="modal-row">
   <div class="modal modal-xl">
     <div class="mhd"><div><div class="mhd-title" id="row-modal-title">Add Row</div><div class="mhd-sub" id="row-modal-sub"></div></div><button class="mcl" onclick="CM('modal-row')">✕</button></div>
     <div id="row-form-fields"></div>
     <div class="mft"><button class="btn bo" onclick="CM('modal-row')">Cancel</button><button class="btn bp" id="row-save-btn" onclick="saveRow()">Save Row</button></div>
+  </div>
+</div>
+
+<!-- MODAL: Row Detail Viewer (NEW) -->
+<div class="mover" id="modal-detail">
+  <div class="modal modal-detail">
+    <div class="mhd">
+      <div>
+        <div class="mhd-title" id="detail-modal-title">👁 Row Details</div>
+        <div class="mhd-sub" id="detail-modal-sub"></div>
+      </div>
+      <button class="mcl" onclick="CM('modal-detail')">✕</button>
+    </div>
+    <!-- Navigation: prev / row N of total / next -->
+    <div class="detail-nav">
+      <button class="detail-nav-btn" id="detail-prev-btn" onclick="detailNav(-1)">← Prev</button>
+      <span class="detail-nav-info" id="detail-nav-info">Row 1 of 1</span>
+      <button class="detail-nav-btn" id="detail-next-btn" onclick="detailNav(1)">Next →</button>
+    </div>
+    <!-- Fields grid -->
+    <div id="detail-fields-container"></div>
+    <!-- History strip -->
+    <div id="detail-hist-strip"></div>
+    <!-- Actions -->
+    <div class="detail-actions" id="detail-actions"></div>
   </div>
 </div>
 
@@ -535,7 +596,6 @@ tbody td:first-child{text-align:center;}
       💡 <strong style="color:var(--blu)">How real-time sync works:</strong>
       When any admin saves data, it's pushed to Sheets immediately (Auto-sync ON).
       Other devices check for changes every 30 seconds automatically and update if needed.
-      The app shows local data instantly and refreshes in the background — no waiting.
     </div>
     <div style="margin-bottom:9px;">
       <button class="btn bo bsm" onclick="toggleSetupSteps()" id="toggle-steps-btn" style="width:100%;justify-content:center;">▼ Show Setup Instructions</button>
@@ -602,58 +662,31 @@ tbody td:first-child{text-align:center;}
 <div id="toasts"></div>
 
 <script>
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  DHW-Application Team Stores — Configuration                 ║
-// ║  ① CONFIG_SPREADSHEET_ID  — your Google Sheet ID            ║
-// ║  ② CONFIG_DEFAULT_GS_URL  — your Apps Script Web App URL    ║
-// ║  ③ ADMINS / VIEWER        — credentials                     ║
-// ╚══════════════════════════════════════════════════════════════╝
-
-// ── ① SPREADSHEET ID ────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════
+//  CONFIGURATION
+// ══════════════════════════════════════════════════════════
 const CONFIG_SPREADSHEET_ID = '1zRJD8cwZuX8BtSj3wJbSNVYfheaFGr2Zqta-XDx7Bio';
-
-// ── ② APPS SCRIPT WEB APP URL ───────────────────────────────────
 const CONFIG_DEFAULT_GS_URL = 'https://script.google.com/macros/s/AKfycbx4PImGlFKWjL3YSvCzymcH8Ous8PO5vRwnVdN6boGFWj3OmYbz4eCIaXKBCWJMndXG/exec';
 
-// ── ③ ADMIN CREDENTIALS ─────────────────────────────────────────
 const ADMINS = [
- { id:'Chiranth1', name:'Chiranth Ramesh',    pass:'42325' },
-  { id:'Madhushri2', name:'Madhushri Kakanaki', pass:'19405' },
-  { id:'Surendra3', name:'Peetlasurendra', pass:'Admin3@2024' },
-  { id:'Anil4',  name:'Anil Vase',    pass:'10698'       },
+  { id:'Chiranth1',   name:'Chiranth Ramesh',    pass:'42325' },
+  { id:'Madhushri2',  name:'Madhushri Kakanaki', pass:'19405' },
+  { id:'Surendra3',   name:'Peetlasurendra',     pass:'Admin3@2024' },
+  { id:'Anil4',       name:'Anil Vase',          pass:'10698' },
 ];
 const VIEWER = { id:'VIEWER', pass:'View@123' };
 
-// ── Sheet link ───────────────────────────────────────────────────
 document.getElementById('sheet-link').href =
   'https://docs.google.com/spreadsheets/d/' + CONFIG_SPREADSHEET_ID + '/edit';
 
-// ═══════════════════════════════════════════════════════════════
-//  PWA MANIFEST - Makes app installable with icon
-// ═══════════════════════════════════════════════════════════════
-const manifest = {
-  name: "DHW-Application Team Stores",
-  short_name: "DHW Stores",
-  description: "COTS & SFF Inventory Management System",
-  start_url: window.location.pathname,
-  display: "standalone",
-  background_color: "#0a0a0f",
-  theme_color: "#f59e0b",
-  icons: [
-    {
-      src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>",
-      sizes: "any",
-      type: "image/svg+xml"
-    }
-  ]
-};
-const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-const manifestURL = URL.createObjectURL(manifestBlob);
-document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+// PWA MANIFEST
+const manifest = {name:"DHW-Application Team Stores",short_name:"DHW Stores",start_url:window.location.pathname,display:"standalone",background_color:"#0a0a0f",theme_color:"#f59e0b",icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>",sizes:"any",type:"image/svg+xml"}]};
+const manifestBlob = new Blob([JSON.stringify(manifest)],{type:'application/json'});
+document.getElementById('manifest-placeholder').setAttribute('href',URL.createObjectURL(manifestBlob));
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  TABLE DEFINITIONS
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 const TABLE_DEFS = {
   COTS:[
     {id:'cots_t1',name:'Regularly Used Items',icon:'🖥️',hasHistory:true,cols:[
@@ -666,7 +699,7 @@ const TABLE_DEFS = {
       {id:'cond',name:'Product Condition',type:'condition'},
       {id:'remark',name:'Remark',type:'text'},
       {id:'inoffice',name:'Present in Office',type:'inoffice'},
-      {id:'prodspec',name:'Product Specification',type:'text'},
+      {id:'prodspec',name:'Product Specification',type:'longtext'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
     {id:'cots_t2',name:'Storage Devices Details',icon:'💾',hasHistory:true,cols:[
@@ -731,7 +764,7 @@ const TABLE_DEFS = {
       {id:'remarks',name:'Remarks',type:'text'},
       {id:'cond',name:'Product Condition',type:'condition'},
       {id:'inoffice',name:'Present in Office',type:'inoffice'},
-      {id:'prodspec',name:'Product Specification',type:'text'},
+      {id:'prodspec',name:'Product Specification',type:'longtext'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
     {id:'sff_t2',name:'SFF Demo Unit Details',icon:'💻',hasHistory:true,cols:[
@@ -742,8 +775,8 @@ const TABLE_DEFS = {
       {id:'cables',name:'Cables / Accessories',type:'text'},
       {id:'cond',name:'Product Condition',type:'condition'},
       {id:'inoffice',name:'Present in Office',type:'inoffice'},
-      {id:'remarks',name:'Remarks',type:'text'},
-      {id:'prodspec',name:'Product Specification',type:'text'},
+      {id:'remarks',name:'Remarks',type:'longtext'},
+      {id:'prodspec',name:'Product Specification',type:'longtext'},
       {id:'lastupdatedby',name:'Last Updated By',type:'autoadmin',readonly:true},
     ]},
   ]
@@ -756,22 +789,20 @@ const TAB_NAMES={
   sff_t1:'SFF_MaterialsList',sff_t2:'SFF_DemoUnit',
 };
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════════════════════════
-let A={user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null,editingHistId:null};
+// ══════════════════════════════════════════════════════════
+let A={user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null,editingHistId:null,detailTableId:null,detailRowId:null};
 let autoSyncEnabled=localStorage.getItem('ip_autosync')==='1';
 let _pollTimer=null;
 let _refreshing=false;
 let _lastKnownVersion='';
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  SESSION PERSISTENCE
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function saveSession(){
-  if(A.user){
-    localStorage.setItem('dhw_session',JSON.stringify({user:A.user,product:A.product,activeTableId:A.activeTableId}));
-  }
+  if(A.user)localStorage.setItem('dhw_session',JSON.stringify({user:A.user,product:A.product,activeTableId:A.activeTableId}));
 }
 function loadSession(){
   try{
@@ -793,18 +824,12 @@ function loadSession(){
   }catch(e){}
   return false;
 }
-function clearSession(){
-  localStorage.removeItem('dhw_session');
-}
-window.addEventListener('DOMContentLoaded',()=>{
-  if(!loadSession()){
-    show('pg-login');
-  }
-});
+function clearSession(){localStorage.removeItem('dhw_session');}
+window.addEventListener('DOMContentLoaded',()=>{if(!loadSession())show('pg-login');});
 
-// ═══════════════════════════════════════════════════════════════
-//  THEME TOGGLE
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════════════════════
 function initTheme(){
   const saved=localStorage.getItem('ip_theme')||'dark';
   document.documentElement.setAttribute('data-theme',saved);
@@ -817,15 +842,12 @@ function toggleTheme(){
   localStorage.setItem('ip_theme',newTheme);
   updateThemeIcon(newTheme);
 }
-function updateThemeIcon(theme){
-  const icon=document.getElementById('theme-icon');
-  if(icon)icon.textContent=theme==='dark'?'🌙':'☀️';
-}
+function updateThemeIcon(theme){const icon=document.getElementById('theme-icon');if(icon)icon.textContent=theme==='dark'?'🌙':'☀️';}
 initTheme();
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  DATA STORE
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function saveData(){localStorage.setItem('ip_data',JSON.stringify(DATA));}
 function loadData(){
   try{
@@ -835,37 +857,30 @@ function loadData(){
   const f={};Object.keys(TABLE_DEFS).forEach(p=>TABLE_DEFS[p].forEach(t=>{f[t.id]=[];}));return f;
 }
 let DATA=loadData();
-
 function localDataIsEmpty(){return [...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].every(t=>(DATA[t.id]||[]).length===0);}
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  LOADING / UI HELPERS
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function showLoading(msg='Loading…'){document.getElementById('loading-msg').textContent=msg;document.getElementById('loading-overlay').classList.add('open');}
 function hideLoading(){document.getElementById('loading-overlay').classList.remove('open');}
 function setLoadingMsg(m){const el=document.getElementById('loading-msg');if(el)el.textContent=m;}
-
 function showRefreshBar(msg){
   let bar=document.getElementById('refresh-bar');
-  if(!bar){
-    bar=document.createElement('div');bar.id='refresh-bar';
-    bar.innerHTML='<span class="rb-spin"></span><span id="refresh-bar-msg"></span>';
-    document.body.appendChild(bar);
-  }
+  if(!bar){bar=document.createElement('div');bar.id='refresh-bar';bar.innerHTML='<span class="rb-spin"></span><span id="refresh-bar-msg"></span>';document.body.appendChild(bar);}
   document.getElementById('refresh-bar-msg').textContent=msg||'Refreshing…';
 }
 function hideRefreshBar(){const b=document.getElementById('refresh-bar');if(b)b.remove();}
-function updateRefreshBar(msg){const el=document.getElementById('refresh-bar-msg');if(el)el.textContent=msg;}
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  MOBILE SIDEBAR
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function toggleMobSidebar(){const sb=document.getElementById('sidebar'),ov=document.getElementById('mob-overlay');const open=sb.classList.toggle('mob-open');ov.classList.toggle('open',open);}
 function closeMobSidebar(){document.getElementById('sidebar').classList.remove('mob-open');document.getElementById('mob-overlay').classList.remove('open');}
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  AUTO-SYNC
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function toggleAutoSync(){
   autoSyncEnabled=!autoSyncEnabled;
   localStorage.setItem('ip_autosync',autoSyncEnabled?'1':'0');
@@ -873,16 +888,15 @@ function toggleAutoSync(){
   toast(autoSyncEnabled?'Auto-sync ON — every save pushes to Sheets':'Auto-sync OFF','i');
 }
 function updateAutoSyncBadge(){
-  const b=document.getElementById('autosync-badge');
-  const ic=document.getElementById('autosync-icon');
+  const b=document.getElementById('autosync-badge');const ic=document.getElementById('autosync-icon');
   if(!b)return;
   if(autoSyncEnabled){b.className='autosync-badge';ic.textContent='●';}
   else{b.className='autosync-badge off';ic.textContent='○';}
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  AUTH
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 let curRole='admin';
 function switchRole(role){
   curRole=role;
@@ -906,35 +920,26 @@ function doLogin(){
     document.getElementById('lerr-viewer').style.display='none';
     A.user={name:'Viewer',id:VIEWER.id,role:'viewer'};
   }
-  saveSession();
-  show('pg-product');
+  saveSession();show('pg-product');
   document.getElementById('pu-name').textContent=A.user.name;
-  const pb=document.getElementById('pu-badge');
-  pb.textContent=A.user.role.toUpperCase();pb.className='puser-badge '+(isAdmin()?'ba':'bv');
+  const pb=document.getElementById('pu-badge');pb.textContent=A.user.role.toUpperCase();pb.className='puser-badge '+(isAdmin()?'ba':'bv');
 }
 function doLogout(){
-  stopPolling();
-  A.user=null;A.product=null;_lastKnownVersion='';
-  clearSession();
+  stopPolling();A.user=null;A.product=null;_lastKnownVersion='';clearSession();
   ['adminId','adminPass','viewerPass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   switchRole('admin');show('pg-login');
 }
 const isAdmin=()=>A.user?.role==='admin';
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  PRODUCT SELECT
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function enterProduct(prod,skipSession){
   A.product=prod;A.activeTableId=TABLE_DEFS[prod][0].id;
   A.nioFilter=false;A.searchMode=false;A.searchQuery='';
-
   if(!skipSession)saveSession();
-
-  if(CONFIG_DEFAULT_GS_URL&&!localStorage.getItem('ip_gsurl')){
-    localStorage.setItem('ip_gsurl',CONFIG_DEFAULT_GS_URL);
-  }
+  if(CONFIG_DEFAULT_GS_URL&&!localStorage.getItem('ip_gsurl'))localStorage.setItem('ip_gsurl',CONFIG_DEFAULT_GS_URL);
   const gsUrl=getGsUrl();
-
   show('pg-app');
   document.getElementById('tb-uname').textContent=A.user.name;
   const b=document.getElementById('tb-badge');b.textContent=A.user.role.toUpperCase();b.className='puser-badge '+(isAdmin()?'ba':'bv');
@@ -943,71 +948,36 @@ function enterProduct(prod,skipSession){
   document.getElementById('btn-add-row').style.display=isAdmin()?'flex':'none';
   document.getElementById('btn-clear-bottom').style.display=isAdmin()?'flex':'none';
   if(isAdmin())document.getElementById('btn-add-row').className='btn bp bsm'+(prod==='SFF'?' sff-btn':'');
-
   const syncPill=document.getElementById('sync-pill');
   const autoSyncBadge=document.getElementById('autosync-badge');
   if(syncPill)syncPill.style.display=isAdmin()?'':'none';
   if(autoSyncBadge)autoSyncBadge.style.display=isAdmin()?'':'none';
-
-  updateAutoSyncBadge();
-  updateSyncDot(!!gsUrl);
-
+  updateAutoSyncBadge();updateSyncDot(!!gsUrl);
   renderSidebar();selectTable(A.activeTableId);
-
-  if(gsUrl){
-    checkAndRefreshIfNeeded(localDataIsEmpty());
-    startPolling();
-  }
+  if(gsUrl){checkAndRefreshIfNeeded(localDataIsEmpty());startPolling();}
 }
-function goProductSelect(){
-  stopPolling();
-  A.product=null;
-  saveSession();
-  show('pg-product');
-}
+function goProductSelect(){stopPolling();A.product=null;saveSession();show('pg-product');}
 
-// ═══════════════════════════════════════════════════════════════
-//  VERSION-BASED SYNC CHECK
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  SYNC / POLLING
+// ══════════════════════════════════════════════════════════
 async function checkAndRefreshIfNeeded(forceRefreshFlag=false){
-  if(_refreshing)return;
-  const url=getGsUrl();if(!url)return;
-
+  if(_refreshing)return;const url=getGsUrl();if(!url)return;
   try{
-    const vRes=await gsPost({action:'getVersion'});
-    const serverVersion=vRes.version||'';
-
-    if(forceRefreshFlag||serverVersion!==_lastKnownVersion){
-      _lastKnownVersion=serverVersion;
-      await pullAllTablesBackground(forceRefreshFlag);
-    }
-  }catch(e){
-    if(forceRefreshFlag){
-      await pullAllTablesBackground(true);
-    }
-    console.warn('Version check failed:',e.message);
-  }
+    const vRes=await gsPost({action:'getVersion'});const serverVersion=vRes.version||'';
+    if(forceRefreshFlag||serverVersion!==_lastKnownVersion){_lastKnownVersion=serverVersion;await pullAllTablesBackground(forceRefreshFlag);}
+  }catch(e){if(forceRefreshFlag)await pullAllTablesBackground(true);console.warn('Version check failed:',e.message);}
 }
-
 async function pullAllTablesBackground(showBar){
-  if(_refreshing)return;
-  _refreshing=true;
+  if(_refreshing)return;_refreshing=true;
   if(showBar)showRefreshBar('Loading data from Google Sheets…');
-
   const allIds=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
-
   try{
     const results=await Promise.all(allIds.map(async id=>{
       const tabName=TAB_NAMES[id];const tdef=tdefForId(id);
-      try{
-        const res=await gsPost({action:'import',tabName});
-        return{id,tdef,res};
-      }catch(e){
-        console.warn('Pull failed for '+tabName+':',e.message);
-        return{id,tdef,res:null};
-      }
+      try{const res=await gsPost({action:'import',tabName});return{id,tdef,res};}
+      catch(e){console.warn('Pull failed for '+tabName+':',e.message);return{id,tdef,res:null};}
     }));
-
     let imported=0;
     results.forEach(({id,tdef,res})=>{
       if(res&&res.rows&&res.rows.length>0){
@@ -1020,43 +990,19 @@ async function pullAllTablesBackground(showBar){
         imported++;
       }
     });
-
-    if(imported>0){
-      saveData();
-      renderSidebar();
-      renderMainTable();
-      if(showBar)toast('✓ Data loaded from Google Sheets','s');
-      else toast('✓ Updated from Sheets','s');
-    }
-  }finally{
-    _refreshing=false;
-    hideRefreshBar();
-  }
+    if(imported>0){saveData();renderSidebar();renderMainTable();if(showBar)toast('✓ Data loaded from Google Sheets','s');else toast('✓ Updated from Sheets','s');}
+  }finally{_refreshing=false;hideRefreshBar();}
 }
-
-// ═══════════════════════════════════════════════════════════════
-//  30-SECOND POLLING
-// ═══════════════════════════════════════════════════════════════
 function startPolling(){
   stopPolling();
-  _pollTimer=setInterval(()=>{
-    if(getGsUrl()&&!_refreshing&&document.visibilityState!=='hidden'){
-      checkAndRefreshIfNeeded(false);
-    }
-  },30000);
+  _pollTimer=setInterval(()=>{if(getGsUrl()&&!_refreshing&&document.visibilityState!=='hidden')checkAndRefreshIfNeeded(false);},30000);
 }
-function stopPolling(){
-  if(_pollTimer){clearInterval(_pollTimer);_pollTimer=null;}
-}
-document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible'&&A.product&&getGsUrl()){
-    checkAndRefreshIfNeeded(false);
-  }
-});
+function stopPolling(){if(_pollTimer){clearInterval(_pollTimer);_pollTimer=null;}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&A.product&&getGsUrl())checkAndRefreshIfNeeded(false);});
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  SIDEBAR
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function renderSidebar(){
   const tables=TABLE_DEFS[A.product];const isSFF=A.product==='SFF';
   document.getElementById('sb-tables').innerHTML=tables.map(t=>{
@@ -1075,19 +1021,16 @@ function renderSidebar(){
 function selectTable(id){A.activeTableId=id;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';saveSession();renderSidebar();renderMainTable();}
 function toggleNIO(){A.nioFilter=!A.nioFilter;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';document.getElementById('nio-toggle').className='nio-toggle'+(A.nioFilter?' active':'');renderMainTable();}
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  SEARCH
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function handleSearch(q){
   A.searchQuery=q.trim().replace(/\s+/g,' ').toLowerCase();A.searchMode=A.searchQuery.length>0;A.nioFilter=false;
   document.getElementById('nio-toggle').className='nio-toggle';
   if(A.searchMode)renderSearchResults();else renderMainTable();
 }
 function rowMatchesSearch(row,tdef,q){
-  for(const col of tdef.cols){
-    const val=String(row[col.id]??'').toLowerCase();
-    if(val.includes(q))return true;
-  }
+  for(const col of tdef.cols){const val=String(row[col.id]??'').toLowerCase();if(val.includes(q))return true;}
   return false;
 }
 function highlightMatch(text,q){
@@ -1122,9 +1065,50 @@ function jumpToRow(tableId,rowId){
   setTimeout(()=>{const tr=document.getElementById('row-'+rowId);if(tr){tr.scrollIntoView({behavior:'smooth',block:'center'});tr.style.background='rgba(245,158,11,.15)';setTimeout(()=>tr.style.background='',1800);}},100);
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  RENDER TABLE
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  RENDER TABLE  — with 👁 row view + long-text chips
+// ══════════════════════════════════════════════════════════
+// How many chars before we truncate in the table cell
+const CELL_TRUNCATE = 55;
+
+function renderCellValue(col, v, tableId, rowId, isSFF) {
+  const sv = String(v ?? '');
+
+  if (col.type === 'autoadmin') {
+    return sv ? `<span class="lub-badge">👤 ${escH(sv)}</span>` : `<span class="lub-badge-none">—</span>`;
+  }
+  if (col.type === 'inoffice') {
+    const cls = sv==='Yes'?'nin-yes':sv==='No'?'nin-no':'';
+    return sv ? `<span class="nin-badge ${cls}">${sv==='Yes'?'✓ Yes':'✗ No'}</span>` : '<span style="color:var(--t3)">—</span>';
+  }
+  if (col.type === 'condition') {
+    if (!sv) return '<span style="color:var(--t3)">—</span>';
+    const vl = sv.toLowerCase();
+    const cls = vl.includes('work')&&!vl.includes('not')?'cg':vl.includes('damage')||vl.includes('not work')||vl.includes('fault')||vl.includes('poor')?'cp':vl.includes('no idea')?'cn':'cf';
+    return `<span class="cond-badge ${cls}">${escH(sv)}</span>`;
+  }
+  if (col.type === 'autonumber' || (col.type === 'number' && sv !== '')) {
+    return sv !== '' ? `<span style="font-family:var(--mono);font-size:11px">${Number(sv).toLocaleString('en-IN')}</span>` : '<span style="color:var(--t3)">—</span>';
+  }
+  if (col.type === 'longtext') {
+    if (!sv) return '<span style="color:var(--t3)">—</span>';
+    if (sv.length <= CELL_TRUNCATE) return `<span style="font-size:12px">${escH(sv)}</span>`;
+    const short = escH(sv.slice(0, CELL_TRUNCATE));
+    return `<div class="spec-cell-wrap">
+      <span class="cell-text-short" style="font-size:12px" title="${escH(sv)}">${short}…</span>
+      <span class="spec-chip" onclick="openViewRow('${tableId}','${rowId}');event.stopPropagation();">📄 View</span>
+    </div>`;
+  }
+  // Generic text — truncate if long
+  if (!sv) return '<span style="color:var(--t3)">—</span>';
+  if (sv.length <= CELL_TRUNCATE) return `<span class="ct">${escH(sv)}</span>`;
+  const short = escH(sv.slice(0, CELL_TRUNCATE));
+  return `<div class="cell-text-wrap">
+    <span class="cell-text-short" title="${escH(sv)}">${short}…</span>
+    <span class="cell-view-chip" onclick="openViewRow('${tableId}','${rowId}');event.stopPropagation();">↗</span>
+  </div>`;
+}
+
 function renderMainTable(){
   const tdef=TABLE_DEFS[A.product].find(t=>t.id===A.activeTableId);if(!tdef)return;
   let rows=DATA[tdef.id]||[];if(A.nioFilter)rows=rows.filter(r=>(r.inoffice||'')==='No');
@@ -1146,6 +1130,9 @@ function renderMainTable(){
     <div class="stat"><div class="stat-d" style="background:var(--t2)"></div><span class="stat-n">${allRows.length}</span><span class="stat-l">Total</span></div>
     <div class="stat"><div class="stat-d" style="background:var(--grn)"></div><span class="stat-n">${inCount}</span><span class="stat-l">In Office</span></div>
     <div class="stat"><div class="stat-d" style="background:var(--red)"></div><span class="stat-n">${nioCount}</span><span class="stat-l">Not In</span></div>
+    <div class="stat" style="margin-left:auto;font-size:10px;color:var(--t3)">
+      <span title="Click 👁 icon or 📄 chip to see full row details" style="cursor:help">💡 Click 👁 to view full details</span>
+    </div>
   </div><div class="twrap">`;
 
   if(!rows.length){
@@ -1154,34 +1141,41 @@ function renderMainTable(){
       <p>${isAdmin()&&!A.nioFilter?'Click "+ Add Row" to add entries.':'No data to display.'}</p></div>`;
   }else{
     const histTh=tdef.hasHistory?`<th>History</th>`:'';
-    const actTh=isAdmin()?`<th style="text-align:right;padding-right:10px">Actions</th>`:'';
-    html+=`<table><thead><tr><th>#</th>${tdef.cols.map(c=>`<th>${escH(c.name)}</th>`).join('')}${histTh}${actTh}</tr></thead><tbody>`;
+    const actTh=isAdmin()?`<th style="text-align:right;padding-right:10px">Actions</th>`:'<th style="text-align:right;padding-right:10px">View</th>';
+    html+=`<table><thead><tr>
+      <th title="Row # · Click 👁 to view full details"># / 👁</th>
+      ${tdef.cols.map(c=>`<th>${escH(c.name)}</th>`).join('')}
+      ${histTh}${actTh}
+    </tr></thead><tbody>`;
+
     rows.forEach((row,i)=>{
       const isNIO=(row.inoffice||'')==='No';
-      html+=`<tr id="row-${row._id}" class="${isNIO?'nio-row':''}"><td class="rn">${i+1}</td>`;
+      html+=`<tr id="row-${row._id}" class="${isNIO?'nio-row':''} ${isSFF?'sff-row':''}">
+        <td>
+          <div class="row-num-cell">
+            <span class="rn">${i+1}</span>
+            <button class="row-view-btn" onclick="openViewRow('${tdef.id}','${row._id}')" title="View full row details">👁</button>
+          </div>
+        </td>`;
       tdef.cols.forEach(col=>{
-        const v=row[col.id]??'';
-        if(col.type==='autoadmin'){
-          html+=`<td>${v?`<span class="lub-badge">👤 ${escH(String(v))}</span>`:`<span class="lub-badge-none">—</span>`}</td>`;
-        }else if(col.type==='inoffice'){
-          const cls=v==='Yes'?'nin-yes':v==='No'?'nin-no':'';
-          html+=`<td>${v?`<span class="nin-badge ${cls}">${v==='Yes'?'✓ Yes':'✗ No'}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
-        }else if(col.type==='condition'){
-          const vl=String(v).toLowerCase();
-          const cls=vl.includes('work')&&!vl.includes('not')?'cg':vl.includes('damage')||vl.includes('not work')||vl.includes('fault')||vl.includes('poor')?'cp':vl.includes('no idea')?'cn':'cf';
-          html+=`<td>${v?`<span class="cond-badge ${cls}">${escH(String(v))}</span>`:'<span style="color:var(--t3)">—</span>'}</td>`;
-        }else if(col.type==='autonumber'||(col.type==='number'&&v!=='')){
-          html+=`<td style="font-family:var(--mono);font-size:11px">${v!==''?Number(v).toLocaleString('en-IN'):'<span style="color:var(--t3)">—</span>'}</td>`;
-        }else{
-          html+=`<td class="ct" title="${String(v).replace(/"/g,'&quot;')}">${v?escH(String(v)):'<span style="color:var(--t3)">—</span>'}</td>`;
-        }
+        html+=`<td>${renderCellValue(col, row[col.id], tdef.id, row._id, isSFF)}</td>`;
       });
       if(tdef.hasHistory){
         const hl=(row._history||[]).length;
         if(hl>0)html+=`<td><span class="hist-count" onclick="openHistory('${tdef.id}','${row._id}')">📜 ${hl}</span></td>`;
         else html+=isAdmin()?`<td><span class="hist-count-zero" onclick="openHistory('${tdef.id}','${row._id}')">📜 0</span></td>`:`<td><span style="color:var(--t3);font-size:11px">—</span></td>`;
       }
-      if(isAdmin())html+=`<td><div class="acts"><button class="abt e" onclick="openEditRow('${row._id}')">✏ Edit</button><button class="abt d" onclick="deleteRow('${row._id}')">🗑</button></div></td>`;
+      if(isAdmin()){
+        html+=`<td><div class="acts">
+          <button class="abt v" onclick="openViewRow('${tdef.id}','${row._id}')" title="View full details">👁</button>
+          <button class="abt e" onclick="openEditRow('${row._id}')">✏</button>
+          <button class="abt d" onclick="deleteRow('${row._id}')">🗑</button>
+        </div></td>`;
+      }else{
+        html+=`<td><div class="acts">
+          <button class="abt v" onclick="openViewRow('${tdef.id}','${row._id}')" title="View full details">👁 View</button>
+        </div></td>`;
+      }
       html+='</tr>';
     });
     html+='</tbody></table>';
@@ -1190,9 +1184,118 @@ function renderMainTable(){
   document.getElementById('main-content').innerHTML=html;
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  ROW DETAIL VIEWER  (new feature)
+// ══════════════════════════════════════════════════════════
+function openViewRow(tableId, rowId) {
+  A.detailTableId = tableId;
+  A.detailRowId = rowId;
+  renderDetailModal();
+  OM('modal-detail');
+}
+
+function renderDetailModal() {
+  const tableId = A.detailTableId;
+  const rowId = A.detailRowId;
+
+  let tdef = null;
+  for (const p of ['COTS','SFF']) {
+    const f = TABLE_DEFS[p].find(t => t.id === tableId);
+    if (f) { tdef = f; break; }
+  }
+  if (!tdef) return;
+
+  const rows = DATA[tableId] || [];
+  const rowIdx = rows.findIndex(r => r._id === rowId);
+  if (rowIdx === -1) return;
+  const row = rows[rowIdx];
+
+  // Header
+  document.getElementById('detail-modal-title').textContent = `${tdef.icon} Row Details`;
+  document.getElementById('detail-modal-sub').textContent = tdef.name;
+
+  // Navigation
+  const prevBtn = document.getElementById('detail-prev-btn');
+  const nextBtn = document.getElementById('detail-next-btn');
+  prevBtn.disabled = rowIdx === 0;
+  nextBtn.disabled = rowIdx === rows.length - 1;
+  document.getElementById('detail-nav-info').textContent = `Row ${rowIdx + 1} of ${rows.length}`;
+
+  // Build fields grid
+  let html = '<div class="detail-fields-grid">';
+  tdef.cols.forEach(col => {
+    const v = String(row[col.id] ?? '');
+    const isEmpty = !v;
+
+    // Determine if spec/long field
+    const isSpec = col.type === 'longtext';
+    const isFullWidth = isSpec || col.type === 'autoadmin';
+
+    let valueHtml = '';
+    if (col.type === 'inoffice') {
+      const cls = v==='Yes'?'nin-yes':v==='No'?'nin-no':'';
+      valueHtml = v ? `<span class="nin-badge ${cls}" style="font-size:12px">${v==='Yes'?'✓ In Office':'✗ Not in Office'}</span>` : '<span class="detail-field-value empty">Not set</span>';
+    } else if (col.type === 'condition') {
+      if (!v) {
+        valueHtml = '<span class="detail-field-value empty">Not set</span>';
+      } else {
+        const vl = v.toLowerCase();
+        const cls = vl.includes('work')&&!vl.includes('not')?'cg':vl.includes('damage')||vl.includes('not work')||vl.includes('fault')||vl.includes('poor')?'cp':vl.includes('no idea')?'cn':'cf';
+        valueHtml = `<span class="cond-badge ${cls}" style="font-size:12px">${escH(v)}</span>`;
+      }
+    } else if (col.type === 'autoadmin') {
+      valueHtml = v ? `<span class="lub-badge">👤 ${escH(v)}</span>` : '<span class="detail-field-value empty">—</span>';
+    } else if (col.type === 'autonumber' || col.type === 'number') {
+      valueHtml = v !== '' ? `<span class="detail-field-value mono">${Number(v).toLocaleString('en-IN')}</span>` : '<span class="detail-field-value empty">—</span>';
+    } else {
+      // text or longtext — show full value
+      valueHtml = v
+        ? `<div class="detail-field-value">${escH(v)}</div>`
+        : '<span class="detail-field-value empty">—</span>';
+    }
+
+    const specLabel = isSpec ? '📄 ' : '';
+    html += `<div class="detail-field ${isFullWidth ? (isSpec ? 'spec-field' : 'full-width') : ''}">
+      <div class="detail-field-label">${specLabel}${escH(col.name)}</div>
+      ${valueHtml}
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('detail-fields-container').innerHTML = html;
+
+  // History strip
+  const histCount = (row._history || []).length;
+  const histHtml = tdef.hasHistory
+    ? `<div class="detail-hist-strip" onclick="CM('modal-detail');openHistory('${tableId}','${rowId}')">
+        <span style="font-size:16px">📜</span>
+        <span class="detail-hist-strip-label">Allocation History</span>
+        <span style="font-family:var(--mono);font-size:11px;background:rgba(139,92,246,.12);color:var(--pur);border:1px solid rgba(139,92,246,.2);padding:2px 7px;border-radius:8px;">${histCount} entr${histCount===1?'y':'ies'}</span>
+        <span class="detail-hist-strip-sub">Click to view →</span>
+      </div>`
+    : '';
+  document.getElementById('detail-hist-strip').innerHTML = histHtml;
+
+  // Action buttons
+  let actHtml = '<button class="btn bo bsm" onclick="CM(\'modal-detail\')">Close</button>';
+  if (isAdmin()) {
+    actHtml += `<button class="btn bp bsm" onclick="CM('modal-detail');openEditRow('${rowId}')" style="margin-left:auto">✏ Edit Row</button>`;
+    actHtml += `<button class="btn br bsm" onclick="CM('modal-detail');deleteRow('${rowId}')">🗑 Delete</button>`;
+  }
+  document.getElementById('detail-actions').innerHTML = actHtml;
+}
+
+function detailNav(dir) {
+  const rows = DATA[A.detailTableId] || [];
+  const idx = rows.findIndex(r => r._id === A.detailRowId);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= rows.length) return;
+  A.detailRowId = rows[newIdx]._id;
+  renderDetailModal();
+}
+
+// ══════════════════════════════════════════════════════════
 //  ROW CRUD
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 const uid=()=>'r'+Date.now()+Math.random().toString(36).slice(2,6);
 const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
@@ -1201,18 +1304,12 @@ function getNextAutoNumber(tableId){
   rows.forEach(row=>{['slno','sn'].forEach(k=>{const v=parseInt(row[k]);if(!isNaN(v)&&v>mx)mx=v;});});
   return mx+1;
 }
-
 function renumberRows(tableId){
   const tdef=tdefForId(tableId);if(!tdef)return;
-  const autoCol=tdef.cols.find(c=>c.type==='autonumber');
-  if(!autoCol)return;
-  const rows=DATA[tableId]||[];
-  rows.forEach((row,idx)=>{
-    row[autoCol.id]=String(idx+1);
-  });
+  const autoCol=tdef.cols.find(c=>c.type==='autonumber');if(!autoCol)return;
+  (DATA[tableId]||[]).forEach((row,idx)=>{row[autoCol.id]=String(idx+1);});
   saveData();
 }
-
 function buildRowForm(tdef,row=null){
   const nextNum=row?null:getNextAutoNumber(tdef.id);const adminId=A.user?.id||'—';
   return tdef.cols.map(col=>{
@@ -1232,6 +1329,9 @@ function buildRowForm(tdef,row=null){
       <div class="fhint">💡 Type custom value or select from: ${opts.join(', ')}</div>`;
     }else if(col.type==='number'){
       inp=`<input type="number" id="rf_${col.id}" value="${v}" placeholder="0" step="any">`;
+    }else if(col.type==='longtext'){
+      inp=`<textarea id="rf_${col.id}" style="min-height:80px" placeholder="${col.name}…">${escH(String(v))}</textarea>
+      <div class="fhint">📄 Long text field — enter full specification details</div>`;
     }else if(col.type==='date'){
       inp=`<input type="date" id="rf_${col.id}" value="${v}">`;
     }else{
@@ -1277,49 +1377,27 @@ function saveRow(){
   if(!DATA[tdef.id])DATA[tdef.id]=[];
   if(A.editRowId){const idx=DATA[tdef.id].findIndex(r=>r._id===A.editRowId);if(idx>-1)DATA[tdef.id][idx]=data;toast('Row updated ✓','s');}
   else{DATA[tdef.id].push(data);toast('Row added ✓','s');}
-  saveData();
-  CM('modal-row');
-  
-  // FIX #2: Force immediate UI update
-  setTimeout(()=>{
-    renderSidebar();
-    renderMainTable();
-  },50);
-  
+  saveData();CM('modal-row');
+  setTimeout(()=>{renderSidebar();renderMainTable();},50);
   pushToSheets(A.activeTableId);
 }
 function deleteRow(rowId){
   if(!confirm('Delete this row and all its history?'))return;
   const tdef=getActiveTDef();
   DATA[tdef.id]=(DATA[tdef.id]||[]).filter(r=>r._id!==rowId);
-  renumberRows(tdef.id);
-  saveData();
-  
-  // FIX #2: Force immediate UI update
-  setTimeout(()=>{
-    renderSidebar();
-    renderMainTable();
-  },50);
-  
-  toast('Row deleted & renumbered','i');
-  pushToSheets(A.activeTableId);
+  renumberRows(tdef.id);saveData();
+  setTimeout(()=>{renderSidebar();renderMainTable();},50);
+  toast('Row deleted & renumbered','i');pushToSheets(A.activeTableId);
 }
-
 async function pushToSheets(tableId){
   if(!getGsUrl())return;
-  try{
-    await syncTableById(tableId);
-    await gsPost({action:'bumpVersion'});
-    _lastKnownVersion='';
-  }catch(e){
-    console.warn('pushToSheets failed:',e.message);
-    if(autoSyncEnabled)toast('Auto-sync failed: '+e.message,'e');
-  }
+  try{await syncTableById(tableId);await gsPost({action:'bumpVersion'});_lastKnownVersion='';}
+  catch(e){console.warn('pushToSheets failed:',e.message);if(autoSyncEnabled)toast('Auto-sync failed: '+e.message,'e');}
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  HISTORY — WITH EDIT FEATURE (FIX #1)
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  HISTORY
+// ══════════════════════════════════════════════════════════
 function openHistory(tableId,rowId){
   A.histTableId=tableId;A.histRowId=rowId;A.editingHistId=null;
   let tdef=null;
@@ -1330,16 +1408,11 @@ function openHistory(tableId,rowId){
   document.getElementById('hist-modal-sub').textContent=`${tdef.icon} ${tdef.name} — Allocation History`;
   document.getElementById('hist-add-btn').style.display=isAdmin()?'flex':'none';
   document.getElementById('hist-form').className='hist-form';
-  clearHistForm();
-  renderHistEntries(row._history||[]);OM('modal-hist');
+  clearHistForm();renderHistEntries(row._history||[]);OM('modal-hist');
 }
-
 function renderHistEntries(entries){
   const el=document.getElementById('hist-entries-list');
-  if(!entries.length){
-    el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--t3);font-size:13px;">No history yet.${isAdmin()?' Click "+ Add History Entry" to track.':''}</div>`;
-    return;
-  }
+  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--t3);font-size:13px;">No history yet.${isAdmin()?' Click "+ Add History Entry" to track.':''}</div>`;return;}
   el.innerHTML=`<div class="hist-list">${entries.map((e,i)=>`
     <div class="hist-entry">
       <div class="hist-entry-head">
@@ -1359,234 +1432,129 @@ function renderHistEntries(entries){
       </div>
     </div>`).join('')}</div>`;
 }
-
 function fmtDate(d){if(!d)return'';try{return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
-
-function toggleHistForm(){
-  const f=document.getElementById('hist-form');
-  f.className=f.className.includes('open')?'hist-form':'hist-form open';
-}
-
+function toggleHistForm(){const f=document.getElementById('hist-form');f.className=f.className.includes('open')?'hist-form':'hist-form open';}
 function clearHistForm(){
   ['hf-went','hf-came','hf-loc','hf-cust','hf-rem'].forEach(id=>document.getElementById(id).value='');
   A.editingHistId=null;
   document.getElementById('hist-form-title').textContent='New History Entry';
   document.getElementById('hist-save-btn').textContent='Save Entry';
 }
-
-function cancelHistEdit(){
-  toggleHistForm();
-  clearHistForm();
-}
-
+function cancelHistEdit(){toggleHistForm();clearHistForm();}
 function editHistEntry(entryId){
   A.editingHistId=entryId;
-  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);
-  if(!row)return;
-  const entry=row._history.find(e=>e._id===entryId);
-  if(!entry)return;
-  
+  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
+  const entry=row._history.find(e=>e._id===entryId);if(!entry)return;
   document.getElementById('hf-went').value=entry.wentDate||'';
   document.getElementById('hf-came').value=entry.cameDate||'';
   document.getElementById('hf-loc').value=entry.location||'';
   document.getElementById('hf-cust').value=entry.customer||'';
   document.getElementById('hf-rem').value=entry.remarks||'';
-  
   document.getElementById('hist-form-title').textContent='Edit History Entry';
   document.getElementById('hist-save-btn').textContent='Update Entry';
-  
   const form=document.getElementById('hist-form');
-  if(!form.classList.contains('open')){
-    form.classList.add('open');
-  }
-  
-  // Scroll to form
+  if(!form.classList.contains('open'))form.classList.add('open');
   form.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-
 function saveHistEntry(){
   const went=document.getElementById('hf-went').value;
   const came=document.getElementById('hf-came').value;
   const loc=document.getElementById('hf-loc').value.trim();
   const cust=document.getElementById('hf-cust').value.trim();
   const rem=document.getElementById('hf-rem').value.trim();
-  
   if(!went&&!loc){toast('Enter at least a date or location','e');return;}
-  
-  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);
-  if(!row)return;
+  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
   if(!row._history)row._history=[];
-  
   if(A.editingHistId){
-    // Update existing entry
     const idx=row._history.findIndex(e=>e._id===A.editingHistId);
-    if(idx>-1){
-      row._history[idx]={
-        _id:A.editingHistId,
-        wentDate:went,
-        cameDate:came,
-        location:loc,
-        customer:cust,
-        remarks:rem
-      };
-      toast('History entry updated ✓','s');
-    }
+    if(idx>-1){row._history[idx]={_id:A.editingHistId,wentDate:went,cameDate:came,location:loc,customer:cust,remarks:rem};toast('History entry updated ✓','s');}
   }else{
-    // Add new entry
-    const entry={_id:uid(),wentDate:went,cameDate:came,location:loc,customer:cust,remarks:rem};
-    row._history.push(entry);
+    row._history.push({_id:uid(),wentDate:went,cameDate:came,location:loc,customer:cust,remarks:rem});
     toast('History entry added ✓','s');
   }
-  
-  saveData();
-  renderHistEntries(row._history);
-  toggleHistForm();
-  clearHistForm();
-  
-  // FIX #2: Force immediate table update
-  setTimeout(()=>{
-    renderMainTable();
-  },50);
-  
+  saveData();renderHistEntries(row._history);toggleHistForm();clearHistForm();
+  setTimeout(()=>{renderMainTable();},50);
   pushToSheets(A.histTableId);
 }
-
 function deleteHistEntry(entryId){
   if(!confirm('Delete this history entry?'))return;
-  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);
-  if(!row)return;
+  const row=(DATA[A.histTableId]||[]).find(r=>r._id===A.histRowId);if(!row)return;
   row._history=(row._history||[]).filter(e=>e._id!==entryId);
-  saveData();
-  renderHistEntries(row._history);
-  
-  // FIX #2: Force immediate table update
-  setTimeout(()=>{
-    renderMainTable();
-  },50);
-  
-  toast('Entry deleted','i');
-  pushToSheets(A.histTableId);
+  saveData();renderHistEntries(row._history);
+  setTimeout(()=>{renderMainTable();},50);
+  toast('Entry deleted','i');pushToSheets(A.histTableId);
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  GOOGLE SHEETS SYNC
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function getGsUrl(){return(CONFIG_DEFAULT_GS_URL||localStorage.getItem('ip_gsurl')||'').trim();}
-function saveGsUrl(val){
-  const u=(val||'').trim();localStorage.setItem('ip_gsurl',u);updateSyncDot(!!u);
-  const inp=document.getElementById('gs-url-input');if(inp)inp.className=u?'has-url':'';
-}
-function clearGsUrl(){
-  localStorage.removeItem('ip_gsurl');
-  const inp=document.getElementById('gs-url-input');if(inp){inp.value='';inp.className='';}
-  updateSyncDot(false);
-  const el=document.getElementById('gs-conn-res');if(el){el.textContent='URL cleared.';el.style.color='var(--t3)';}
-  const dot=document.getElementById('sync-dot-modal');if(dot)dot.className='sync-dot';
-}
-function toggleSetupSteps(){
-  const steps=document.getElementById('setup-steps');const btn=document.getElementById('toggle-steps-btn');
-  const h=steps.style.display==='none';steps.style.display=h?'block':'none';
-  btn.textContent=h?'▲ Hide Setup Instructions':'▼ Show Setup Instructions';
-}
+function saveGsUrl(val){const u=(val||'').trim();localStorage.setItem('ip_gsurl',u);updateSyncDot(!!u);const inp=document.getElementById('gs-url-input');if(inp)inp.className=u?'has-url':'';}
+function clearGsUrl(){localStorage.removeItem('ip_gsurl');const inp=document.getElementById('gs-url-input');if(inp){inp.value='';inp.className='';}updateSyncDot(false);const el=document.getElementById('gs-conn-res');if(el){el.textContent='URL cleared.';el.style.color='var(--t3)';}const dot=document.getElementById('sync-dot-modal');if(dot)dot.className='sync-dot';}
+function toggleSetupSteps(){const steps=document.getElementById('setup-steps');const btn=document.getElementById('toggle-steps-btn');const h=steps.style.display==='none';steps.style.display=h?'block':'none';btn.textContent=h?'▲ Hide Setup Instructions':'▼ Show Setup Instructions';}
 function updateSyncDot(on){
   const dot=document.getElementById('sync-dot');if(dot)dot.className='sync-dot'+(on?' on':'');
   const txt=document.getElementById('sync-txt');if(txt)txt.textContent=on?'Sheets connected':'Not connected';
   const mdot=document.getElementById('sync-dot-modal');if(mdot)mdot.className='sync-dot'+(on?' on':'');
 }
-
 async function gsPost(payload){
-  const url=getGsUrl();
-  if(!url)throw new Error('No Apps Script URL configured.');
+  const url=getGsUrl();if(!url)throw new Error('No Apps Script URL configured.');
   const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
-  const d=await r.json();
-  if(!d.ok)throw new Error(d.error||'Apps Script error');
-  return d;
+  const d=await r.json();if(!d.ok)throw new Error(d.error||'Apps Script error');return d;
 }
-
 async function testGsConn(){
   const el=document.getElementById('gs-conn-res');const mdot=document.getElementById('sync-dot-modal');
-  const url=getGsUrl();
-  if(!url){el.textContent='✗ No URL entered';el.style.color='var(--red)';return;}
+  const url=getGsUrl();if(!url){el.textContent='✗ No URL entered';el.style.color='var(--red)';return;}
   el.textContent='Testing…';el.style.color='var(--t3)';
   try{
     const d=await gsPost({action:'ping'});
     el.style.color='var(--grn)';el.textContent='✓ '+d.message;
-    if(mdot)mdot.className='sync-dot on';
-    updateSyncDot(true);toast('Connected to Google Sheets ✓','s');
-  }catch(e){
-    el.style.color='var(--red)';el.textContent='✗ '+e.message;
-    if(mdot)mdot.className='sync-dot';updateSyncDot(false);
-    toast('Connection failed: '+e.message,'e');
-  }
+    if(mdot)mdot.className='sync-dot on';updateSyncDot(true);toast('Connected to Google Sheets ✓','s');
+  }catch(e){el.style.color='var(--red)';el.textContent='✗ '+e.message;if(mdot)mdot.className='sync-dot';updateSyncDot(false);toast('Connection failed: '+e.message,'e');}
 }
-
 async function syncTableById(tableId){
   const tdef=tdefForId(tableId);if(!tdef)throw new Error('Table not found: '+tableId);
   const tabName=TAB_NAMES[tableId];if(!tabName)throw new Error('No tab mapped: '+tableId);
-  const headers=[...tdef.cols.map(c=>c.name),'History (JSON)'];
-  const colCount=headers.length;
+  const headers=[...tdef.cols.map(c=>c.name),'History (JSON)'];const colCount=headers.length;
   const rows=(DATA[tableId]||[]).map(row=>{
     const vals=[...tdef.cols.map(c=>String(row[c.id]??'')),JSON.stringify(row._history||[])];
-    while(vals.length<colCount)vals.push('');
-    return vals.slice(0,colCount);
+    while(vals.length<colCount)vals.push('');return vals.slice(0,colCount);
   });
   return gsPost({action:'sync',tabName,headers,rows});
 }
-
 async function syncActive(){
   if(!A.activeTableId){toast('Select a table first','i');return;}
   if(!getGsUrl()){openSyncModal();return;}
   showLoading('Syncing table…');
-  try{
-    const d=await syncTableById(A.activeTableId);
-    await gsPost({action:'bumpVersion'});
-    _lastKnownVersion='';
-    toast('✓ '+d.message,'s');
-  }catch(e){toast('Sync failed: '+e.message,'e');}
-  finally{hideLoading();}
+  try{const d=await syncTableById(A.activeTableId);await gsPost({action:'bumpVersion'});_lastKnownVersion='';toast('✓ '+d.message,'s');}
+  catch(e){toast('Sync failed: '+e.message,'e');}finally{hideLoading();}
 }
-
 async function syncAll(){
   if(!getGsUrl()){toast('Connect Google Sheets first','e');openSyncModal();return;}
   const ids=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF].map(t=>t.id);
-  showLoading('Syncing all tables…');
-  let ok=0,fail=0;
-  for(const id of ids){
-    setLoadingMsg('Syncing '+TAB_NAMES[id]+'…');
-    try{await syncTableById(id);ok++;}catch(e){fail++;console.warn('Sync fail',id,e.message);}
-  }
+  showLoading('Syncing all tables…');let ok=0,fail=0;
+  for(const id of ids){setLoadingMsg('Syncing '+TAB_NAMES[id]+'…');try{await syncTableById(id);ok++;}catch(e){fail++;}}
   try{await gsPost({action:'bumpVersion'});_lastKnownVersion='';}catch(e){}
-  hideLoading();
-  toast(fail?`${ok} synced, ${fail} failed`:`✓ All ${ok} tables synced to Sheets`,'s');
+  hideLoading();toast(fail?`${ok} synced, ${fail} failed`:`✓ All ${ok} tables synced to Sheets`,'s');
 }
-
 async function forceRefresh(){
   if(!getGsUrl()){toast('Connect Google Sheets first','e');openSyncModal();return;}
-  _lastKnownVersion='';
-  showLoading('Force refreshing from Sheets…');
+  _lastKnownVersion='';showLoading('Force refreshing from Sheets…');
   try{await pullAllTablesBackground(false);}finally{hideLoading();updateCacheDisplay();}
   toast('✓ Data refreshed from Sheets','s');
 }
-
-function updateCacheDisplay(){
-  const el=document.getElementById('cache-age-display');if(!el)return;
-  el.innerHTML=`Last server version: <span style="color:var(--acc);font-family:var(--mono)">${_lastKnownVersion||'unknown'}</span> · Auto-polls every 30s`;
-}
+function updateCacheDisplay(){const el=document.getElementById('cache-age-display');if(!el)return;el.innerHTML=`Last server version: <span style="color:var(--acc);font-family:var(--mono)">${_lastKnownVersion||'unknown'}</span> · Auto-polls every 30s`;}
 function openSyncModal(){
-  const gsUrl=getGsUrl();
-  const inp=document.getElementById('gs-url-input');
+  const gsUrl=getGsUrl();const inp=document.getElementById('gs-url-input');
   if(inp){inp.value=gsUrl;inp.className=gsUrl?'has-url':'';}
-  const el=document.getElementById('gs-conn-res');
-  if(el&&!el.textContent)el.textContent='Not connected — paste URL above';
-  const mdot=document.getElementById('sync-dot-modal');
-  if(mdot)mdot.className='sync-dot'+(gsUrl?' on':'');
-  updateCacheDisplay();
-  OM('modal-sync');
+  const el=document.getElementById('gs-conn-res');if(el&&!el.textContent)el.textContent='Not connected — paste URL above';
+  const mdot=document.getElementById('sync-dot-modal');if(mdot)mdot.className='sync-dot'+(gsUrl?' on':'');
+  updateCacheDisplay();OM('modal-sync');
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  CLEAR
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function openClearModal(){
   if(!A.activeTableId){toast('Select a table first','i');return;}
   document.querySelectorAll('input[name="clearScope"]')[0].checked=true;
@@ -1616,9 +1584,9 @@ function doDataClear(){
   saveData();CM('modal-clear');renderSidebar();renderMainTable();toast(`🗑 Cleared ${cleared} row(s)`,'i');
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  EXPORT
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function toCSV(tdef,rows){
   const h=[...tdef.cols.map(c=>`"${c.name}"`),'"History Count"'].join(',');
   const r=rows.map(row=>[...tdef.cols.map(c=>`"${String(row[c.id]??'').replace(/"/g,'""')}"`),`"${(row._history||[]).length}"`].join(','));
@@ -1629,9 +1597,9 @@ function exportCSV(){const tdef=getActiveTDef();dlFile(toCSV(tdef,DATA[tdef.id]|
 function exportAllCSV(){const ts=TABLE_DEFS[A.product];ts.forEach((t,i)=>setTimeout(()=>dlFile(toCSV(t,DATA[t.id]||[]),A.product+'_'+t.name.replace(/[^a-z0-9]/gi,'_')+'.csv'),i*250));toast(`Downloading ${ts.length} CSVs…`,'s');}
 function exportJSON(){const tdef=getActiveTDef();dlFile(JSON.stringify({product:A.product,table:tdef.name,rows:DATA[tdef.id]||[]},null,2),tdef.name.replace(/\s+/g,'_')+'.json','application/json');toast('Downloaded JSON','s');}
 
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  HELPERS
-// ═══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function getActiveTDef(){return TABLE_DEFS[A.product].find(t=>t.id===A.activeTableId);}
 function tdefForId(id){for(const p of['COTS','SFF']){const t=TABLE_DEFS[p].find(t=>t.id===id);if(t)return t;}}
 function show(pg){['pg-login','pg-product','pg-app'].forEach(id=>{const el=document.getElementById(id);el.style.display=id===pg?'flex':'none';});}
@@ -1647,6 +1615,8 @@ function toast(msg,type='i'){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){document.querySelectorAll('.mover.open').forEach(m=>m.classList.remove('open'));closeMobSidebar();}
   if(e.key==='n'&&isAdmin()&&!document.querySelector('.mover.open')&&A.activeTableId)openAddRow();
+  if(e.key==='ArrowLeft'&&document.getElementById('modal-detail').classList.contains('open'))detailNav(-1);
+  if(e.key==='ArrowRight'&&document.getElementById('modal-detail').classList.contains('open'))detailNav(1);
 });
 updateAutoSyncBadge();
 </script>
