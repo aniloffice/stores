@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DHW-Application Team Stores</title>
+<title>ECG-Application Team Stores</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
 <link rel="manifest" href="#" id="manifest-placeholder">
 <meta name="theme-color" content="#f59e0b">
@@ -396,7 +396,7 @@ tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,
   <div class="login-wrap">
     <div class="login-brand">
       <div class="login-brand-logo">📦</div>
-      <h1>DHW-Application<br><span>Team Stores</span></h1>
+      <h1>ECG-Application<br><span>Team Stores</span></h1>
       <p>COTS & SFF Inventory Management System</p>
     </div>
     <div class="role-switch">
@@ -461,7 +461,7 @@ tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,
     <button class="mob-menu-btn" onclick="toggleMobSidebar()">☰</button>
     <div class="tb-brand">
       <div class="tb-icon">📦</div>
-      <span>DHW-Application <span style="color:var(--acc)">Team Stores</span></span>
+      <span>ECG-Application <span style="color:var(--acc)">Team Stores</span></span>
       <span class="tb-brand-info">ℹ️</span>
       <div class="tb-brand-tooltip">Developed and maintained by application team</div>
     </div>
@@ -602,7 +602,7 @@ tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,
     </div>
     <div id="setup-steps" style="display:none;">
       <div class="step-card"><div class="step-hd"><div class="step-n">1</div><div class="step-t">Add Apps Script</div></div>
-        <div class="step-d">Google Sheet → <strong>Extensions → Apps Script</strong> → paste <strong>dhw-apps-script-v2.gs</strong> → Save</div></div>
+        <div class="step-d">Google Sheet → <strong>Extensions → Apps Script</strong> → paste <strong>ECG-apps-script-v2.gs</strong> → Save</div></div>
       <div class="step-card"><div class="step-hd"><div class="step-n">2</div><div class="step-t">Deploy as Web App</div></div>
         <div class="step-d"><strong>Deploy → New Deployment → Web App</strong><br>Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong> → Copy URL</div></div>
       <div class="step-card"><div class="step-hd"><div class="step-n">3</div><div class="step-t">Paste URL above → Test → Sync All</div></div>
@@ -680,7 +680,7 @@ document.getElementById('sheet-link').href =
   'https://docs.google.com/spreadsheets/d/' + CONFIG_SPREADSHEET_ID + '/edit';
 
 // PWA MANIFEST
-const manifest = {name:"DHW-Application Team Stores",short_name:"DHW Stores",start_url:window.location.pathname,display:"standalone",background_color:"#0a0a0f",theme_color:"#f59e0b",icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>",sizes:"any",type:"image/svg+xml"}]};
+const manifest = {name:"ECG-Application Team Stores",short_name:"ECG Stores",start_url:window.location.pathname,display:"standalone",background_color:"#0a0a0f",theme_color:"#f59e0b",icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>",sizes:"any",type:"image/svg+xml"}]};
 const manifestBlob = new Blob([JSON.stringify(manifest)],{type:'application/json'});
 document.getElementById('manifest-placeholder').setAttribute('href',URL.createObjectURL(manifestBlob));
 
@@ -802,11 +802,11 @@ let _lastKnownVersion='';
 //  SESSION PERSISTENCE
 // ══════════════════════════════════════════════════════════
 function saveSession(){
-  if(A.user)localStorage.setItem('dhw_session',JSON.stringify({user:A.user,product:A.product,activeTableId:A.activeTableId}));
+  if(A.user)localStorage.setItem('ECG_session',JSON.stringify({user:A.user,product:A.product,activeTableId:A.activeTableId}));
 }
 function loadSession(){
   try{
-    const s=JSON.parse(localStorage.getItem('dhw_session')||'null');
+    const s=JSON.parse(localStorage.getItem('ECG_session')||'null');
     if(s&&s.user){
       A.user=s.user;
       if(s.product){
@@ -824,7 +824,7 @@ function loadSession(){
   }catch(e){}
   return false;
 }
-function clearSession(){localStorage.removeItem('dhw_session');}
+function clearSession(){localStorage.removeItem('ECG_session');}
 window.addEventListener('DOMContentLoaded',()=>{if(!loadSession())show('pg-login');});
 
 // ══════════════════════════════════════════════════════════
