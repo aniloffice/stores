@@ -344,6 +344,33 @@ tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,
 [data-theme="light"] .te{background:#fee2e2;color:#991b1b;}
 [data-theme="light"] .ti{background:#dbeafe;color:#1e40af;}
 
+/* FILTER PANEL (per-table, dynamic columns) */
+.filter-panel{padding:10px 16px;border-bottom:1px solid var(--bdr);background:var(--s1);flex-shrink:0;}
+.filter-panel-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;}
+.filter-panel-toggle:hover{color:var(--acc);}
+.filter-panel-toggle .fp-chevron{transition:transform var(--tr);font-size:10px;}
+.filter-panel-toggle.collapsed .fp-chevron{transform:rotate(-90deg);}
+.filter-panel-badge{font-family:var(--mono);font-size:10px;background:rgba(245,158,11,.15);color:var(--acc);padding:1px 6px;border-radius:8px;}
+.filter-fields-body{display:none;margin-top:10px;}
+.filter-fields-body.open{display:block;}
+.filter-fields-grid{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-end;}
+.filter-field{display:flex;flex-direction:column;gap:4px;min-width:130px;flex:1 1 150px;max-width:220px;}
+.filter-field label{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.filter-field input,.filter-field select{padding:7px 9px;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;color:var(--txt);font-size:12px;outline:none;transition:border-color var(--tr);width:100%;}
+.filter-field input:focus,.filter-field select:focus{border-color:var(--acc);}
+.filter-field select{cursor:pointer;}
+.filter-actions{display:flex;gap:6px;flex-shrink:0;align-items:flex-end;padding-bottom:0;}
+.filter-btn-search{padding:7px 14px;background:var(--acc);color:#000;border:1px solid var(--acc);border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.filter-btn-search:hover{background:var(--acc2);}
+.filter-btn-search.sff-btn{background:var(--sff);border-color:var(--sff);color:#fff;}
+.filter-btn-search.sff-btn:hover{background:#2563eb;}
+.filter-btn-clear{padding:7px 12px;background:transparent;border:1px solid rgba(239,68,68,.3);color:var(--red);border-radius:6px;font-size:12px;cursor:pointer;transition:all var(--tr);display:none;align-items:center;gap:4px;white-space:nowrap;}
+.filter-btn-clear:hover{background:rgba(239,68,68,.08);}
+.filter-btn-clear.show{display:inline-flex;}
+.filter-btn-download{padding:7px 12px;background:var(--grn);border:1px solid var(--grn);color:#000;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.filter-btn-download:hover{opacity:.85;}
+.filter-result-count{font-size:11px;color:var(--t3);font-family:var(--mono);margin-top:8px;}
+
 /* MOBILE */
 @media(max-width:768px){
   html,body{overflow:auto;}
@@ -374,6 +401,10 @@ tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,
   #toasts{right:10px;left:10px;bottom:10px;align-items:center;}
   .toast{min-width:unset;width:100%;justify-content:center;}
   .autosync-badge{display:none;}
+  .filter-fields-grid{flex-direction:column;align-items:stretch;}
+  .filter-field{max-width:none;}
+  .filter-actions{width:100%;}
+  .filter-btn-search,.filter-btn-clear,.filter-btn-download{flex:1;justify-content:center;}
 }
 @media(max-width:480px){
   .topbar{padding:0 10px;gap:7px;}
@@ -505,6 +536,7 @@ tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,
       <div class="sb-bottom">
         <button class="btn bp bsm" id="btn-add-row" onclick="openAddRow()" style="width:100%;justify-content:center;display:none;">+ Add Row</button>
         <button class="btn bo bsm" id="btn-clear-bottom" onclick="openClearModal()" style="width:100%;justify-content:center;margin-top:5px;display:none;color:var(--red);border-color:rgba(239,68,68,.3);">🗑 Clear Rows</button>
+        <button class="btn bo bsm" id="btn-download-all" onclick="downloadAllSheets()" style="width:100%;justify-content:center;margin-top:5px;">📦 Download All Sheets</button>
       </div>
     </div>
     <div class="main" id="main-content">
@@ -620,7 +652,8 @@ tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,
         <div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:7px;">⬇ Local Export (no internet needed)</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="btn bo bsm" onclick="exportCSV()">📄 CSV</button>
-          <button class="btn bo bsm" onclick="exportAllCSV()">📦 All CSVs</button>
+          <button class="btn bo bsm" onclick="exportAllCSV()">📦 All CSVs (This Product)</button>
+          <button class="btn bg bsm" onclick="downloadAllSheets()">🗂 Download ALL Sheets (ZIP)</button>
           <button class="btn bo bsm" onclick="exportJSON()">{ } JSON</button>
         </div>
       </div>
@@ -661,6 +694,7 @@ tbody tr.sff-row .row-view-btn:hover{border-color:var(--blu);background:rgba(59,
 
 <div id="toasts"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 // ══════════════════════════════════════════════════════════
 //  CONFIGURATION
@@ -792,7 +826,7 @@ const TAB_NAMES={
 // ══════════════════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════════════════
-let A={user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null,editingHistId:null,detailTableId:null,detailRowId:null};
+let A={user:null,product:null,activeTableId:null,nioFilter:false,searchMode:false,searchQuery:'',editRowId:null,histRowId:null,histTableId:null,editingHistId:null,detailTableId:null,detailRowId:null,appliedFilters:{},filterPanelOpen:true};
 let autoSyncEnabled=localStorage.getItem('ip_autosync')==='1';
 let _pollTimer=null;
 let _refreshing=false;
@@ -937,6 +971,7 @@ const isAdmin=()=>A.user?.role==='admin';
 function enterProduct(prod,skipSession){
   A.product=prod;A.activeTableId=TABLE_DEFS[prod][0].id;
   A.nioFilter=false;A.searchMode=false;A.searchQuery='';
+  A.appliedFilters={};
   if(!skipSession)saveSession();
   if(CONFIG_DEFAULT_GS_URL&&!localStorage.getItem('ip_gsurl'))localStorage.setItem('ip_gsurl',CONFIG_DEFAULT_GS_URL);
   const gsUrl=getGsUrl();
@@ -1018,7 +1053,7 @@ function renderSidebar(){
   const nc=document.getElementById('nio-count');
   if(totalNIO>0){nc.textContent=totalNIO;nc.style.display='inline';}else nc.style.display='none';
 }
-function selectTable(id){A.activeTableId=id;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';saveSession();renderSidebar();renderMainTable();}
+function selectTable(id){A.activeTableId=id;A.searchMode=false;A.searchQuery='';A.appliedFilters={};document.getElementById('sb-search-input').value='';saveSession();renderSidebar();renderMainTable();}
 function toggleNIO(){A.nioFilter=!A.nioFilter;A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';document.getElementById('nio-toggle').className='nio-toggle'+(A.nioFilter?' active':'');renderMainTable();}
 
 // ══════════════════════════════════════════════════════════
@@ -1063,6 +1098,96 @@ function jumpToRow(tableId,rowId){
   A.searchMode=false;A.searchQuery='';document.getElementById('sb-search-input').value='';
   selectTable(tableId);
   setTimeout(()=>{const tr=document.getElementById('row-'+rowId);if(tr){tr.scrollIntoView({behavior:'smooth',block:'center'});tr.style.background='rgba(245,158,11,.15)';setTimeout(()=>tr.style.background='',1800);}},100);
+}
+
+// ══════════════════════════════════════════════════════════
+//  PER-TABLE FILTER PANEL (dynamic per-column fields, search-on-click)
+// ══════════════════════════════════════════════════════════
+// Columns we don't bother showing a dedicated filter field for
+const FILTER_SKIP_TYPES=['longtext'];
+
+function filterableColsFor(tdef){
+  return tdef.cols.filter(c=>!FILTER_SKIP_TYPES.includes(c.type));
+}
+function toggleFilterPanel(){
+  A.filterPanelOpen=!A.filterPanelOpen;
+  const body=document.getElementById('filter-fields-body');
+  const tgl=document.getElementById('filter-panel-toggle');
+  if(body)body.classList.toggle('open',A.filterPanelOpen);
+  if(tgl)tgl.classList.toggle('collapsed',!A.filterPanelOpen);
+}
+function applyTableFilterSearch(){
+  const tdef=getActiveTDef();if(!tdef)return;
+  const next={};
+  filterableColsFor(tdef).forEach(col=>{
+    const el=document.getElementById('ff_'+col.id);
+    if(el&&el.value.trim()!=='')next[col.id]=el.value.trim();
+  });
+  A.appliedFilters=next;
+  renderMainTable();
+}
+function clearTableFilters(){
+  A.appliedFilters={};
+  renderMainTable();
+}
+function applyTableFilters(rows,tdef){
+  const f=A.appliedFilters||{};
+  const keys=Object.keys(f);
+  if(!keys.length)return rows;
+  return rows.filter(row=>keys.every(colId=>{
+    const col=tdef.cols.find(c=>c.id===colId);
+    const rv=String(row[colId]??'');
+    if(!col)return true;
+    if(col.type==='condition'||col.type==='inoffice'){
+      return rv===f[colId];
+    }
+    return rv.toLowerCase().includes(f[colId].toLowerCase());
+  }));
+}
+function getVisibleRows(){
+  const tdef=getActiveTDef();
+  if(!tdef)return{tdef:null,rows:[]};
+  let rows=DATA[tdef.id]||[];
+  if(A.nioFilter)rows=rows.filter(r=>(r.inoffice||'')==='No');
+  rows=applyTableFilters(rows,tdef);
+  return{tdef,rows};
+}
+function buildFilterFieldsHtml(tdef,rows){
+  const cols=filterableColsFor(tdef);
+  if(!cols.length)return '';
+  const applied=A.appliedFilters||{};
+  const fieldsHtml=cols.map(col=>{
+    const curVal=applied[col.id]||'';
+    if(col.type==='condition'){
+      const presets=['Working','Not Working','Damaged','No idea','Fault','Poor'];
+      const dataVals=[...new Set(rows.map(r=>String(r[col.id]||'')).filter(Boolean))];
+      const vals=[...new Set([...presets,...dataVals])];
+      return `<div class="filter-field"><label>${escH(col.name)}</label>
+        <select id="ff_${col.id}" onkeydown="if(event.key==='Enter')applyTableFilterSearch()">
+          <option value="">Any</option>
+          ${vals.map(v=>`<option value="${escH(v)}" ${curVal===v?'selected':''}>${escH(v)}</option>`).join('')}
+        </select></div>`;
+    }
+    if(col.type==='inoffice'){
+      return `<div class="filter-field"><label>${escH(col.name)}</label>
+        <select id="ff_${col.id}" onkeydown="if(event.key==='Enter')applyTableFilterSearch()">
+          <option value="">Any</option>
+          <option value="Yes" ${curVal==='Yes'?'selected':''}>✓ Yes</option>
+          <option value="No" ${curVal==='No'?'selected':''}>✗ No</option>
+        </select></div>`;
+    }
+    return `<div class="filter-field"><label>${escH(col.name)}</label>
+      <input type="text" id="ff_${col.id}" value="${escH(curVal)}" placeholder="Any ${escH(col.name)}…" onkeydown="if(event.key==='Enter')applyTableFilterSearch()"></div>`;
+  }).join('');
+  const isSFF=A.product==='SFF';
+  return `<div class="filter-fields-grid">
+    ${fieldsHtml}
+    <div class="filter-actions">
+      <button class="filter-btn-search${isSFF?' sff-btn':''}" onclick="applyTableFilterSearch()">🔍 Search</button>
+      <button class="filter-btn-clear ${Object.keys(applied).length?'show':''}" onclick="clearTableFilters()">✕ Clear</button>
+      <button class="filter-btn-download" onclick="exportFilteredCSV()" title="Download the current filtered result as a CSV file">⬇ Download Result</button>
+    </div>
+  </div>`;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1111,11 +1236,14 @@ function renderCellValue(col, v, tableId, rowId, isSFF) {
 
 function renderMainTable(){
   const tdef=TABLE_DEFS[A.product].find(t=>t.id===A.activeTableId);if(!tdef)return;
-  let rows=DATA[tdef.id]||[];if(A.nioFilter)rows=rows.filter(r=>(r.inoffice||'')==='No');
   const allRows=DATA[tdef.id]||[];
+  let rows=allRows;
+  if(A.nioFilter)rows=rows.filter(r=>(r.inoffice||'')==='No');
+  rows=applyTableFilters(rows,tdef);
   const nioCount=allRows.filter(r=>(r.inoffice||'')==='No').length;
   const inCount=allRows.filter(r=>(r.inoffice||'')==='Yes').length;
   const isSFF=A.product==='SFF';const accentCls=isSFF?'bp sff-btn':'bp';
+  const filtersActive=Object.keys(A.appliedFilters||{}).length>0;
 
   let html=`<div class="table-area"><div class="main-head"><div class="mh-left">
     <h2>${tdef.icon} ${escH(tdef.name)}</h2>
@@ -1126,6 +1254,17 @@ function renderMainTable(){
     <button class="btn ${accentCls} bsm" onclick="openAddRow()">+ Add Row</button>`
     :'<span style="font-size:11px;color:var(--t2)">👁 View only</span>'}
   </div></div>
+  <div class="filter-panel">
+    <div class="filter-panel-toggle ${A.filterPanelOpen?'':'collapsed'}" id="filter-panel-toggle" onclick="toggleFilterPanel()">
+      <span class="fp-chevron">▾</span>
+      <span>🔍 Filter by column</span>
+      ${filtersActive?`<span class="filter-panel-badge">${Object.keys(A.appliedFilters).length} active</span>`:''}
+    </div>
+    <div class="filter-fields-body ${A.filterPanelOpen?'open':''}" id="filter-fields-body">
+      ${buildFilterFieldsHtml(tdef,allRows)}
+      <div class="filter-result-count">${filtersActive?rows.length+' of '+allRows.length+' rows match':allRows.length+' total rows'}</div>
+    </div>
+  </div>
   <div class="stat-bar">
     <div class="stat"><div class="stat-d" style="background:var(--t2)"></div><span class="stat-n">${allRows.length}</span><span class="stat-l">Total</span></div>
     <div class="stat"><div class="stat-d" style="background:var(--grn)"></div><span class="stat-n">${inCount}</span><span class="stat-l">In Office</span></div>
@@ -1137,8 +1276,8 @@ function renderMainTable(){
 
   if(!rows.length){
     html+=`<div class="empty-state"><div class="empty-state-icon">${tdef.icon}</div>
-      <h3>${A.nioFilter?'No items out of office':'No rows yet'}</h3>
-      <p>${isAdmin()&&!A.nioFilter?'Click "+ Add Row" to add entries.':'No data to display.'}</p></div>`;
+      <h3>${filtersActive?'No rows match this filter':A.nioFilter?'No items out of office':'No rows yet'}</h3>
+      <p>${filtersActive?'Try a different search term or clear the filters.':(isAdmin()&&!A.nioFilter?'Click "+ Add Row" to add entries.':'No data to display.')}</p></div>`;
   }else{
     const histTh=tdef.hasHistory?`<th>History</th>`:'';
     const actTh=isAdmin()?`<th style="text-align:right;padding-right:10px">Actions</th>`:'<th style="text-align:right;padding-right:10px">View</th>';
@@ -1488,7 +1627,7 @@ function deleteHistEntry(entryId){
 // ══════════════════════════════════════════════════════════
 //  GOOGLE SHEETS SYNC
 // ══════════════════════════════════════════════════════════
-function getGsUrl(){return(CONFIG_DEFAULT_GS_URL||localStorage.getItem('ip_gsurl')||'').trim();}
+function getGsUrl(){return(localStorage.getItem('ip_gsurl')||CONFIG_DEFAULT_GS_URL||'').trim();}
 function saveGsUrl(val){const u=(val||'').trim();localStorage.setItem('ip_gsurl',u);updateSyncDot(!!u);const inp=document.getElementById('gs-url-input');if(inp)inp.className=u?'has-url':'';}
 function clearGsUrl(){localStorage.removeItem('ip_gsurl');const inp=document.getElementById('gs-url-input');if(inp){inp.value='';inp.className='';}updateSyncDot(false);const el=document.getElementById('gs-conn-res');if(el){el.textContent='URL cleared.';el.style.color='var(--t3)';}const dot=document.getElementById('sync-dot-modal');if(dot)dot.className='sync-dot';}
 function toggleSetupSteps(){const steps=document.getElementById('setup-steps');const btn=document.getElementById('toggle-steps-btn');const h=steps.style.display==='none';steps.style.display=h?'block':'none';btn.textContent=h?'▲ Hide Setup Instructions':'▼ Show Setup Instructions';}
@@ -1597,6 +1736,53 @@ function exportCSV(){const tdef=getActiveTDef();dlFile(toCSV(tdef,DATA[tdef.id]|
 function exportAllCSV(){const ts=TABLE_DEFS[A.product];ts.forEach((t,i)=>setTimeout(()=>dlFile(toCSV(t,DATA[t.id]||[]),A.product+'_'+t.name.replace(/[^a-z0-9]/gi,'_')+'.csv'),i*250));toast(`Downloading ${ts.length} CSVs…`,'s');}
 function exportJSON(){const tdef=getActiveTDef();dlFile(JSON.stringify({product:A.product,table:tdef.name,rows:DATA[tdef.id]||[]},null,2),tdef.name.replace(/\s+/g,'_')+'.json','application/json');toast('Downloaded JSON','s');}
 
+// Download the CURRENT FILTERED RESULT of the active table (NEW)
+function exportFilteredCSV(){
+  const {tdef,rows}=getVisibleRows();
+  if(!tdef){toast('Select a table first','i');return;}
+  if(!rows.length){toast('No rows match the current filter — nothing to download','i');return;}
+  const filtersActive=Object.keys(A.appliedFilters||{}).length>0||A.nioFilter;
+  const suffix=filtersActive?'_FilteredResult':'';
+  dlFile(toCSV(tdef,rows),tdef.name.replace(/\s+/g,'_')+suffix+'.csv');
+  toast(`✓ Downloaded ${rows.length} filtered row(s)`,'s');
+}
+
+// Download ALL 8 sheets (COTS + SFF) as a single ZIP file (NEW)
+async function downloadAllSheets(){
+  const allTables=[...TABLE_DEFS.COTS,...TABLE_DEFS.SFF];
+  const totalRows=allTables.reduce((s,t)=>s+(DATA[t.id]||[]).length,0);
+  if(!totalRows){toast('No data to download yet','i');return;}
+  if(typeof JSZip==='undefined'){
+    // Fallback: no internet for the CDN lib — download each CSV separately instead
+    toast('ZIP library unavailable — downloading separate CSVs','i');
+    allTables.forEach((t,i)=>setTimeout(()=>dlFile(toCSV(t,DATA[t.id]||[]),(t.id.startsWith('cots')?'COTS':'SFF')+'_'+t.name.replace(/[^a-z0-9]/gi,'_')+'.csv'),i*250));
+    return;
+  }
+  showLoading('Preparing ZIP of all sheets…');
+  try{
+    const zip=new JSZip();
+    const cotsFolder=zip.folder('COTS');
+    const sffFolder=zip.folder('SFF');
+    TABLE_DEFS.COTS.forEach(t=>cotsFolder.file(t.name.replace(/[^a-z0-9]/gi,'_')+'.csv',toCSV(t,DATA[t.id]||[])));
+    TABLE_DEFS.SFF.forEach(t=>sffFolder.file(t.name.replace(/[^a-z0-9]/gi,'_')+'.csv',toCSV(t,DATA[t.id]||[])));
+    // Also include one combined JSON snapshot of everything
+    const allJson={};allTables.forEach(t=>{allJson[t.id]={product:t.id.startsWith('cots')?'COTS':'SFF',table:t.name,rows:DATA[t.id]||[]};});
+    zip.file('ALL_DATA.json',JSON.stringify(allJson,null,2));
+    const blob=await zip.generateAsync({type:'blob'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='ECG_Team_Stores_AllSheets_'+new Date().toISOString().slice(0,10)+'.zip';
+    a.click();
+    toast(`✓ Downloaded all ${allTables.length} sheets (${totalRows} rows) as ZIP`,'s');
+  }catch(e){
+    console.warn('ZIP generation failed:',e.message);
+    toast('ZIP failed — downloading separate CSVs instead','e');
+    allTables.forEach((t,i)=>setTimeout(()=>dlFile(toCSV(t,DATA[t.id]||[]),(t.id.startsWith('cots')?'COTS':'SFF')+'_'+t.name.replace(/[^a-z0-9]/gi,'_')+'.csv'),i*250));
+  }finally{
+    hideLoading();
+  }
+}
+
 // ══════════════════════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════════════════════
@@ -1613,7 +1799,12 @@ function toast(msg,type='i'){
   setTimeout(()=>el.remove(),3200);
 }
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){document.querySelectorAll('.mover.open').forEach(m=>m.classList.remove('open'));closeMobSidebar();}
+  if(e.key==='Escape'){document.querySelectorAll('.mover.open').forEach(m=>m.classList.remove('open'));closeMobSidebar();return;}
+  // Ignore all other shortcuts while the user is actually typing in a field
+  // (fixes: typing "n" inside Make/any filter or search box was popping open "Add Row")
+  const tag=(e.target&&e.target.tagName)||'';
+  const isTyping=tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||(e.target&&e.target.isContentEditable);
+  if(isTyping)return;
   if(e.key==='n'&&isAdmin()&&!document.querySelector('.mover.open')&&A.activeTableId)openAddRow();
   if(e.key==='ArrowLeft'&&document.getElementById('modal-detail').classList.contains('open'))detailNav(-1);
   if(e.key==='ArrowRight'&&document.getElementById('modal-detail').classList.contains('open'))detailNav(1);
